@@ -1,28 +1,7 @@
-const express = require('express');
-var router = express.Router();
 const sql = require('mssql');
 var config = require('../config.js');
 
-router.use(express.json());
-
-router.get('/area/:AreaID', async function (req, res) {
-    try {
-        const { AreaID } = req.params; // Lấy AreaID từ URL
-        const pool = await sql.connect(config); // Kết nối cơ sở dữ liệu
-
-        // Sử dụng tham số hóa đúng cách
-        const result = await pool.request()
-            .input('AreaID', sql.Int, AreaID) // Định nghĩa tham số AreaID
-            .query("SELECT * FROM AREA WHERE AreaID = @AreaID");
-
-        return res.json(result.recordset); // Trả về kết quả truy vấn
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: "An error occurred" });
-    }
-});
-
-router.get('/api/employee/:EmployeeID', async (req, res) => {
+const getEmployee = async (req, res) => {
     const { EmployeeID } = req.params;
 
     try {
@@ -40,10 +19,10 @@ router.get('/api/employee/:EmployeeID', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-});
+};
 
 // API thêm nhân viên
-router.post('/api/new-employee', async (req, res) => {
+const addNewEmployee = async (req, res) => {
     const { EmployeeID,EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = req.body;
 
     try {
@@ -65,10 +44,10 @@ router.post('/api/new-employee', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-});
+};
 
 // API cập nhật thông tin nhân viên
-router.put('/api/update-employee/:EmployeeID', async (req, res) => {
+const updateEmployee = async (req, res) => {
     const { EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, LeaveDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = req.body;
 
     try {
@@ -91,10 +70,10 @@ router.put('/api/update-employee/:EmployeeID', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-});
+};
 
 // API xóa nhân viên
-router.delete('/api/delete-employee/:EmployeeID', async (req, res) => {
+const deleteEmployee = async (req, res) => {
     const { EmployeeID } = req.params;
 
     try {
@@ -107,6 +86,11 @@ router.delete('/api/delete-employee/:EmployeeID', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-});
+};
 
-module.exports = router;
+module.exports = {
+    getEmployee,
+    addNewEmployee,
+    updateEmployee,
+    deleteEmployee
+};
