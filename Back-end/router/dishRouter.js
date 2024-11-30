@@ -28,7 +28,9 @@ router.post('/api/add-new-dish', async (req, res) => {
     const { BranchID, DirectoryName, DishName, Price } = req.body;
 
     try {
-        const result = await sql.request()
+        const pool = await sql.connect(config);
+
+        const result = await pool.request()
             .input('BranchID', sql.Int, BranchID)
             .input('DirectoryName', sql.NVarChar, DirectoryName)
             .input('DishName', sql.NVarChar, DishName)
@@ -46,7 +48,9 @@ router.delete('/api/delete-dish/:DishID', async (req, res) => {
     const { DishID } = req.params;
 
     try {
-        const result = await sql.request()
+        const pool = await sql.connect(config);
+
+        const result = await pool.request()
             .input('DishID', sql.Int, DishID)
             .query('EXEC DeleteDish @DishID');
         
@@ -61,7 +65,9 @@ router.put('/api/update-dish', async (req, res) => {
     const { DishID, NewDishName, NewPrice, BranchID, DirectoryName } = req.body;
 
     try {
-        const result = await sql.request()
+        const pool = await sql.connect(config);
+
+        const result = await pool.request()
             .input('DishID', sql.Int, DishID)
             .input('NewDishName', sql.NVarChar, NewDishName)
             .input('NewPrice', sql.Decimal, NewPrice)
