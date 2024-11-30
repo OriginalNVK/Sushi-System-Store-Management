@@ -25,7 +25,7 @@ router.get('/api/dish/:DishID', async (req, res) => {
 
 //API thêm món ăn
 router.post('/api/add-new-dish', async (req, res) => {
-    const { BranchID, DirectoryName, DishName, Price } = req.body;
+    const { BranchID, DirectoryName,DishID , DishName, Price } = req.body;
 
     try {
         const pool = await sql.connect(config);
@@ -33,9 +33,10 @@ router.post('/api/add-new-dish', async (req, res) => {
         const result = await pool.request()
             .input('BranchID', sql.Int, BranchID)
             .input('DirectoryName', sql.NVarChar, DirectoryName)
+            .input('DishID', sql.Int, DishID)
             .input('DishName', sql.NVarChar, DishName)
             .input('Price', sql.Decimal, Price)
-            .query('EXEC AddNewDish @BranchID, @DirectoryName, @DishName, @Price');
+            .query('EXEC AddNewDish @BranchID, @DirectoryName,@DishID, @DishName, @Price');
         
         res.status(200).json({ message: 'Dish added successfully.' });
     } catch (err) {
@@ -61,19 +62,19 @@ router.delete('/api/delete-dish/:DishID', async (req, res) => {
 });
 
 // API cập nhật món ăn
-router.put('/api/update-dish', async (req, res) => {
-    const { DishID, NewDishName, NewPrice, BranchID, DirectoryName } = req.body;
+router.put('/api/update-dish/:DishID', async (req, res) => {
+    const { BranchID, DirectoryName, DishID, NewDishName, NewPrice,  } = req.body;
 
     try {
         const pool = await sql.connect(config);
 
         const result = await pool.request()
-            .input('DishID', sql.Int, DishID)
-            .input('NewDishName', sql.NVarChar, NewDishName)
-            .input('NewPrice', sql.Decimal, NewPrice)
             .input('BranchID', sql.Int, BranchID)
             .input('DirectoryName', sql.NVarChar, DirectoryName)
-            .query('EXEC Update_Dish @DishID, @NewDishName, @NewPrice, @BranchID, @DirectoryName');
+            .input('DishID', sql.Int, DishID)
+            .input('NewDishName', sql.NVarChar, NewDishName)
+            .input('NewPrice', sql.Int, NewPrice)
+            .query('EXEC Update_Dish @BranchID, @DirectoryName, @DishID, @NewDishName, @NewPrice');
         
         res.status(200).json({ message: 'Dish updated successfully.' });
     } catch (err) {
