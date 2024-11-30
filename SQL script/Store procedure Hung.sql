@@ -1,8 +1,12 @@
-USE SUSHISTORE_MANAGEMENT
+﻿USE SUSHISTORE_MANAGEMENT
 GO
 
+select* from EMPLOYEE 
+select* from DISH
+select* from DIRECTORY_DISH
 --Them nhan vien
 CREATE PROC New_Employee
+	@EmployeeID INT,
 	@EmployeeName NVARCHAR(255),
     @EmployeeBirth DATE,
     @EmployeeGender NVARCHAR(10),
@@ -15,11 +19,11 @@ CREATE PROC New_Employee
 AS
 BEGIN
     INSERT INTO EMPLOYEE (
-        EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, 
+        EmployeeID,EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, 
         DepartmentID, BranchID, EmployeeAddress, EmployeePhone
     )
     VALUES (
-        @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, 
+        @EmployeeID,@EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, 
         @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone
     );
 END;
@@ -77,11 +81,13 @@ GO
 CREATE PROCEDURE AddNewDish
     @BranchID INT,
     @DirectoryName NVARCHAR(255),
+    @DishID INT, -- Thêm DishID vào tham số đầu vào
     @DishName NVARCHAR(255),
     @Price INT
 AS
 BEGIN
     DECLARE @DirectoryID INT;
+    -- Kiểm tra nếu Directory không tồn tại, nếu không tồn tại thì thêm mới và lấy DirectoryID
     IF NOT EXISTS (SELECT 1 FROM DIRECTORY WHERE DirectoryName = @DirectoryName)
     BEGIN
         INSERT INTO DIRECTORY (DirectoryName) VALUES (@DirectoryName);
@@ -91,22 +97,28 @@ BEGIN
     BEGIN
         SELECT @DirectoryID = DirectoryID FROM DIRECTORY WHERE DirectoryName = @DirectoryName;
     END
-    DECLARE @DishID INT;
-    IF NOT EXISTS (SELECT 1 FROM DISH WHERE DishName = @DishName)
+
+    -- Kiểm tra nếu Dish không tồn tại, nếu không thì thêm mới và lấy DishID
+    DECLARE @NewDishID INT;
+    IF NOT EXISTS (SELECT 1 FROM DISH WHERE DishID = @DishID) -- Kiểm tra DishID
     BEGIN
-        INSERT INTO DISH (DishName, Price)
-        VALUES (@DishName, @Price);
-        SET @DishID = SCOPE_IDENTITY();
+        INSERT INTO DISH (DishID, DishName, Price)
+        VALUES (@DishID, @DishName, @Price);  -- Chèn Dish với DishID
+        SET @NewDishID = @DishID;  -- Đặt DishID mới
     END
     ELSE
     BEGIN
-        SELECT @DishID = DishID FROM DISH WHERE DishName = @DishName;
+        SELECT @NewDishID = DishID FROM DISH WHERE DishID = @DishID;
     END
-    IF NOT EXISTS (SELECT 1 FROM DIRECTORY_DISH WHERE DirectoryID = @DirectoryID AND DishID = @DishID)
+
+    -- Thêm vào DIRECTORY_DISH nếu chưa tồn tại mối quan hệ giữa Directory và Dish
+    IF NOT EXISTS (SELECT 1 FROM DIRECTORY_DISH WHERE DirectoryID = @DirectoryID AND DishID = @NewDishID)
     BEGIN
         INSERT INTO DIRECTORY_DISH (DirectoryID, DishID)
-        VALUES (@DirectoryID, @DishID);
+        VALUES (@DirectoryID, @NewDishID);
     END
+
+    -- Thêm vào MENU_DIRECTORY nếu chưa tồn tại mối quan hệ giữa Branch và Directory
     IF NOT EXISTS (SELECT 1 FROM MENU_DIRECTORY WHERE BranchID = @BranchID AND DirectoryID = @DirectoryID)
     BEGIN
         INSERT INTO MENU_DIRECTORY (BranchID, DirectoryID)
@@ -114,6 +126,7 @@ BEGIN
     END
 END;
 GO
+
 
 --Xoa mon an
 CREATE PROCEDURE DeleteDish
@@ -126,63 +139,54 @@ GO
 
 --Cap nhat mon
 CREATE PROCEDURE Update_Dish
-    @DishID INT,                  -- ID c?a m�n c?n c?p nh?t
-    @NewDishName NVARCHAR(255),   -- T�n m�n m?i
-    @NewPrice INT,                -- Gi� m?i
-    @BranchID INT,                -- Chi nh�nh m?i
-    @DirectoryName NVARCHAR(255)  -- T�n m?c m?i
+	@BranchID INT,
+	@DirectoryName NVARCHAR(255),
+    @DishID INT,                  -- ID của món cần cập nhật
+    @NewDishName NVARCHAR(255),   -- Tên món mới
+    @NewPrice INT              -- Giá mới
 AS
 BEGIN
-    BEGIN TRY
-        BEGIN TRANSACTION;
+    -- Kiểm tra món ăn có tồn tại hay không
+    IF NOT EXISTS (SELECT 1 FROM DISH WHERE DishID = @DishID)
+    BEGIN
+        PRINT 'Dish not found!';
+        RETURN;
+    END
 
-        -- Ki?m tra m�n ?n c� t?n t?i hay kh�ng
-        IF NOT EXISTS (SELECT 1 FROM DISH WHERE DishID = @DishID)
-        BEGIN
-            PRINT 'Dish not found!';
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
+    -- Cập nhật thông tin món ăn trong bảng DISH
+    UPDATE DISH
+    SET DishName = @NewDishName, Price = @NewPrice
+    WHERE DishID = @DishID;
 
-        -- C?p nh?t th�ng tin m�n ?n trong b?ng DISH
-        UPDATE DISH
-        SET DishName = @NewDishName, Price = @NewPrice
-        WHERE DishID = @DishID;
+    -- Kiểm tra Directory có tồn tại trong Branch không
+    DECLARE @DirectoryID INT;
+    SELECT @DirectoryID = MD.DirectoryID
+    FROM MENU_DIRECTORY MD
+    INNER JOIN DIRECTORY D ON MD.DirectoryID = D.DirectoryID
+    WHERE MD.BranchID = @BranchID AND D.DirectoryName = @DirectoryName;
 
-        -- Ki?m tra Directory c� t?n t?i trong Branch kh�ng
-        DECLARE @DirectoryID INT;
-        SELECT @DirectoryID = MD.DirectoryID
-        FROM MENU_DIRECTORY MD
-        INNER JOIN DIRECTORY D ON MD.DirectoryID = D.DirectoryID
-        WHERE MD.BranchID = @BranchID AND D.DirectoryName = @DirectoryName;
+    IF @DirectoryID IS NULL
+    BEGIN
+        -- Thêm mục mới nếu chưa tồn tại
+        INSERT INTO DIRECTORY (DirectoryName)
+        VALUES (@DirectoryName);
 
-        IF @DirectoryID IS NULL
-        BEGIN
-            -- Th�m m?c m?i n?u ch?a t?n t?i
-            INSERT INTO DIRECTORY (DirectoryName)
-            VALUES (@DirectoryName);
+        SET @DirectoryID = SCOPE_IDENTITY();
 
-            SET @DirectoryID = SCOPE_IDENTITY();
+        -- Liên kết mục mới với chi nhánh
+        INSERT INTO MENU_DIRECTORY (BranchID, DirectoryID)
+        VALUES (@BranchID, @DirectoryID);
+    END
 
-            -- Li�n k?t m?c m?i v?i chi nh�nh
-            INSERT INTO MENU_DIRECTORY (BranchID, DirectoryID)
-            VALUES (@BranchID, @DirectoryID);
-        END
+    -- Cập nhật mối liên kết món ăn với mục mới trong DIRECTORY_DISH
+    DELETE FROM DIRECTORY_DISH WHERE DishID = @DishID;
 
-        -- C?p nh?t m?i li�n k?t m�n ?n v?i m?c m?i trong DIRECTORY_DISH
-        DELETE FROM DIRECTORY_DISH WHERE DishID = @DishID;
+    INSERT INTO DIRECTORY_DISH (DirectoryID, DishID)
+    VALUES (@DirectoryID, @DishID);
 
-        INSERT INTO DIRECTORY_DISH (DirectoryID, DishID)
-        VALUES (@DirectoryID, @DishID);
-
-        COMMIT TRANSACTION;
-        PRINT 'Dish updated successfully.';
-    END TRY
-    BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        PRINT 'Error occurred while updating dish.';
-    END CATCH
+    PRINT 'Dish updated successfully.';
 END;
 GO
+
 
 
