@@ -26,10 +26,10 @@ const Header = () => {
                     </div>
                     <div className="text-xl text-white ">
                         <button className="cursor-pointer hover:text-orange">
-                            Register
+                            <a href="/register">Register</a>
                         </button>|  
                         <button className="cursor-pointer hover:text-orange">
-                            Login
+                            <a href="/login">Login</a>
                         </button>
                     </div>
                 </div>

@@ -102,3 +102,107 @@ export const sushiInformation = {
   email: "contact@oishii-sushi.com",
   address: "1234, Golden Street, Thu Duc District, Ho Chi Minh",
 };
+
+export const HomeDish = [
+  {
+    name: "Sashimi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Cơm cuộn cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sushi thịt bò",
+    price: 79000,
+  },
+  {
+    name: "Sushi cá hồi",
+    price: 79000,
+  },
+];
+
+export const Homeown = [
+  {
+    image: avatar1,
+    name: "Original NVK",
+    description: "He is the owner of the Oishii Sushi",
+  },
+  {
+    image: avatar2,
+    name: "Quoc Nguyen",
+    description: "He is the head chef of the restaurant",
+  },
+  {
+    image: avatar3,
+    name: "Phong Nguyen",
+    description: "He is an investor of the restaurant",
+  },
+];
+
+export const menuDish = [
+  {
+    name: "Sashimi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Cơm cuộn cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sushi thịt bò",
+    price: 79000,
+  },
+  {
+    name: "Sushi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sashimi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Cơm cuộn cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sushi thịt bò",
+    price: 79000,
+  },
+  {
+    name: "Sushi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sashimi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Cơm cuộn cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sushi thịt bò",
+    price: 79000,
+  },
+  {
+    name: "Sushi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sashimi cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Cơm cuộn cá hồi",
+    price: 79000,
+  },
+  {
+    name: "Sushi thịt bò",
+    price: 79000,
+  },
+  {
+    name: "Sushi cá hồi",
+    price: 79000,
+  }
+]
