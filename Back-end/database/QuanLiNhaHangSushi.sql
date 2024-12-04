@@ -1,4 +1,4 @@
-CREATE DATABASE SUSHISTORE_MANAGEMENT
+﻿CREATE DATABASE SUSHISTORE_MANAGEMENT
 GO
 
 USE SUSHISTORE_MANAGEMENT
@@ -73,7 +73,7 @@ CREATE TABLE EMPLOYEE (
     Salary INT CHECK (Salary > 0),
     EntryDate DATE,
     LeaveDate DATE,
-    DepartmentID INT,
+    DepartmentID INT NOT NULL,
     BranchID INT,
     EmployeeAddress NVARCHAR(255),
     EmployeePhone CHAR(15)
@@ -95,7 +95,7 @@ CREATE TABLE CARD_CUSTOMER (
     CardEstablishDate DATE,
     EmployeeID INT,
     Score INT CHECK(Score >=0),
-    CardType NVARCHAR(100)
+    CardType NVARCHAR(100) CHECK (CardType in (N'member', N'silver', N'golden')
 );
 GO
 
@@ -251,3 +251,47 @@ ALTER TABLE ORDER_OFFLINE
 ADD CONSTRAINT FK_OfflineOrder FOREIGN KEY (OffOrderID) REFERENCES ORDER_DIRECTORY(OrderID);
 GO
 
+CREATE TRIGGER TRG_Salary_Same_Department
+ON EMPLOYEE
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Kiểm tra xem có nhân viên nào trong cùng department có mức lương khác nhau không
+    IF EXISTS (
+        SELECT 1
+        FROM EMPLOYEE e1
+        JOIN EMPLOYEE e2
+            ON e1.DepartmentID = e2.DepartmentID
+           AND e1.Salary <> e2.Salary
+    )
+    BEGIN
+        RAISERROR ('Employees in the same department must have the same salary.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
+
+CREATE TRIGGER TRG_Ensure_Manager_In_Branch
+ON BRANCH
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Kiểm tra ManagerID có thuộc BranchID hay không
+    IF EXISTS (
+        SELECT 1
+        FROM BRANCH b
+        LEFT JOIN EMPLOYEE e
+        ON b.ManagerID = e.EmployeeID
+        WHERE b.ManagerID IS NOT NULL 
+          AND b.BranchID <> e.BranchID
+    )
+    BEGIN
+        RAISERROR ('The manager must be an employee of the same branch.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
