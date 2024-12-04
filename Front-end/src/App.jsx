@@ -8,11 +8,11 @@ const App = () =>{
   return (
     <main className="relative">
       <section>
-        {/* <HomeClient /> */}
+        <HomeClient />
         {/* <MenuDish /> */}
         {/* <LoginPage /> */}
         {/* <RegisterPage /> */}
-        <ReserveTable />
+        {/* <ReserveTable /> */}
       </section>
     </main>
   );
