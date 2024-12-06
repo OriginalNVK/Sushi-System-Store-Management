@@ -12,71 +12,64 @@ const getInvoices = async (req, res) => {
 };
 
 const addInvoice = async (req, res) => {
-  
-    try {
-      // Lấy dữ liệu từ body của request
-      const {
-        CardID,
-        CardEstablishDate,
-        EmployeeID,
-        Score,
-        CardType,
-        OrderID,
-        NumberTable,
-        InvoiceID,
-        TotalMoney,
-        DiscountMoney,
-        PaymentDate
-      } = req.body;
-  
-      // Kiểm tra và định dạng ngày tháng
-      const formatDate = (date) => {
-        const formattedDate = new Date(date);
-        if (isNaN(formattedDate.getTime())) {
-          return null;
-        }
-        return formattedDate.toISOString().split('T')[0]; // trả về định dạng YYYY-MM-DD
-      };
-  
-      const formattedCardEstablishDate = formatDate(CardEstablishDate);
-      const formattedPaymentDate = formatDate(PaymentDate);
-  
-      if (!formattedCardEstablishDate || !formattedPaymentDate) {
-        return res.status(400).json({
-          error: "CardEstablishDate and PaymentDate must be valid date format (YYYY-MM-DD)",
-        });
+  try {
+    // Lấy dữ liệu từ body của request
+    const {
+      CardID,
+      TotalMoney,
+      DiscountMoney,
+      PaymentDate,
+      OrderID,
+      InvoiceID,
+    } = req.body;
+
+    // Kiểm tra và định dạng ngày tháng
+    const formatDate = (date) => {
+      const formattedDate = new Date(date);
+      if (isNaN(formattedDate.getTime())) {
+        return null;
       }
-  
-      // Kết nối đến cơ sở dữ liệu
-      const pool = await connectToDB();
-  
-      // Gọi stored procedure để thêm hóa đơn
-      const result = await pool.request()
-        .input('CardID', sql.Int, CardID)
-        .input('CardEstablishDate', sql.Date, formattedCardEstablishDate)
-        .input('EmployeeID', sql.Int, EmployeeID)
-        .input('Score', sql.Int, Score)
-        .input('CardType', sql.NVarChar(50), CardType)
-        .input('OrderID', sql.Int, OrderID)
-        .input('NumberTable', sql.Int, NumberTable)
-        .input('InvoiceID', sql.Int, InvoiceID)
-        .input('TotalMoney', sql.Decimal(18, 2), TotalMoney)
-        .input('DiscountMoney', sql.Decimal(18, 2), DiscountMoney)
-        .input('PaymentDate', sql.Date, formattedPaymentDate)
-        .query('EXEC AddInvoiceData @CardID, @CardEstablishDate, @EmployeeID, @Score, @CardType, @OrderID, @NumberTable, @InvoiceID, @TotalMoney, @DiscountMoney, @PaymentDate');
-  
-      // Nếu thành công, trả về kết quả
-      res.status(200).json({
-        message: "Invoice added successfully",
-        result: result.recordset
-      });
-    } catch (err) {
-      res.status(500).json({
-        error: err.message
+      return formattedDate.toISOString().split('T')[0]; // trả về định dạng YYYY-MM-DD
+    };
+
+    const formattedPaymentDate = formatDate(PaymentDate);
+
+    if (!formattedPaymentDate) {
+      return res.status(400).json({
+        error: "PaymentDate must be a valid date format (YYYY-MM-DD)",
       });
     }
-  };
 
+    // Kết nối tới cơ sở dữ liệu
+    const pool = await connectToDB();
+
+    // Câu lệnh SQL để thêm hóa đơn
+    const sqlQuery = `
+      INSERT INTO INVOICE (InvoiceID, CardID, TotalMoney, DiscountMoney, PaymentDate, OrderID)
+      VALUES (@InvoiceID, @CardID, @TotalMoney, @DiscountMoney, @PaymentDate, @OrderID)
+    `;
+
+    // Thực thi câu lệnh SQL
+    const result = await pool.request()
+      .input('InvoiceID', sql.Int, InvoiceID)
+      .input('CardID', sql.Int, CardID)
+      .input('TotalMoney', sql.Decimal(18, 2), TotalMoney)
+      .input('DiscountMoney', sql.Decimal(18, 2), DiscountMoney)
+      .input('PaymentDate', sql.Date, formattedPaymentDate)
+      .input('OrderID', sql.Int, OrderID)
+      .query(sqlQuery);
+
+    // Nếu thêm thành công, trả về phản hồi
+    res.status(200).json({
+      message: "Invoice added successfully",
+    });
+  } catch (err) {
+    // Trả về lỗi nếu có lỗi xảy ra
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
 
   // Hàm xóa hóa đơn
 const deleteInvoice = async (req, res) => {

@@ -12,79 +12,6 @@ const getBranches = async (req, res) => {
   }
 };
 
-const addBranch = async (req, res) => {
-
-    try {
-      const {
-        BranchID,
-        BranchName,
-        BranchAddress,
-        OpenHour,
-        CloseHour,
-        PhoneNumber,
-        HasCarParking,
-        HasMotorParking,
-        AreaID,
-        ManagerID,
-        HasDeliveryService,
-        Salary,
-        EmployeeName,
-        EmployeeBirth,
-        EmployeeGender,
-        EmployeeAddress,
-        EmployeePhone
-      } = req.body; // Lấy dữ liệu từ body của request
-
-      const formatTime = (time) => {
-        const [hour, minute] = time.split(":");
-        return `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`;
-      };
-  
-      // Kiểm tra và định dạng thời gian
-      const formattedOpenHour = /^\d{1,2}:\d{2}(:\d{2})?$/.test(OpenHour)
-        ? formatTime(OpenHour)
-        : null;
-      const formattedCloseHour = /^\d{1,2}:\d{2}(:\d{2})?$/.test(CloseHour)
-        ? formatTime(CloseHour)
-        : null;
-  
-      if (!formattedOpenHour || !formattedCloseHour) {
-        return res.status(400).json({
-          error: "OpenHour and CloseHour must be in HH:mm:ss format",
-        });
-      }
-
-      // Kết nối đến cơ sở dữ liệu
-      const pool = await connectToDB();
-  
-      // Gọi store procedure để thêm chi nhánh và nhân viên
-      const result = await pool.request()
-        .input("BranchID", sql.Int, BranchID)
-        .input("BranchName", sql.NVarChar(255), BranchName)
-        .input("BranchAddress", sql.NVarChar(255), BranchAddress)
-        .input("OpenHour", sql.VarChar, OpenHour)
-        .input("CloseHour", sql.VarChar, CloseHour)
-        .input("PhoneNumber", sql.Char(15), PhoneNumber)
-        .input("HasCarParking", sql.VarChar(10), HasCarParking)
-        .input("HasMotorParking", sql.VarChar(10), HasMotorParking)
-        .input("AreaID", sql.Int, AreaID)
-        .input("ManagerID", sql.Int, ManagerID)
-        .input("HasDeliveryService", sql.VarChar(10), HasDeliveryService)
-        .input("Salary", sql.Int, Salary)
-        .input("EmployeeName", sql.NVarChar(255), EmployeeName)
-        .input("EmployeeBirth", sql.Date, EmployeeBirth)
-        .input("EmployeeGender", sql.NVarChar(10), EmployeeGender)
-        .input("EmployeeAddress", sql.NVarChar(255), EmployeeAddress)
-        .input("EmployeePhone", sql.Char(15), EmployeePhone)
-        .query('EXEC AddBranch @BranchID, @BranchName , @BranchAddress , @OpenHour , @CloseHour , @PhoneNumber, @HasCarParking , @HasMotorParking, @AreaID , @ManagerID ,   @HasDeliveryService , @Salary,@EmployeeName,@EmployeeBirth,@EmployeeGender,@EmployeeAddress,@EmployeePhone');
-  
-      // Nếu thành công, trả về kết quả
-      res.status(200).json({ message: "Branch and employee added successfully", result: result.recordset });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-};
-  
 const deleteBranch = async (req, res) => {
   try {
     const { id } = req.params; // Lấy BranchID từ tham số URL
@@ -202,7 +129,7 @@ const updateBranch = async (req, res) => {
   }
 };
 
-module.exports = { getBranches, addBranch, deleteBranch, updateBranch};
+module.exports = { getBranches, deleteBranch, updateBranch};
 
 
 
