@@ -30,17 +30,17 @@ export const navLinks = [
     icon: menuIcon,
   },
   {
-    id: "booking",
+    id: "reserve",
     title: "Booking",
     icon: bookingIcon,
   },
   {
-    id: "about",
+    id: "introduction",
     title: "About",
     icon: introduceIcon,
   },
   {
-    id: "contact",
+    id: "feedback",
     title: "Contact",
     icon: contactIcon,
   },
@@ -205,4 +205,33 @@ export const menuDish = [
     name: "Sushi cá hồi",
     price: 79000,
   }
+]
+
+export const teamMembers = [ 
+  {
+    img: avatar1,
+    name: "Nguyễn Văn Khánh",
+    des: "He is the owner of the Oishii Sushi",
+  },
+  {
+    img: avatar2,
+    name: "Nguyễn Việt Hoàng",
+    des: "He is the head chef of the restaurant",
+  },
+  {
+    img: avatar3,
+    name: "Lê Viết Hưng",
+    des: "He is first customer of the restaurant",
+  },
+  {
+    img: avatar4,
+    name: "Nguyễn Thành Huy",
+    des: "He is an investor of the restaurant",
+  },
+  {
+    img: avatar5,
+    name: "Đặng Huy",
+    des: "He is an investor of the restaurant",
+  },
+
 ]

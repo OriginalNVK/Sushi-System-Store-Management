@@ -20,9 +20,9 @@ const Header = () => {
             </div>
             <div className="flex flex-col flex-1 flex-wrap justify-between gap-8">
                 <div className="flex justify-between items-center">
-                    <div className="flex gap-2 cursor-pointer">
+                    <div className="hidden md:flex gap-2 cursor-pointer">
                         <img src={email} alt="email" className="w-8 h-8" />
-                        <p className="text-xl text-white">Support@oishii.com</p>
+                        <p className="text-xl text-white ">Support@oishii.com</p>
                     </div>
                     <div className="text-xl text-white ">
                         <button className="cursor-pointer hover:text-orange">

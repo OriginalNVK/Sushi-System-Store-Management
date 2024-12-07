@@ -6,7 +6,7 @@ const Footer = () => {
     <div className="bg-gradient-to-b from-zinc-800 to-black text-gray border-t-4 border-gray font-play">
       <div className="flex md:flex-row flex-col justify-between w-full py-6 px-8 gap-6">
         <div className="flex items-center flex-col gap-4 w-64">
-          <img src={logo} className="opacity-90" width={120} height={120} />
+          <a href='/'><img src={logo} className="opacity-90" width={120} height={120} /></a>
           <div className="flex flex-wrap gap-4">
             {footerLinks.map((link) => (
               <a

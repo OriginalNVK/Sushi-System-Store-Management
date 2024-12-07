@@ -3,6 +3,7 @@ import Header from "../components/Header"
 import image1 from "../assets/content/homeClient/image-content-1.png"
 import image2 from "../assets/content/homeClient/image-content-2.png"
 import { HomeDish, Homeown } from "../constants"
+import Decorate from "../components/Decorate"
 
 const HomeClient = () => {
   return (
@@ -18,7 +19,7 @@ const HomeClient = () => {
                           Sushi made by Japanese sushi chefs, using native ingedients. Enjoy sushi the traditional way. We offer you an unforgettable experience.Our doors are open on 8:00 AM to 11:00 PM.
                       </p>
                       <button className="bg-yellow text-white text-sm py-4 px-8 rounded-xl hover:opacity-80">
-                          Make The Reservation
+                          <a href="/reserve">Make The Reservation</a>
                       </button>
                   </div>
                   <img src={image1} alt="image1" width={600} height={600} />
@@ -37,8 +38,10 @@ const HomeClient = () => {
                       </p>
                   </div>
               </div>
-              <div className="flex flex-col px-500">
+              <section className="flex flex-col items-center gap-2">
                   <p className="text-4xl text-yellow font-play text-center font-bold">Menu Dish</p>
+                  <Decorate />
+                  <div className="flex flex-col px-500">
                   {HomeDish.map((dish, index) => (
                       <div key={index} className="flex justify-between items-center px-[400px] py-2">
                       <p className="text-left">{dish.name}</p>
@@ -50,8 +53,12 @@ const HomeClient = () => {
                       <a href="/menu">View More</a>
                     </button>
               </div>
-              <div className="flex flex-col py-6">
+              </section>
+              
+              <section className="flex flex-col items-center py-10">
                   <p className="text-4xl text-yellow font-play text-center font-bold">Collaboration</p>
+                  <Decorate />
+              <div className="flex flex-col py-6">
                   <div className="flex gap-20 justify-center items-center py-8">
                       {Homeown.map((own, index) => (
                       <div key={index} className="flex flex-col items-center justify-center">
@@ -61,8 +68,8 @@ const HomeClient = () => {
                       </div>
                     ))}
                   </div>
-                  
-              </div>
+                  </div>
+                  </section>
           </div>
           <Footer />
     </div>

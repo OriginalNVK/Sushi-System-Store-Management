@@ -95,8 +95,8 @@ CREATE TABLE CARD_CUSTOMER (
     CardEstablishDate DATE,
     EmployeeID INT,
     Score INT CHECK(Score >=0),
-    CardType NVARCHAR(100) CHECK (CardType in (N'member', N'silver', N'golden')
-);
+    CardType NVARCHAR(100) CHECK (CardType in (N'member', N'silver', N'golden'))
+)
 GO
 
 CREATE TABLE CUSTOMER (
