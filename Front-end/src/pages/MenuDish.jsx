@@ -18,27 +18,28 @@ const MenuDish = () => {
           <Decorate />
           </div>
           
-                <div className="flex gap-2 lg:text-xl text-base font-play px-[750px] py-4">
+          <div className="flex flex-col lg:flex-row gap-4 lg:text-xl text-base font-play px-4 sm:px-[50px] md:px-[100px] lg:px-[450px] xl:px-[800px] py-4">
             <input
               type="text"
               placeholder="🔍 Dish Name"
-              className="border rounded-md px-2 font-bold lg:w-52 w-[125px]"
+              className="border rounded-md px-2 font-bold lg:w-52 w-full sm:w-[150px] md:w-[200px]"
               value={searchDish}
               onChange={(e) => setSearchDish(e.target.value)}
             />
             <select
-              className="border rounded-md font-bold px-4 py-2"
+              className="border rounded-md font-bold px-4 py-2 w-full sm:w-[150px] md:w-[200px] lg:w-52"
               value={filterCategory}
               onChange={(e) => setFilterCatagory(e.target.value)}
             >
-              <option value="all">Catagory</option>
+              <option value="all">Category</option>
               {listCatagory.map((catagory, index) => (
                 <option key={index} value={catagory.Catagory.toLowerCase()}>
                   {catagory.Catagory}
                 </option>
               ))}
-                    </select>
+            </select>
           </div>
+
           <div className='flex flex-col gap-4'>
               {menuDish.map((dish, index) => (
                  <div key={index} className="sm:px-[20px] lg:px-[200px] flex justify-between items-center  py-2">

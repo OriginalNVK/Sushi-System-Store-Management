@@ -7,6 +7,8 @@ import MenuDish from "./pages/MenuDish";
 import RegisterPage from "./pages/RegisterPage";
 import ReserveTable from "./pages/ReserveTable";
 import React from "react";
+import Employee from "./pages/Employee";
+import Customer from "./pages/Customer";
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/employee" element={<Employee />} />
+        <Route path="/customer" element={<Customer />} />
       </Routes>
     </Router>
   );
