@@ -1,11 +1,15 @@
-const express = require("express");
+const express = require('express');
+const sql = require('mssql');
+const cors = require('cors');
+const employeeRouter = require('./routes/employeeRouter.js');
+const dishRouter = require('./routes/dishRouter.js');
+
 const app = express();
-const port = 3000;
+app.use(cors());
+app.use(express.json());
+app.use('/api/employees', employeeRouter);
+app.use('/api/dishes', dishRouter);
 
-app.get("/", (req, res) => {
-  res.send("Hello, Express!");
-});
-
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
 });
