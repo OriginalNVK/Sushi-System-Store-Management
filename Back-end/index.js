@@ -1,11 +1,14 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+const customerRoutes = require("./routes/customerRoutes");
 
-app.get("/", (req, res) => {
-  res.send("Hello, Express!");
-});
+app.use(express.json());
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+// Dùng route cho khách hàng
+app.use("/api", customerRoutes);
+
+// Cổng chạy server
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
