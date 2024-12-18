@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { loginUser } from "../service/Services"
+import {useNavigate} from 'react-router-dom'
 
 const LoginForm = () => {
 
@@ -8,6 +9,11 @@ const LoginForm = () => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false);
 
+  const Navigate = useNavigate();
+
+  const handleLoginSuccess = (role) => {
+    localStorage.setItem('user', JSON.stringify({ isLogged: true, role: role }));
+  }
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true);
@@ -17,8 +23,16 @@ const LoginForm = () => {
 
     if (result.success)
     {
+      handleLoginSuccess(result.role);
       console.log("Login successful");
-
+      if (result.role === 'customer')
+      {
+        Navigate('/');
+      }
+      else if (result.role === 'manager branch')
+      {
+        Navigate('/customer');
+      }
     }
     else {
       setError(result.error);

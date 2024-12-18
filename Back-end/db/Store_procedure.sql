@@ -322,6 +322,7 @@ BEGIN
 
     PRINT 'Đơn hàng đã được xóa thành công!';
 END;
+GO
 
 -- PUT ORDER OFFLINE
 CREATE PROCEDURE UpdateOrderOffline
@@ -413,3 +414,4 @@ BEGIN
     END CATCH
 END;
 GO
+	
