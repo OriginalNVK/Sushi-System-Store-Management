@@ -599,7 +599,77 @@ END;
 GO
 --===============================================================================================================================
 
+----------------------REVENUE PROC----------------------------------------------------------------------------------------------
+--Doanh thu theo ngày
+CREATE PROCEDURE GetRevenueByDay 
+    @StartDate DATE, 
+    @EndDate DATE 
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        RevenueDate, 
+        TotalRevenue 
+    FROM RevenueByDate 
+    WHERE RevenueDate BETWEEN @StartDate AND @EndDate;
+END;
+GO
 
-
-
-
+--Doanh thu theo tháng
+CREATE PROCEDURE GetRevenueByMonth 
+    @StartDate DATE, 
+    @EndDate DATE 
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        YEAR(RevenueDate) AS RevenueYear, 
+        MONTH(RevenueDate) AS RevenueMonth, 
+        SUM(TotalRevenue) AS TotalRevenue 
+    FROM RevenueByDate 
+    WHERE RevenueDate BETWEEN @StartDate AND @EndDate
+    GROUP BY YEAR(RevenueDate), MONTH(RevenueDate);
+END;
+GO
+--Doanh thu theo quý
+CREATE PROCEDURE GetRevenueByQuarter 
+    @StartDate DATE, 
+    @EndDate DATE 
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        YEAR(RevenueDate) AS RevenueYear, 
+        DATEPART(QUARTER, RevenueDate) AS RevenueQuarter, 
+        SUM(TotalRevenue) AS TotalRevenue 
+    FROM RevenueByDate 
+    WHERE RevenueDate BETWEEN @StartDate AND @EndDate
+    GROUP BY YEAR(RevenueDate), DATEPART(QUARTER, RevenueDate);
+END;
+GO
+--Doanh thu theo năm
+CREATE PROCEDURE GetRevenueByYear 
+    @StartDate DATE, 
+    @EndDate DATE 
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        YEAR(RevenueDate) AS RevenueYear, 
+        SUM(TotalRevenue) AS TotalRevenue 
+    FROM RevenueByDate 
+    WHERE RevenueDate BETWEEN @StartDate AND @EndDate
+    GROUP BY YEAR(RevenueDate);
+END;
+GO
+--Câu lệnh Test
+--------------------------------------------------------------------------------
+EXEC GetRevenueByDay @StartDate = '2024-12-01', @EndDate = '2024-12-04';      --
+EXEC GetRevenueByMonth @StartDate = '2024-09-01', @EndDate = '2024-12-31';    --
+EXEC GetRevenueByQuarter @StartDate = '2024-09-01', @EndDate = '2024-12-31';  --
+EXEC GetRevenueByYear @StartDate = '2024-01-01', @EndDate = '2024-12-31';     --
+--------------------------------------------------------------------------------
