@@ -1,17 +1,12 @@
-const express = require("express");
-const {
-  getOrderOnline,
-  postOrderOnline,
-  putOrderOnline,
-  deleteOrderOnline,
-} = require("../controllers/orderOnlineController");
+const express = require('express');
+const orderOnlineController = require('../controllers/orderOnlineController');
 
 const router = express.Router();
 
-// Define routes for online orders
-router.get("/", getOrderOnline); // Fetch all orders
-router.post("/", postOrderOnline); // Create a new order
-router.put("/:OrderID", putOrderOnline); // Update an existing order
-router.delete("/:OrderID", deleteOrderOnline); // Delete an order
+// Định nghĩa các route cho đơn hàng online
+router.get('/', orderOnlineController.getOrderOnline); // GET
+router.post('/', orderOnlineController.postOrderOnline); // POST
+router.put('/', orderOnlineController.putOrderOnline); // PUT
+router.delete('/:OrderID', orderOnlineController.deleteOrderOnline); // DELETE
 
 module.exports = router;

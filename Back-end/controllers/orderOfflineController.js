@@ -1,37 +1,37 @@
-const orderOnlineModel = require('../models/orderOnlineModel');
+const orderOfflineModel = require('../models/orderOfflineModel');
 
-const getOrderOnline = async (req, res) => {
+const getOrderOffline = async (req, res) => {
     try {
-        const orders = await orderOnlineModel.getAllOrders();
+        const orders = await orderOfflineModel.getAllOrders();
         res.json(orders);
     } catch (err) {
         res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
     }
 };
 
-const postOrderOnline = async (req, res) => {
+const postOrderOffline = async (req, res) => {
     try {
-        const newOrder = await orderOnlineModel.addOrder(req.body);
+        const newOrder = await orderOfflineModel.addOrder(req.body);
         res.status(201).json(newOrder);
     } catch (err) {
         res.status(500).send('Lỗi khi thêm đơn hàng: ' + err.message);
     }
 };
 
-const putOrderOnline = async (req, res) => {
+const putOrderOffline = async (req, res) => {
     const orderID = req.body.OrderID; // Giả sử OrderID được gửi trong body
     try {
-        const updatedOrder = await orderOnlineModel.updateOrder(orderID, req.body);
+        const updatedOrder = await orderOfflineModel.updateOrder(orderID, req.body);
         res.json(updatedOrder);
     } catch (err) {
         res.status(500).send('Lỗi khi cập nhật đơn hàng: ' + err.message);
     }
 };
 
-const deleteOrderOnline = async (req, res) => {
+const deleteOrderOffline = async (req, res) => {
     const orderID = req.params.OrderID;
     try {
-        await orderOnlineModel.deleteOrder(orderID);
+        await orderOfflineModel.deleteOrder(orderID);
         res.status(204).send(); // Trả về 204 No Content
     } catch (err) {
         res.status(500).send('Lỗi khi xóa đơn hàng: ' + err.message);
@@ -39,8 +39,8 @@ const deleteOrderOnline = async (req, res) => {
 };
 
 module.exports = {
-    getOrderOnline,
-    postOrderOnline,
-    putOrderOnline,
-    deleteOrderOnline
+    getOrderOffline,
+    postOrderOffline,
+    putOrderOffline,
+    deleteOrderOffline
 };

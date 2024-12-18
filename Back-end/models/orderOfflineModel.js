@@ -1,49 +1,63 @@
-const connectToDB = require("../db/dbConfig"); // Ensure you have a valid DB connection config
-const sql = require("mssql");
+const sql = require('mssql');
+const config = require('../db/dbConfig'); // Đảm bảo bạn có tệp config cho kết nối DB
 
-const getAllOrdersModel = async () => {
-  const pool = await connectToDB();
-  const result = await pool.request().execute("GetOrderOffline"); // Replace with the correct stored procedure name if needed
-  return result.recordset;
+const OrderOffline = {
+    async getAllOrders() {
+        try {
+            const pool = await sql.connect(config);
+            const result = await pool.request().execute('GetOrderOffline'); // Thay đổi tên thủ tục nếu cần
+            return result.recordset;
+        } catch (error) {
+            throw new Error('Lỗi khi lấy tất cả đơn hàng offline: ' + error.message);
+        }
+    },
+    
+    async addOrder(orderData) {
+        try {
+            const pool = await sql.connect(config);
+            const result = await pool.request()
+                .input('OrderID', sql.Int, orderData.OrderID)
+                .input('EmployeeID', sql.Int, orderData.EmployeeID)
+                .input('NumberTable', sql.Int, orderData.NumberTable)
+                .input('CardID', sql.Int, orderData.CardID)
+                .input('DishName', sql.NVarChar, orderData.DishName)
+                .input('AmountDish', sql.Int, orderData.AmountDish)
+                .input('OrderEstablishDate', sql.NVarChar, orderData.OrderEstablishDate)
+                .execute('AddNewOfflineOrder'); // Thay đổi tên thủ tục nếu cần
+            return result.recordset;
+        } catch (error) {
+            throw new Error('Lỗi khi thêm đơn hàng offline: ' + error.message);
+        }
+    },
+    
+    async updateOrder(orderID, orderData) {
+        try {
+            const pool = await sql.connect(config);
+            const result = await pool.request()
+                .input('OrderID', sql.Int, orderID)
+                .input('EmployeeID', sql.Int, orderData.EmployeeID)
+                .input('NumberTable', sql.Int, orderData.NumberTable)
+                .input('CardID', sql.Int, orderData.CardID)
+                .input('DishName', sql.NVarChar, orderData.DishName)
+                .input('AmountDish', sql.Int, orderData.AmountDish)
+                .input('OrderEstablishDate', sql.NVarChar, orderData.OrderEstablishDate)
+                .execute('UpdateOrderOffline'); // Thay đổi tên thủ tục nếu cần
+            return result.recordset;
+        } catch (error) {
+            throw new Error('Lỗi khi cập nhật đơn hàng offline: ' + error.message);
+        }
+    },
+    
+    async deleteOrder(orderID) {
+        try {
+            const pool = await sql.connect(config);
+            await pool.request()
+                .input('OrderID', sql.Int, orderID)
+                .execute('DeleteOrderOffline'); // Thay đổi tên thủ tục nếu cần
+        } catch (error) {
+            throw new Error('Lỗi khi xóa đơn hàng offline: ' + error.message);
+        }
+    }
 };
 
-const addOrderModel = async (orderData) => {
-  const pool = await connectToDB();
-  const result = await pool.request()
-    .input("OrderID", sql.Int, orderData.OrderID)
-    .input("EmployeeID", sql.Int, orderData.EmployeeID)
-    .input("NumberTable", sql.Int, orderData.NumberTable)
-    .input("DishName", sql.NVarChar(255), orderData.DishName)
-    .input("AmountDish", sql.Int, orderData.AmountDish)
-    .input("OrderEstablishDate", sql.NVarChar(255), orderData.OrderEstablishDate)
-    .execute("AddNewOfflineOrder"); // Replace with the correct stored procedure name if needed
-  return result.recordset;
-};
-
-const updateOrderModel = async (orderID, orderData) => {
-  const pool = await connectToDB();
-  const result = await pool.request()
-    .input("OrderID", sql.Int, orderID)
-    .input("EmployeeID", sql.Int, orderData.EmployeeID)
-    .input("NumberTable", sql.Int, orderData.NumberTable)
-    .input("DishName", sql.NVarChar(255), orderData.DishName)
-    .input("AmountDish", sql.Int, orderData.AmountDish)
-    .input("OrderEstablishDate", sql.NVarChar(255), orderData.OrderEstablishDate)
-    .execute("UpdateOrderOffline"); // Replace with the correct stored procedure name if needed
-  return result.recordset;
-};
-
-const deleteOrderModel = async (orderID) => {
-  const pool = await connectToDB();
-  const result = await pool.request()
-    .input("OrderID", sql.Int, orderID)
-    .execute("DeleteOrderOffline"); // Replace with the correct stored procedure name if needed
-  return result.rowsAffected[0] > 0; // Return true if the row was deleted
-};
-
-module.exports = {
-  getAllOrdersModel,
-  addOrderModel,
-  updateOrderModel,
-  deleteOrderModel,
-};
+module.exports = OrderOffline;

@@ -1,17 +1,12 @@
-const express = require("express");
-const {
-  getOrderOffline,
-  postOrderOffline,
-  putOrderOffline,
-  deleteOrderOffline,
-} = require("../controllers/orderOfflineControllers");
+const express = require('express');
+const orderOfflineController = require('../controllers/orderOfflineController');
 
 const router = express.Router();
 
-// Define routes for offline orders
-router.get("/", getOrderOffline); // Fetch all orders
-router.post("/", postOrderOffline); // Create a new order
-router.put("/:OrderID", putOrderOffline); // Update an existing order
-router.delete("/:OrderID", deleteOrderOffline); // Delete an order
+// Định nghĩa các route cho đơn hàng offline
+router.get('/', orderOfflineController.getOrderOffline); // GET
+router.post('/', orderOfflineController.postOrderOffline); // POST
+router.put('/', orderOfflineController.putOrderOffline); // PUT
+router.delete('/:OrderID', orderOfflineController.deleteOrderOffline); // DELETE
 
 module.exports = router;

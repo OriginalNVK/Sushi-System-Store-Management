@@ -1,8 +1,14 @@
-const invoiceModel = require("../models/invoiceModels");
+const { 
+  getInvoices, 
+  addInvoice, 
+  deleteInvoiceById, 
+  updateInvoiceById 
+} = require("../models/invoiceModels");
 
-const getInvoices = async (req, res) => {
+// Lấy tất cả hóa đơn
+const getInvoicesController = async (req, res) => {
   try {
-    const invoices = await invoiceModel.getAllInvoices();
+    const invoices = await getInvoices(); // Gọi phương thức từ models
     res.json(invoices);
   } catch (err) {
     console.error("Error fetching invoices:", err);
@@ -10,76 +16,37 @@ const getInvoices = async (req, res) => {
   }
 };
 
-const addInvoice = async (req, res) => {
+// Thêm hóa đơn mới
+const addInvoiceController = async (req, res) => {
   try {
     const invoiceData = req.body;
 
-    // Kiểm tra và định dạng ngày
-    const formatDate = (date) => {
-      const formattedDate = new Date(date);
-      if (isNaN(formattedDate.getTime())) {
-        return null;
-      }
-      return formattedDate.toISOString().split("T")[0];
-    };
-
-    invoiceData.PaymentDate = formatDate(invoiceData.PaymentDate);
-    if (!invoiceData.PaymentDate) {
-      return res.status(400).json({
-        error: "PaymentDate must be a valid date format (YYYY-MM-DD)",
-      });
+    if (!invoiceData) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
-    const result = await invoiceModel.addInvoice(invoiceData);
-    res.status(200).json({ message: "Invoice added successfully" });
+    const result = await addInvoice(invoiceData); // Gọi phương thức từ models
+    res.status(201).json({ message: "Invoice added successfully", rowsAffected: result });
   } catch (err) {
     console.error("Error adding invoice:", err);
     res.status(500).json({ error: "An error occurred while adding the invoice" });
   }
 };
 
-const deleteInvoice = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await invoiceModel.deleteInvoiceById(id);
-
-    if (!result) {
-      return res.status(404).json({ error: "Invoice not found" });
-    }
-
-    res.status(200).json({ message: `Invoice with ID ${id} deleted successfully` });
-  } catch (err) {
-    console.error("Error deleting invoice:", err);
-    res.status(500).json({ error: "An error occurred while deleting the invoice" });
-  }
-};
-
-const updateInvoice = async (req, res) => {
+// Cập nhật hóa đơn
+const updateInvoiceController = async (req, res) => {
   try {
     const { id } = req.params;
     const invoiceData = req.body;
 
-    // Kiểm tra và định dạng ngày
-    const formatDate = (date) => {
-      const formattedDate = new Date(date);
-      if (isNaN(formattedDate.getTime())) {
-        return null;
-      }
-      return formattedDate.toISOString().split("T")[0];
-    };
-
-    invoiceData.PaymentDate = formatDate(invoiceData.PaymentDate);
-    if (!invoiceData.PaymentDate) {
-      return res.status(400).json({
-        error: "PaymentDate must be a valid date format (YYYY-MM-DD)",
-      });
+    if (!invoiceData) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
-    const result = await invoiceModel.updateInvoiceById(id, invoiceData);
+    const result = await updateInvoiceById(id, invoiceData); // Gọi phương thức từ models
     if (!result) {
       return res.status(404).json({ error: "Invoice not found" });
     }
-
     res.status(200).json({ message: `Invoice with ID ${id} updated successfully` });
   } catch (err) {
     console.error("Error updating invoice:", err);
@@ -87,4 +54,24 @@ const updateInvoice = async (req, res) => {
   }
 };
 
-module.exports = { getInvoices, addInvoice, deleteInvoice, updateInvoice };
+// Xóa hóa đơn
+const deleteInvoiceController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteInvoiceById(id); // Gọi phương thức từ models
+    if (!result) {
+      return res.status(404).json({ error: "Invoice not found" });
+    }
+    res.status(200).json({ message: `Invoice with ID ${id} deleted successfully` });
+  } catch (err) {
+    console.error("Error deleting invoice:", err);
+    res.status(500).json({ error: "An error occurred while deleting the invoice" });
+  }
+};
+
+module.exports = { 
+  getInvoicesController, 
+  addInvoiceController, 
+  updateInvoiceController, 
+  deleteInvoiceController 
+};

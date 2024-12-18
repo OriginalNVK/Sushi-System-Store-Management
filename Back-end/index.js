@@ -8,6 +8,7 @@ const orderOnlineRouter = require('./routes/orderOnlineRouter');
 const dishRouter = require('./routes/dishRouter.js');
 const employeeRouter = require('./routes/employeeRouter.js');
 const customerRoutes = require("./routes/customerRouter");
+const cardCustomerRouter = require("./routes/cardCustomerRouter");
 
 const app = express();
 const port = 3000;
@@ -22,11 +23,12 @@ app.get("/", (req, res) => {
 
 app.use("/branch", branchRoutes);
 app.use("/invoice", invoiceRoutes);
-app.use("/orderOffline", orderOfflineRouter);
-app.use("/orderOnline", orderOnlineRouter);
+app.use("/api/order-offline", orderOfflineRouter);
+app.use("/api/order-online", orderOnlineRouter);
 app.use("/dishes", dishRouter);
 app.use("/employees", employeeRouter);
-app.use("/api", customerRoutes);
+app.use("/api/customers", customerRoutes);
+app.use("/api/cards", cardCustomerRouter);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
