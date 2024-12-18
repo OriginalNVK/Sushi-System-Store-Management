@@ -1,74 +1,38 @@
-const sql = require('mssql');
-const config = require('../config');
+const orderOfflineModel = require('../models/orderOfflineModel');
 
-// Kết nối đến cơ sở dữ liệu
-const connectDB = async () => {
-    try {
-        const pool = await sql.connect(config);
-        return pool;
-    } catch (err) {
-        throw new Error('Kết nối DB thất bại: ' + err.message);
-    }
-};
-
-// Phương thức GET: Lấy dữ liệu đơn hàng offline
 const getOrderOffline = async (req, res) => {
     try {
-        const pool = await connectDB();
-        const result = await pool.request().execute('GetOrderOffline'); 
-        res.json(result.recordset);
+        const orders = await orderOfflineModel.getAllOrders();
+        res.json(orders);
     } catch (err) {
         res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
     }
 };
 
-// Phương thức POST: Thêm đơn hàng offline mới
 const postOrderOffline = async (req, res) => {
     try {
-        const { OrderID, EmployeeID, NumberTable, DishName, AmountDish, OrderEstablishDate} = req.body;
-        const pool = await connectDB();
-        const result = await pool.request()
-            .input('OrderID', sql.Int, OrderID)
-            .input('EmployeeID', sql.Int, EmployeeID)
-            .input('NumberTable', sql.Int, NumberTable)
-            .input('DishName', sql.NVarChar, DishName)
-            .input('AmountDish', sql.Int, AmountDish)
-            .input('OrderEstablishDate', sql.NVarChar, OrderEstablishDate)
-            .execute('AddNewOfflineOrder');
-        res.json(result.recordset);
+        const newOrder = await orderOfflineModel.addOrder(req.body);
+        res.status(201).json(newOrder);
     } catch (err) {
         res.status(500).send('Lỗi khi thêm đơn hàng: ' + err.message);
     }
 };
 
-// Phương thức PUT: Cập nhật thông tin đơn hàng offline
 const putOrderOffline = async (req, res) => {
+    const orderID = req.body.OrderID; // Giả sử OrderID được gửi trong body
     try {
-        const { OrderID, EmployeeID, NumberTable, DishName, AmountDish, OrderEstablishDate } = req.body;
-        const pool = await connectDB();
-        const result = await pool.request()
-            .input('OrderID', sql.Int, OrderID)
-            .input('EmployeeID', sql.Int, EmployeeID)
-            .input('NumberTable', sql.Int, NumberTable)
-            .input('DishName', sql.NVarChar, DishName)
-            .input('AmountDish', sql.Int, AmountDish)
-            .input('OrderEstablishDate', sql.NVarChar, OrderEstablishDate)
-            .execute('UpdateOrderOffline');
-        res.json(result.recordset);
+        const updatedOrder = await orderOfflineModel.updateOrder(orderID, req.body);
+        res.json(updatedOrder);
     } catch (err) {
         res.status(500).send('Lỗi khi cập nhật đơn hàng: ' + err.message);
     }
 };
 
-// Phương thức DELETE: Xóa đơn hàng offline
 const deleteOrderOffline = async (req, res) => {
+    const orderID = req.params.OrderID;
     try {
-        const { OrderID } = req.params;
-        const pool = await connectDB();
-        const result = await pool.request()
-            .input('OrderID', sql.Int, OrderID)
-            .execute('DeleteOrderOffline'); // Gọi stored procedure DELETE_ORDER_OFFLINE
-        res.json(result.recordset);
+        await orderOfflineModel.deleteOrder(orderID);
+        res.status(204).send(); // Trả về 204 No Content
     } catch (err) {
         res.status(500).send('Lỗi khi xóa đơn hàng: ' + err.message);
     }

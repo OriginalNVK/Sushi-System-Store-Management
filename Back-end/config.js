@@ -4,7 +4,7 @@ const config = {
     user: "sa",
     password: "123456",
     server: "LAPTOP-S3VQSE6D\\SQLEXPRESS",
-    database: "SUSHISTORE_MANAGEMENT",
+    database: "SUSHISTORE_MANAGEMENT_MAIN_1999",
     options: {
         trustServerCertificate: true,
         enableArithAbort: true,
