@@ -2,8 +2,8 @@ const sql = require("mssql");
 
 const config = {
   user: "sa",
-  password: "12345",
-  server: "TH11\\SQLEXPRESS",
+  password: "27072004",
+  server: "ORIGINALNVK\SQLEXPRESS",
   database: "SUSHISTORE_MANAGEMENT",
   options: {
     trustServerCertificate: true,
