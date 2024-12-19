@@ -601,79 +601,281 @@ GO
 --===============================================================================================================================
 
 ----------------------REVENUE PROC----------------------------------------------------------------------------------------------
---Doanh thu theo ngày
-CREATE PROCEDURE GetRevenueByDay 
-    @StartDate DATE, 
-    @EndDate DATE 
+CREATE PROCEDURE InsertRevenueByDate
 AS
 BEGIN
-    SET NOCOUNT ON;
-    
+    INSERT INTO RevenueByDate (RevenueDate, TotalRevenue)
     SELECT 
-        RevenueDate, 
-        TotalRevenue 
-    FROM RevenueByDate 
-    WHERE RevenueDate BETWEEN @StartDate AND @EndDate;
+        PaymentDate AS RevenueDate, 
+        SUM(TotalMoney - DiscountMoney) AS TotalRevenue
+    FROM 
+        INVOICE
+    GROUP BY 
+        PaymentDate;
+END;
+GO
+EXEC InsertRevenueByDate;
+
+-------------------------------------------------------------------
+GO
+CREATE PROCEDURE InsertRevenueByMonth
+AS
+BEGIN
+    INSERT INTO RevenueByMonth (RevenueMonth, RevenueYear, TotalRevenue)
+    SELECT 
+        MONTH(RevenueDate) AS RevenueMonth, 
+        YEAR(RevenueDate) AS RevenueYear, 
+        SUM(TotalRevenue) AS TotalRevenue
+    FROM 
+        RevenueByDate
+    GROUP BY 
+        MONTH(RevenueDate), YEAR(RevenueDate)
+    HAVING SUM(TotalRevenue) > 0;
 END;
 GO
 
---Doanh thu theo tháng
-CREATE PROCEDURE GetRevenueByMonth 
-    @StartDate DATE, 
-    @EndDate DATE 
+EXEC InsertRevenueByMonth
+
+GO
+CREATE PROCEDURE InsertRevenueByQuarter
 AS
 BEGIN
-    SET NOCOUNT ON;
-    
+    INSERT INTO RevenueByQuarter (RevenueQuarter, RevenueYear, TotalRevenue)
     SELECT 
+        CEILING(MONTH(RevenueDate) / 3.0) AS RevenueQuarter, 
         YEAR(RevenueDate) AS RevenueYear, 
-        MONTH(RevenueDate) AS RevenueMonth, 
-        SUM(TotalRevenue) AS TotalRevenue 
-    FROM RevenueByDate 
-    WHERE RevenueDate BETWEEN @StartDate AND @EndDate
-    GROUP BY YEAR(RevenueDate), MONTH(RevenueDate);
+        SUM(TotalRevenue) AS TotalRevenue
+    FROM 
+        RevenueByDate
+    GROUP BY 
+        CEILING(MONTH(RevenueDate) / 3.0), YEAR(RevenueDate)
+    HAVING SUM(TotalRevenue) > 0;
 END;
 GO
---Doanh thu theo quý
-CREATE PROCEDURE GetRevenueByQuarter 
-    @StartDate DATE, 
-    @EndDate DATE 
+
+EXEC InsertRevenueByQuarter
+
+
+CREATE PROCEDURE InsertRevenueByYear
 AS
 BEGIN
-    SET NOCOUNT ON;
-    
+    INSERT INTO RevenueByYear (RevenueYear, TotalRevenue)
     SELECT 
         YEAR(RevenueDate) AS RevenueYear, 
-        DATEPART(QUARTER, RevenueDate) AS RevenueQuarter, 
-        SUM(TotalRevenue) AS TotalRevenue 
-    FROM RevenueByDate 
-    WHERE RevenueDate BETWEEN @StartDate AND @EndDate
-    GROUP BY YEAR(RevenueDate), DATEPART(QUARTER, RevenueDate);
+        SUM(TotalRevenue) AS TotalRevenue
+    FROM 
+        RevenueByDate
+    GROUP BY 
+        YEAR(RevenueDate)
+    HAVING SUM(TotalRevenue) > 0;
 END;
 GO
---Doanh thu theo năm
-CREATE PROCEDURE GetRevenueByYear 
-    @StartDate DATE, 
-    @EndDate DATE 
+
+EXEC InsertRevenueByYear
+
+
+-- Procedure to calculate revenue by day
+CREATE PROCEDURE CalRevenueByDay (@InputDate DATE)
 AS
 BEGIN
-    SET NOCOUNT ON;
-    
     SELECT 
-        YEAR(RevenueDate) AS RevenueYear, 
-        SUM(TotalRevenue) AS TotalRevenue 
-    FROM RevenueByDate 
-    WHERE RevenueDate BETWEEN @StartDate AND @EndDate
-    GROUP BY YEAR(RevenueDate);
+        RevenueDate AS [Date],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByDate
+    WHERE 
+        RevenueDate = @InputDate;
 END;
 GO
---Câu lệnh Test
---------------------------------------------------------------------------------
-EXEC GetRevenueByDay @StartDate = '2024-12-01', @EndDate = '2024-12-04';      --
-EXEC GetRevenueByMonth @StartDate = '2024-09-01', @EndDate = '2024-12-31';    --
-EXEC GetRevenueByQuarter @StartDate = '2024-09-01', @EndDate = '2024-12-31';  --
-EXEC GetRevenueByYear @StartDate = '2024-01-01', @EndDate = '2024-12-31';     --
---------------------------------------------------------------------------------
+
+-- Procedure to calculate revenue by month
+CREATE PROCEDURE CalRevenueByMonth (@InputMonth INT, @InputYear INT)
+AS
+BEGIN
+    SELECT 
+        RevenueMonth AS [Month],
+        RevenueYear AS [Year],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByMonth
+    WHERE 
+        RevenueMonth = @InputMonth AND RevenueYear = @InputYear;
+END;
+GO
+
+-- Procedure to calculate revenue by quarter
+CREATE PROCEDURE CalRevenueByQuarter (@InputQuarter INT, @InputYear INT)
+AS
+BEGIN
+    SELECT 
+        RevenueQuarter AS [Quarter],
+        RevenueYear AS [Year],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByQuarter
+    WHERE 
+        RevenueQuarter = @InputQuarter AND RevenueYear = @InputYear;
+END;
+GO
+
+-- Procedure to calculate revenue by year
+CREATE PROCEDURE CalRevenueByYear (@InputYear INT)
+AS
+BEGIN
+    SELECT 
+        RevenueYear AS [Year],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByYear
+    WHERE 
+        RevenueYear = @InputYear;
+END;
+GO
+
+EXEC CalRevenueByDay @InputDate = '2024-11-30';
+EXEC CalRevenueByMonth @InputMonth = 12, @InputYear = 2024;
+EXEC CalRevenueByQuarter @InputQuarter = 4, @InputYear = 2024;
+EXEC CalRevenueByYear @InputYear = 2024;
+
 =======
 	
 >>>>>>> c9adf76cdef25c3cd7d39e048286f260b8118212
+
+
+
+----------------------REVENUE PROC----------------------------------------------------------------------------------------------
+CREATE PROCEDURE InsertRevenueByDate
+AS
+BEGIN
+    INSERT INTO RevenueByDate (RevenueDate, TotalRevenue)
+    SELECT 
+        PaymentDate AS RevenueDate, 
+        SUM(TotalMoney - DiscountMoney) AS TotalRevenue
+    FROM 
+        INVOICE
+    GROUP BY 
+        PaymentDate;
+END;
+GO
+EXEC InsertRevenueByDate;
+
+-------------------------------------------------------------------
+GO
+CREATE PROCEDURE InsertRevenueByMonth
+AS
+BEGIN
+    INSERT INTO RevenueByMonth (RevenueMonth, RevenueYear, TotalRevenue)
+    SELECT 
+        MONTH(RevenueDate) AS RevenueMonth, 
+        YEAR(RevenueDate) AS RevenueYear, 
+        SUM(TotalRevenue) AS TotalRevenue
+    FROM 
+        RevenueByDate
+    GROUP BY 
+        MONTH(RevenueDate), YEAR(RevenueDate)
+    HAVING SUM(TotalRevenue) > 0;
+END;
+GO
+
+EXEC InsertRevenueByMonth
+
+GO
+CREATE PROCEDURE InsertRevenueByQuarter
+AS
+BEGIN
+    INSERT INTO RevenueByQuarter (RevenueQuarter, RevenueYear, TotalRevenue)
+    SELECT 
+        CEILING(MONTH(RevenueDate) / 3.0) AS RevenueQuarter, 
+        YEAR(RevenueDate) AS RevenueYear, 
+        SUM(TotalRevenue) AS TotalRevenue
+    FROM 
+        RevenueByDate
+    GROUP BY 
+        CEILING(MONTH(RevenueDate) / 3.0), YEAR(RevenueDate)
+    HAVING SUM(TotalRevenue) > 0;
+END;
+GO
+
+EXEC InsertRevenueByQuarter
+
+
+CREATE PROCEDURE InsertRevenueByYear
+AS
+BEGIN
+    INSERT INTO RevenueByYear (RevenueYear, TotalRevenue)
+    SELECT 
+        YEAR(RevenueDate) AS RevenueYear, 
+        SUM(TotalRevenue) AS TotalRevenue
+    FROM 
+        RevenueByDate
+    GROUP BY 
+        YEAR(RevenueDate)
+    HAVING SUM(TotalRevenue) > 0;
+END;
+GO
+
+EXEC InsertRevenueByYear
+
+
+-- Procedure to calculate revenue by day
+CREATE PROCEDURE CalRevenueByDay (@InputDate DATE)
+AS
+BEGIN
+    SELECT 
+        RevenueDate AS [Date],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByDate
+    WHERE 
+        RevenueDate = @InputDate;
+END;
+GO
+
+-- Procedure to calculate revenue by month
+CREATE PROCEDURE CalRevenueByMonth (@InputMonth INT, @InputYear INT)
+AS
+BEGIN
+    SELECT 
+        RevenueMonth AS [Month],
+        RevenueYear AS [Year],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByMonth
+    WHERE 
+        RevenueMonth = @InputMonth AND RevenueYear = @InputYear;
+END;
+GO
+
+-- Procedure to calculate revenue by quarter
+CREATE PROCEDURE CalRevenueByQuarter (@InputQuarter INT, @InputYear INT)
+AS
+BEGIN
+    SELECT 
+        RevenueQuarter AS [Quarter],
+        RevenueYear AS [Year],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByQuarter
+    WHERE 
+        RevenueQuarter = @InputQuarter AND RevenueYear = @InputYear;
+END;
+GO
+
+-- Procedure to calculate revenue by year
+CREATE PROCEDURE CalRevenueByYear (@InputYear INT)
+AS
+BEGIN
+    SELECT 
+        RevenueYear AS [Year],
+        TotalRevenue AS [Total Revenue]
+    FROM 
+        RevenueByYear
+    WHERE 
+        RevenueYear = @InputYear;
+END;
+GO
+
+EXEC CalRevenueByDay @InputDate = '2024-11-30';
+EXEC CalRevenueByMonth @InputMonth = 12, @InputYear = 2024;
+EXEC CalRevenueByQuarter @InputQuarter = 4, @InputYear = 2024;
+EXEC CalRevenueByYear @InputYear = 2024;
