@@ -1,8 +1,14 @@
 const sql = require('mssql');
-const config = require('../db/dbConfig');
+const connectToDB = require('../db/dbConfig');
+
+const getAllEmployee = async () => {
+    const pool = await connectToDB();
+    const result = await pool.request().query('SELECT * FROM EMPLOYEE');
+    return result.recordset; // Trả về bản ghi đầu tiên nếu có
+};
 
 const getEmployeeById = async (EmployeeID) => {
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     const result = await pool.request()
         .input('EmployeeID', sql.Int, EmployeeID)
         .query('SELECT * FROM EMPLOYEE WHERE EmployeeID = @EmployeeID');
@@ -11,7 +17,7 @@ const getEmployeeById = async (EmployeeID) => {
 
 const addEmployee = async (Employee) => {
     const { EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = Employee;
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     await pool.request()
         .input('EmployeeID', sql.Int, EmployeeID)
         .input('EmployeeName', sql.NVarChar, EmployeeName)
@@ -28,7 +34,7 @@ const addEmployee = async (Employee) => {
 
 const updateEmployee = async (Employee) => {
     const { EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, LeaveDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = Employee;
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     await pool.request()
         .input('EmployeeID', sql.Int, EmployeeID)
         .input('EmployeeName', sql.NVarChar, EmployeeName)
@@ -45,13 +51,14 @@ const updateEmployee = async (Employee) => {
 };
 
 const deleteEmployeeById = async (EmployeeID) => {
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     await pool.request()
         .input('EmployeeID', sql.Int, EmployeeID)
         .query('EXEC Delete_Employee @EmployeeID');
 };
 
 module.exports = {
+    getAllEmployee,
     getEmployeeById,
     addEmployee,
     updateEmployee,

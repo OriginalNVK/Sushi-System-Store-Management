@@ -1,8 +1,14 @@
 const sql = require('mssql');
-const config = require('../db/dbConfig');
+const connectToDB = require('../db/dbConfig');
+
+const getAllDishes = async () => {
+    const pool = await connectToDB();
+    const result = await pool.request().query('SELECT * FROM DISH');
+    return result.recordset; // Trả về món ăn đầu tiên nếu có
+};
 
 const getDishById = async (DishID) => {
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     const result = await pool.request()
         .input('DishID', sql.Int, DishID)
         .query('SELECT * FROM DISH WHERE DishID = @DishID');
@@ -10,7 +16,7 @@ const getDishById = async (DishID) => {
 };
 
 const addDish = async (BranchID, DirectoryName, DishID, DishName, Price) => {
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     await pool.request()
         .input('BranchID', sql.Int, BranchID)
         .input('DirectoryName', sql.NVarChar, DirectoryName)
@@ -21,14 +27,14 @@ const addDish = async (BranchID, DirectoryName, DishID, DishName, Price) => {
 };
 
 const deleteDishById = async (DishID) => {
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     await pool.request()
         .input('DishID', sql.Int, DishID)
         .query('EXEC DeleteDish @DishID');
 };
 
 const updateDish = async (BranchID, DirectoryName, DishID, NewDishName, NewPrice) => {
-    const pool = await sql.connect(config);
+    const pool = await connectToDB();
     await pool.request()
         .input('BranchID', sql.Int, BranchID)
         .input('DirectoryName', sql.NVarChar, DirectoryName)
@@ -39,6 +45,7 @@ const updateDish = async (BranchID, DirectoryName, DishID, NewDishName, NewPrice
 };
 
 module.exports = {
+    getAllDishes,
     getDishById,
     addDish,
     deleteDishById,
