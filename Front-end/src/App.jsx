@@ -9,6 +9,7 @@ import ReserveTable from "./pages/ReserveTable";
 import React from "react";
 import Employee from "./pages/Employee";
 import Customer from "./pages/Customer";
+import ReportOverview from "./pages/ReportOverview";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/employee" element={<Employee />} />
         <Route path="/customer" element={<Customer />} />
+        <Route path="/reports" element={<ReportOverview />} />
       </Routes>
     </Router>
   );

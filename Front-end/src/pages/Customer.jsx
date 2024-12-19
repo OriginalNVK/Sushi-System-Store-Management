@@ -1,9 +1,22 @@
+import {useState, useEffect} from "react"
 import Decorate from "../components/Decorate"
 import Footer from "../components/Footer"
 import Header from "../components/Header"
 import { customerList } from "../constants"
+import { getCustomer } from "../service/Services"
 
 const Customer = () => {
+
+    const [customers, setCustomers] = useState([]);
+
+    useEffect(() => {
+        const loadCustomers = async () => {
+            const data = await getCustomer();
+            setCustomers(data);
+        }
+        loadCustomers();
+    })
+
   return (
       <div className="min-h-screen flex flex-col">
       <Header />
@@ -15,7 +28,7 @@ const Customer = () => {
         <Decorate />
         </div>
         <table className="table text-center px-2 w-11/12 font-play shadow-lg">
-            <thead className="table-header-group border bg-red text-white">
+            <thead className="table-h eader-group border bg-red text-white">
                 <tr className="table-row border">
                     <th className="table-cell h-12">NO</th>
                     <th className="table-cell h-12">Name</th>
@@ -23,21 +36,19 @@ const Customer = () => {
                     <th className="table-cell h-12">Gender</th>
                     <th className="table-cell h-12">CCCD</th>
                     <th className="table-cell h-12">Mobile Phone</th>
-                    <th className="table-cell h-12">Password</th>
                 </tr>
             </thead>
             <tbody>
                 {
-                    customerList.map((customer, index) => {
+                    customers.map((customer, index) => {
                         return (
                             <tr key={index} className="border border-gray">
                                 <td className="table-cell p-2">{index + 1}</td>
-                                <td className="table-cell p-2">{customer.name}</td>
-                                <td className="table-cell p-2">{customer.email}</td>
-                                <td className="table-cell p-2">{customer.gender}</td>
+                                <td className="table-cell p-2">{customer.CustomerName}</td>
+                                <td className="table-cell p-2">{customer.CustomerEmail}</td>
+                                <td className="table-cell p-2">{customer.CustomerGender}</td>
                                 <td className="table-cell p-2">{customer.CCCD}</td>
-                                <td className="table-cell p-2">{customer.phone}</td>
-                                <td className="table-cell p-2">{customer.password}</td>
+                                <td className="table-cell p-2">{customer.CustomerPhone}</td>
                             </tr>
                         )
                     })

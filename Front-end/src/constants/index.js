@@ -10,6 +10,10 @@ import {
   introduceIcon,
   menuIcon,
   reportIcon,
+  orderIcon,
+  branchIcon,
+  customerIcon,
+  employeeIcon,
   facebook,
   instagram,
   x,
@@ -44,6 +48,67 @@ export const navLinks = [
     title: "Contact",
     icon: contactIcon,
   },
+];
+
+export const navLinksEmployee = [
+  {
+    id: "",
+    title: "Home",
+    icon: homeIcon,
+  },
+  {
+    id: "Menu",
+    title: "Menu",
+    icon: menuIcon,
+  },
+  {
+    id: "Order",
+    title: "Order",
+    icon: orderIcon,
+  },
+  {
+    id: "introduction",
+    title: "About",
+    icon: introduceIcon,
+  },
+  {
+    id: "feedback",
+    title: "Contact",
+    icon: contactIcon,
+  },
+];
+
+export const navLinksManager = [
+  {
+    id: "",
+    title: "Home",
+    icon: homeIcon,
+  },
+  {
+    id: "Menu",
+    title: "Menu",
+    icon: menuIcon,
+  },
+  {
+    id: "Branch",
+    title: "Branch",
+    icon: branchIcon,
+  },
+  {
+    id: "Customer",
+    title: "Customer",
+    icon: customerIcon,
+  },
+  {
+    id: "Employee",
+    title: "Employee",
+    icon: employeeIcon,
+  },
+  {
+    id: "reports",
+    title: "Report",
+    icon: reportIcon,
+  }
 ];
 
 export const footerLinks = [
