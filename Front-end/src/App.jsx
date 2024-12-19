@@ -10,6 +10,9 @@ import React from "react";
 import Employee from "./pages/Employee";
 import Customer from "./pages/Customer";
 import ReportOverview from "./pages/ReportOverview";
+import Branch from "./pages/Branch";
+import Booking from "./pages/Booking";
+import BookingDish from "./pages/BookingDish";
 
 const App = () => {
   return (
@@ -25,6 +28,9 @@ const App = () => {
         <Route path="/employee" element={<Employee />} />
         <Route path="/customer" element={<Customer />} />
         <Route path="/reports" element={<ReportOverview />} />
+        <Route path="/branch" element={<Branch />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/bookingdish" element={<BookingDish />} />
       </Routes>
     </Router>
   );

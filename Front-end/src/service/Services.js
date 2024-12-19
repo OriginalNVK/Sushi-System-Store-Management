@@ -41,7 +41,7 @@ export const getCustomer = async () => {
   }
 }
 
-export const getBranch = async () => {
+export const getBranches = async () => {
   try {
     const response = await fetch('http://localhost:3000/api/branch');
     const result = await response.json();
@@ -51,6 +51,21 @@ export const getBranch = async () => {
   {
     console.error("Error during getBranch request:", error);
     return [];
+  }
+}
+
+export const deleteBranch = async (branchID) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/branch/${branchID}`, {
+      method: "DELETE",
+    });
+    
+    return response;
+  }
+  catch (error)
+  {
+    console.error("Error during deleteBranch request:", error);
+    return { success: false, error: "Network error" };
   }
 }
 
@@ -85,4 +100,28 @@ export const deleteEmployee = async (employeeID) => {
     console.error("Error during deleteEmployee request:", error);
     return { success: false, error: "Network error" };
   }
+}
+
+export const getDishes = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/dishes');
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getDishes request:", error);
+    return [];
+  }
+}
+
+export const bookOrder = async (order) => {
+  const response = await fetch("http://localhost:3000/api/order-online", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return response;
 }
