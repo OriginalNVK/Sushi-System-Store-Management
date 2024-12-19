@@ -1,5 +1,16 @@
 const dishModel = require('../models/dishModel');
 
+
+const getAllDish = async (req, res) => {
+    try {
+      const dish = await dishModel.getAllDishes();
+      res.json(dish);
+    } catch (err) {
+      console.error("Error fetching dish:", err);
+      res.status(500).json({ error: "An error occurred while fetching dish" });
+    }
+  };
+
 const getDish = async (req, res) => {
     const { DishID } = req.params;
 
@@ -50,6 +61,7 @@ const updateDish = async (req, res) => {
 };
 
 module.exports = {
+    getAllDish,
     getDish,
     addNewDish,
     deleteDish,

@@ -5,9 +5,10 @@ const config = {
   password: "12345",
   server: "TH11\\SQLEXPRESS",
   database: "SUSHISTORE_MANAGEMENT",
+
   options: {
-    trustServerCertificate: true,
-    enableArithAbort: true,
+    encrypt: true, // Use this if you're on Windows Azure
+    trustServerCertificate: true // Change to true for local dev / self-signed certs
   },
   port: 1433,
 };

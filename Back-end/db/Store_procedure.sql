@@ -414,6 +414,7 @@ BEGIN
     END CATCH
 END;
 GO
+<<<<<<< HEAD
 --===================================================================================================================
 CREATE OR ALTER PROC New_Employee
 	@EmployeeID INT,
@@ -673,3 +674,6 @@ EXEC GetRevenueByMonth @StartDate = '2024-09-01', @EndDate = '2024-12-31';    --
 EXEC GetRevenueByQuarter @StartDate = '2024-09-01', @EndDate = '2024-12-31';  --
 EXEC GetRevenueByYear @StartDate = '2024-01-01', @EndDate = '2024-12-31';     --
 --------------------------------------------------------------------------------
+=======
+	
+>>>>>>> c9adf76cdef25c3cd7d39e048286f260b8118212

@@ -1,31 +1,17 @@
-// src/service.js
-const API_URL = "http://localhost:3000"; // Adjust this URL if your backend runs on a different port
-
-// Function to handle login
 export const loginUser = async (phone, password) => {
   try {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch("http://localhost:3000/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        CustomerPhone: phone,
-        Password: password,
-      }),
+      body: JSON.stringify({ phone, password }),
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      // Store the token in localStorage (or use it for further requests)
-      localStorage.setItem("token", data.token);
-      return { success: true, message: data.message };
-    } else {
-      return { success: false, error: data.error };
-    }
-  } catch (error) {
-    console.error("Error during login:", error);
-    return { success: false, error: "Login failed. Please try again later." };
+    const result = await response.json();
+    return { success: true, role: result.user.role };
+  } catch (err) {
+    console.error("Error during login request:", err);
+    return { success: false, error: "Network error" };
   }
 };

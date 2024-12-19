@@ -143,8 +143,6 @@ CREATE TABLE DISH (
 );
 GO
 
-select * from EMPLOYEE
-
 CREATE TABLE INVOICE (
     InvoiceID INT PRIMARY KEY,
     CardID INT,
@@ -154,23 +152,6 @@ CREATE TABLE INVOICE (
     OrderID INT
 );
 GO
-
--- Thêm dữ liệu vào bảng INVOICE
-INSERT INTO INVOICE (InvoiceID, CardID, TotalMoney, DiscountMoney, PaymentDate, OrderID) 
-VALUES 
-    (1, NULL, 1000, NULL, '2024-01-10', NULL),
-    (2, NULL, 2000, NULL, '2024-01-11', NULL),
-    (3, NULL, 3000, NULL, '2024-01-12', NULL),
-    (4, NULL, 4000, NULL, '2024-01-13', NULL),
-    (5, NULL, 5000, NULL, '2024-01-14', NULL),
-    (6, NULL, 6000, NULL, '2024-01-15', NULL),
-    (7, NULL, 7000, NULL, '2024-01-16', NULL),
-    (8, NULL, 8000, NULL, '2024-01-17', NULL),
-    (9, NULL, 9000, NULL, '2024-01-18', NULL),
-    (10, NULL, 10000, NULL, '2024-01-19', NULL);
-
-
-select * from CUSTOMER
 
 CREATE TABLE ORDER_OFFLINE (
     OffOrderID INT PRIMARY KEY,
@@ -283,3 +264,4 @@ ALTER TABLE ORDER_ONLINE
 ADD CONSTRAINT FK_OrderOnline_OrderDirectory FOREIGN KEY (OnOrderID) REFERENCES ORDER_DIRECTORY(OrderID);
 GO
 
+select * from userweb

@@ -2,11 +2,32 @@ import Decorate from '../components/Decorate'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import { menuDish } from '../constants'
-import { useState, useEffect } from 'react'    
+import React, { useState, useEffect } from 'react'    
 const MenuDish = () => {
     const [searchDish, setSearchDish] = useState('');
     const [filterCategory, setFilterCatagory] = useState('all');
     const [listCatagory, setListCatagory] = useState([]);
+  const [filterDishes, setFilterDishes] = useState(menuDish);
+
+  const searchDishes = () => {
+    let filtered = menuDish;
+
+    if (searchDish) {
+      filtered = filtered.filter((dish) =>
+        dish.name.toLowerCase().includes(searchDish.toLowerCase()));
+    }
+    
+    if (filterCategory !== 'all') {
+      filtered = filtered.filter(dish =>
+        dish.catagory.toLowerCase() === filterCategory.toLowerCase()
+      );
+    }
+    setFilterDishes(filtered);
+  }
+
+  useEffect(() => {
+    searchDishes();
+  }, [searchDish, filterCategory]);
 
     return (
         <div>
@@ -41,7 +62,7 @@ const MenuDish = () => {
           </div>
 
           <div className='flex flex-col gap-4'>
-              {menuDish.map((dish, index) => (
+              {filterDishes.map((dish, index) => (
                  <div key={index} className="sm:px-[20px] lg:px-[200px] flex justify-between items-center  py-2">
                  <p className="text-left">{dish.name}</p>
                  <span className="flex-1 border-b border-dotted mx-2"></span>
