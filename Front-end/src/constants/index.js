@@ -34,7 +34,7 @@ export const navLinks = [
     icon: menuIcon,
   },
   {
-    id: "reserve",
+    id: "booking",
     title: "Booking",
     icon: bookingIcon,
   },

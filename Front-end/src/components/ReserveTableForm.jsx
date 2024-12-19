@@ -61,7 +61,7 @@ const ReserveTableForm = () => {
         className="p-3 border border-gray-300 rounded resize-none"
       ></textarea>
 
-      <button className="bg-yellow-500 text-white p-3 rounded hover:bg-yellow-600">
+      <button className="bg-yellow text-white p-3 rounded hover:opacity-90">
         Reserve Now
       </button>
     </div>
