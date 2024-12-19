@@ -23,12 +23,12 @@ app.get("/", (req, res) => {
   res.send("Hello, Express!");
 });
 
-app.use("/branch", branchRoutes);
-app.use("/invoice", invoiceRoutes);
+app.use("/api/branch", branchRoutes);
+app.use("/api/invoice", invoiceRoutes);
 app.use("/api/order-offline", orderOfflineRouter);
 app.use("/api/order-online", orderOnlineRouter);
-app.use("/dishes", dishRouter);
-app.use("/employees", employeeRouter);
+app.use("/api/dishes", dishRouter);
+app.use("/api/employees", employeeRouter);
 app.use("/api/customers", customerRoutes);
 app.use("/api/cards", cardCustomerRouter);
 app.use("/api/register", registerRouter);

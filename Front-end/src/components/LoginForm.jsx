@@ -33,6 +33,10 @@ const LoginForm = () => {
       {
         Navigate('/customer');
       }
+      else if(result.role === 'employee')
+      {
+        Navigate('/');
+      }
     }
     else {
       setError(result.error);

@@ -1,4 +1,5 @@
 ﻿USE SUSHISTORE_MANAGEMENT1
+USE SUSHISTORE_MANAGEMENT1
 GO
 ---------------------------------------------------------------------------------
 -- GET DATA FROM OrderDirectory, OrderOnline, Dish, OrderDishAmount
@@ -46,6 +47,7 @@ BEGIN
         -- Check if OrderID already exists
         IF EXISTS (SELECT 1 FROM ORDER_DIRECTORY WHERE OrderID = @OrderID)
         BEGIN
+			THROW 50010, 'OrderID already exists in the system.', 1;
 			THROW 50010, 'OrderID already exists in the system.', 1;
         END
 
@@ -301,6 +303,7 @@ GO
 
 -- DELETE ORDER OFFLINE
 CREATE OR ALTER PROCEDURE DeleteOrderOffline
+CREATE OR ALTER PROCEDURE DeleteOrderOffline
     @OrderID INT  -- Nhận giá trị OrderID cần xóa
 AS
 BEGIN
@@ -414,7 +417,6 @@ BEGIN
     END CATCH
 END;
 GO
-<<<<<<< HEAD
 --===================================================================================================================
 CREATE OR ALTER PROC New_Employee
 	@EmployeeID INT,
@@ -737,9 +739,7 @@ EXEC CalRevenueByMonth @InputMonth = 12, @InputYear = 2024;
 EXEC CalRevenueByQuarter @InputQuarter = 4, @InputYear = 2024;
 EXEC CalRevenueByYear @InputYear = 2024;
 
-=======
-	
->>>>>>> c9adf76cdef25c3cd7d39e048286f260b8118212
+
 
 
 
