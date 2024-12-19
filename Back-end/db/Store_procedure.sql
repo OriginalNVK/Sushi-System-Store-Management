@@ -1,4 +1,4 @@
-﻿USE SUSHISTORE_MANAGEMENT1
+﻿﻿USE SUSHISTORE_MANAGEMENT
 GO
 ---------------------------------------------------------------------------------
 -- GET DATA FROM OrderDirectory, OrderOnline, Dish, OrderDishAmount
@@ -414,9 +414,6 @@ BEGIN
     END CATCH
 END;
 GO
-<<<<<<< HEAD
-	
-=======
 --===================================================================================================================
 CREATE OR ALTER PROC New_Employee
 	@EmployeeID INT,
@@ -676,4 +673,3 @@ EXEC GetRevenueByMonth @StartDate = '2024-09-01', @EndDate = '2024-12-31';    --
 EXEC GetRevenueByQuarter @StartDate = '2024-09-01', @EndDate = '2024-12-31';  --
 EXEC GetRevenueByYear @StartDate = '2024-01-01', @EndDate = '2024-12-31';     --
 --------------------------------------------------------------------------------
->>>>>>> a93e88fe644ffdc13581b6624213a4ca16c74979
