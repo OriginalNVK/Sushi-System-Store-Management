@@ -3,7 +3,7 @@ const sql = require("mssql");
 
 const getInvoices = async () => {
   const pool = await connectToDB();
-  const result = await pool.request().query("SELECT * FROM INVOICE");
+  const result = await pool.request().query("SELECT  FROM INVOICE");
   return result.recordset;
 };
 

@@ -54,6 +54,32 @@ const Employee = () => {
           </p>
           <Decorate />
         </div>
+        <div>
+          <div className="flex gap-2 lg:text-xl text-base font-play">
+            <input
+              type="number"
+              placeholder="🔍 Room Number"
+              className="border rounded-md px-2 font-bold lg:w-52 w-[125px]"
+              value={searchNumber}
+              onChange={(e) => setSearchNumber(e.target.value)}
+            />
+            <select
+              className="border rounded-md font-bold px-2"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="all">Type</option>
+              {roomTypes.map((type, index) => (
+                <option key={index} value={type.Type.toLowerCase()}>
+                  {type.Type}
+                </option>
+              ))}
+            </select>
+            <div className="min-w-24">
+              <Button text="🔄 Reset" onClick={handleReset} />
+            </div>
+          </div>
+        </div>
         <table className="table text-center px-2 w-11/12 font-play shadow-lg">
           <thead className="table-header-group md:text-xl text-lg text-white">
             <tr className="table-row">
