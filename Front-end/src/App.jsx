@@ -13,6 +13,8 @@ import ReportOverview from "./pages/ReportOverview";
 import Branch from "./pages/Branch";
 import Booking from "./pages/Booking";
 import BookingDish from "./pages/BookingDish";
+import Invoice from "./pages/Invoice";
+import InvoiceDetails from "./pages/InvoiceDetails";
 
 const App = () => {
   return (
@@ -31,6 +33,8 @@ const App = () => {
         <Route path="/branch" element={<Branch />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/bookingdish" element={<BookingDish />} />
+        <Route path="/invoices" element={<Invoice />} />
+        <Route path="/invoice/detail" element={<InvoiceDetails />} />
       </Routes>
     </Router>
   );

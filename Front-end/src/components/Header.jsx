@@ -42,14 +42,14 @@ const Header = () => {
       </div>
       <div className="flex flex-col flex-1 flex-wrap justify-between gap-8">
         <div className="flex justify-between items-center">
-          <div className="hidden md:flex gap-2 cursor-pointer">
+          <div className="hidden lg:flex gap-2 cursor-pointer">
             <img src={email} alt="email" className="w-8 h-8" />
             <p className="text-xl text-white">Support@oishii.com</p>
           </div>
           <div className="text-xl text-white">
             {isLogged ? (
               <span>
-                Hello {role === "customer" ? "Customer" : role === "employee"? "Employee" : "Manager"} |{" "}
+                Hello {role === "manager branch" ? "Manager" : role === "employee"? "Employee" : "Customer"} |{" "}
                 <button
                   className="cursor-pointer hover:text-orange"
                   onClick={handleLogout}

@@ -14,6 +14,7 @@ import {
   branchIcon,
   customerIcon,
   employeeIcon,
+  invoiceIcon,
   facebook,
   instagram,
   x,
@@ -67,14 +68,14 @@ export const navLinksEmployee = [
     icon: orderIcon,
   },
   {
+    id: "invoices",
+    title: "Invoice",
+    icon: invoiceIcon,
+  },
+  {
     id: "introduction",
     title: "About",
     icon: introduceIcon,
-  },
-  {
-    id: "feedback",
-    title: "Contact",
-    icon: contactIcon,
   },
 ];
 
@@ -515,4 +516,39 @@ export const customerList = [
     phone: "555-3434",
     password: "doepass456",
   },
+];
+
+
+export const invoiceList = [
+  {
+    invoiceId: 1,
+    CustomerName: "Nguyen Van A",
+    DiscountMoney: 10000,
+    SubTotal: 200000,
+  },
+  {
+    invoiceId: 2,
+    CustomerName: "Nguyen Van B",
+    DiscountMoney: 20000,
+    SubTotal: 300000,
+  },
+  {
+    invoiceId: 3,
+    CustomerName: "Nguyen Van C",
+    DiscountMoney: 30000,
+    SubTotal: 400000,
+  }
+];
+
+export const orderListDish = [
+  {
+    dishName: "Sushi cá hồi",
+    quantity: 2,
+    price: 20000
+  },
+  {
+    dishName: "Cơm cuộn bào ngư",
+    quantity: 4,
+    price: 40000
+  }
 ];
