@@ -1,3 +1,5 @@
+USE SUSHISTORE_MANAGEMENT
+
 CREATE PROCEDURE AddNewOrder
     @OrderID INT,            
     @BranchID INT,             
@@ -91,7 +93,8 @@ GO
 CREATE PROCEDURE AddNewInvoice
     @OrderID INT,
     @TotalMoney INT,
-    @DiscountMoney INT
+    @DiscountMoney INT,
+    @CustomerName NVARCHAR(255) -- Tên khách hàng
 AS
 BEGIN
     BEGIN TRY
@@ -116,12 +119,25 @@ BEGIN
             THROW 60011, 'Không tìm thấy khách hàng liên quan đến đơn hàng.', 1;
         END
 
-        -- Bước 3: Thêm thông tin vào bảng INVOICE
+        -- Bước 3: Cập nhật hoặc thêm CustomerName vào bảng CUSTOMER nếu chưa tồn tại
+        IF NOT EXISTS (SELECT 1 FROM CUSTOMER WHERE CardID = @CardID)
+        BEGIN
+            INSERT INTO CUSTOMER (CardID, CustomerName)
+            VALUES (@CardID, @CustomerName);
+        END
+        ELSE
+        BEGIN
+            UPDATE CUSTOMER
+            SET CustomerName = @CustomerName
+            WHERE CardID = @CardID;
+        END
+
+        -- Bước 4: Thêm thông tin vào bảng INVOICE
         INSERT INTO INVOICE (InvoiceID, CardID, TotalMoney, DiscountMoney, OrderID)
         VALUES ((SELECT ISNULL(MAX(InvoiceID), 0) + 1 FROM INVOICE), @CardID, @TotalMoney, @DiscountMoney, @OrderID);
 
         -- Thông báo thành công
-        PRINT 'Thêm hóa đơn thành công!';
+        PRINT 'Thêm hóa đơn và cập nhật tên khách hàng thành công!';
 
         -- Cam kết giao dịch
         COMMIT TRANSACTION;
@@ -133,6 +149,7 @@ BEGIN
     END CATCH
 END
 GO
+drop procedure AddNewInvoice
 --sau đó nếu xuất hóa đơn thì cập nhật ngày trả tiền
 CREATE PROCEDURE UpdatePaymentDate
     @InvoiceID INT,
@@ -286,3 +303,41 @@ BEGIN
         RevenueYear = @InputYear;
 END;
 GO
+
+-- viết api get 
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY i.InvoiceID) AS [No.], -- Số thứ tự
+    c.CustomerName AS [Customer name],                -- Tên khách hàng
+    i.DiscountMoney AS [Discount money],              -- Tiền giảm giá
+    i.TotalMoney + i.DiscountMoney AS [Sub total],    -- Tổng tiền trước giảm giá
+    i.TotalMoney AS [Total Money]                     -- Tổng tiền sau giảm giá
+FROM 
+    INVOICE i
+JOIN 
+    CUSTOMER c ON i.CardID = c.CardID;                -- Kết nối hóa đơn với khách hàng
+
+GO
+--viết api get 
+SELECT 
+    i.InvoiceID AS [Invoice Number],             -- Mã hóa đơn
+    FORMAT(i.PaymentDate, 'dd-MM-yyyy') AS [Date], -- Ngày thanh toán
+    c.CustomerName AS [Billed to],               -- Tên khách hàng
+    c.CustomerPhone AS [Phone],                 -- Số điện thoại khách hàng
+    ROW_NUMBER() OVER (PARTITION BY i.InvoiceID ORDER BY d.DishID) AS [NO], -- Số thứ tự món ăn
+    d.DishName AS [Dish Name],                  -- Tên món ăn
+    oda.AmountDish AS [Quantity],               -- Số lượng món ăn
+    d.Price * oda.AmountDish AS [Amount],       -- Thành tiền cho mỗi món
+    (SELECT SUM(d.Price * oda.AmountDish)
+     FROM ORDER_DISH_AMOUNT oda
+     JOIN DISH d ON oda.DishID = d.DishID
+     WHERE oda.OrderID = i.OrderID) AS [Subtotal], -- Tổng tiền trước giảm giá
+    i.DiscountMoney AS [Discount],              -- Số tiền giảm giá
+    i.TotalMoney AS [Total]                     -- Tổng tiền sau giảm giá
+FROM 
+    INVOICE i
+JOIN 
+    CUSTOMER c ON i.CardID = c.CardID            -- Kết nối hóa đơn với khách hàng
+JOIN 
+    ORDER_DISH_AMOUNT oda ON i.OrderID = oda.OrderID -- Kết nối hóa đơn với món ăn trong đơn hàng
+JOIN 
+    DISH d ON oda.DishID = d.DishID;            -- Kết nối món ăn trong đơn hàng với bảng món ăn
