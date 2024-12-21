@@ -3,7 +3,25 @@ const sql = require("mssql");
 
 const getBranchesModel = async () => {
   const pool = await connectToDB();
-  const result = await pool.request().query("SELECT * FROM BRANCH");
+  const result = await pool.request().query(`
+    SELECT 
+        b.BranchName,
+        b.BranchAddress,
+        b.OpenHour,
+        b.CloseHour,
+        b.PhoneNumber,
+        b.HasCarParking,
+        b.HasMotorParking,
+        AREA.AreaName,
+        EMPLOYEE.EmployeeName,
+        b.HasDeliveryService
+    FROM 
+        BRANCH b
+    LEFT JOIN 
+        AREA ON b.AreaID = AREA.AreaID
+    LEFT JOIN 
+        EMPLOYEE ON b.ManagerID = EMPLOYEE.EmployeeID;
+`);
   return result.recordset;
 };
 
