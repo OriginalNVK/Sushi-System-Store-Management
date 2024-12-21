@@ -31,9 +31,9 @@ const LoginForm = () => {
       }
       else if (result.role === 'manager branch')
       {
-        Navigate('/customer');
+        Navigate('/');
       }
-      else if(result.role === 'employee')
+      else if(result.role === 'employee') 
       {
         Navigate('/');
       }

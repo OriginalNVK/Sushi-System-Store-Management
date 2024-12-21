@@ -6,18 +6,24 @@ import { getEmployees, deleteEmployee } from "../service/Services"; // Ensure `d
 import { useNavigate } from "react-router-dom";
 
 const Employee = () => {
+  const [searchEmployee, setSearchEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
+  const [allEmployees, setAllEmployees] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [filterDepartment, setFilterDepartment] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadEmployees = async () => {
       const data = await getEmployees();
       setEmployees(data);
+      setAllEmployees(data);
     };
 
     loadEmployees();
   }, []); // Added dependency array to prevent infinite re-rendering
 
+  
   const handleEditEmployee = (employeeID) => {
     navigate(`/employee/${employeeID}`);
   };
@@ -44,6 +50,39 @@ const Employee = () => {
     }
   };
 
+  const searchEmployees = () => {
+  let filtered = allEmployees;
+
+  // Lọc theo tên nhân viên nếu có giá trị tìm kiếm
+  if (searchEmployee) {
+    filtered = employees.filter((employee) =>
+      employee.EmployeeName.toLowerCase().includes(searchEmployee.toLowerCase())
+    );
+  }
+
+  // Lọc theo phòng ban nếu có giá trị
+  if (filterDepartment && filterDepartment !== "all") {
+    filtered = filtered.filter((employee) =>
+      employee.DepartmentName.toLowerCase() === filterDepartment.toLowerCase()
+    );
+  }
+
+  // Cập nhật danh sách nhân viên
+  setEmployees(filtered);
+};
+
+// Gọi `searchEmployees` khi `searchEmployee` hoặc `filterDepartment` thay đổi
+useEffect(() => {
+  searchEmployees();
+}, [searchEmployee, filterDepartment]);
+
+  const handleReset = async () => {
+    setSearchEmployee("");
+    setFilterDepartment("all");
+    const data = await getEmployees();
+    setEmployees(data);
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -54,29 +93,31 @@ const Employee = () => {
           </p>
           <Decorate />
         </div>
-        <div>
+        <div className="flex items-center justify-between pb-4 w-8/12">
+          <button className="border p-2 rounded-lg font-bold font-play text-xl bg-green text-white hover:bg-white hover:text-green transition-all duration-300"
+                  onClick={() => navigate("/add-employee")}>Add employee</button>
           <div className="flex gap-2 lg:text-xl text-base font-play">
             <input
-              type="number"
-              placeholder="🔍 Room Number"
+              type="text"
+              placeholder="🔍 Employee Name"
               className="border rounded-md px-2 font-bold lg:w-52 w-[125px]"
-              value={searchNumber}
-              onChange={(e) => setSearchNumber(e.target.value)}
+              value={searchEmployee}
+              onChange={(e) => setSearchEmployee(e.target.value)}
             />
             <select
               className="border rounded-md font-bold px-2"
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              value={filterDepartment}
+              onChange={(e) => setFilterDepartment(e.target.value)}
             >
-              <option value="all">Type</option>
-              {roomTypes.map((type, index) => (
-                <option key={index} value={type.Type.toLowerCase()}>
-                  {type.Type}
+              <option value="all">Department</option>
+              {departments.map((department, index) => (
+                <option key={index} value={department.toLowerCase()}>
+                  {department}
                 </option>
               ))}
             </select>
             <div className="min-w-24">
-              <Button text="🔄 Reset" onClick={handleReset} />
+              <button className="border p-2 rounded-lg font-bold font-play bg-green text-white hover:bg-white hover:text-green transition-all duration-300" onClick={handleReset}>🔄 Reset</button>
             </div>
           </div>
         </div>

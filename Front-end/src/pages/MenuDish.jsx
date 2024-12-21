@@ -7,7 +7,7 @@ const MenuDish = () => {
     const [searchDish, setSearchDish] = useState('');
     const [filterCategory, setFilterCatagory] = useState('all');
     const [listCatagory, setListCatagory] = useState([]);
-  const [filterDishes, setFilterDishes] = useState(menuDish);
+    const [filterDishes, setFilterDishes] = useState(menuDish);
 
   const searchDishes = () => {
     let filtered = menuDish;
