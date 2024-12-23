@@ -101,7 +101,7 @@ export const navLinksManager = [
     icon: customerIcon,
   },
   {
-    id: "Employee",
+    id: "employee",
     title: "Employee",
     icon: employeeIcon,
   },

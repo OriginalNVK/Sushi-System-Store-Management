@@ -15,6 +15,7 @@ import Booking from "./pages/Booking";
 import BookingDish from "./pages/BookingDish";
 import Invoice from "./pages/Invoice";
 import InvoiceDetails from "./pages/InvoiceDetails";
+import AddEmployee from "./pages/AddEmployee";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/bookingdish" element={<BookingDish />} />
         <Route path="/invoices" element={<Invoice />} />
         <Route path="/invoice/detail" element={<InvoiceDetails />} />
+        <Route path="/add-employee" element={<AddEmployee />} />
       </Routes>
     </Router>
   );
