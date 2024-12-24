@@ -12,11 +12,24 @@ const getOrderOnline = async (req, res) => {
 const postOrderOnline = async (req, res) => {
     try {
         const newOrder = await orderOnlineModel.addOrder(req.body);
-        res.status(201).json(newOrder);
+        console.log("Backend response:", {
+            Status: "Success",
+            OrderID: req.body.OrderID, // Log để debug
+        });
+
+        res.status(201).json({
+            Status: "Success",
+            OrderID: req.body.OrderID, // Đảm bảo OrderID được trả về
+        });
     } catch (err) {
-        res.status(500).send('Lỗi khi thêm đơn hàng: ' + err.message);
+        res.status(500).json({
+            Status: "Error",
+            ErrorMessage: "Lỗi khi thêm đơn hàng: " + err.message,
+        });
     }
 };
+
+
 
 const putOrderOnline = async (req, res) => {
     const orderID = req.body.OrderID; // Giả sử OrderID được gửi trong body

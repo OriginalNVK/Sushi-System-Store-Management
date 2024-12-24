@@ -1,11 +1,11 @@
 const sql = require('mssql');
-const config = require('../db/dbConfig'); // Đảm bảo bạn có tệp config cho kết nối DB
+const connectToDB = require('../db/dbConfig'); 
 
 const OrderOffline = {
     async getAllOrders() {
         try {
-            const pool = await sql.connect(config);
-            const result = await pool.request().execute('GetOrderOffline'); // Thay đổi tên thủ tục nếu cần
+            const pool = await connectToDB(); 
+            const result = await pool.request().execute('GetOrderOffline'); 
             return result.recordset;
         } catch (error) {
             throw new Error('Lỗi khi lấy tất cả đơn hàng offline: ' + error.message);
@@ -14,7 +14,7 @@ const OrderOffline = {
     
     async addOrder(orderData) {
         try {
-            const pool = await sql.connect(config);
+            const pool = await connectToDB(); ;
             const result = await pool.request()
                 .input('OrderID', sql.Int, orderData.OrderID)
                 .input('EmployeeID', sql.Int, orderData.EmployeeID)
@@ -23,7 +23,7 @@ const OrderOffline = {
                 .input('DishName', sql.NVarChar, orderData.DishName)
                 .input('AmountDish', sql.Int, orderData.AmountDish)
                 .input('OrderEstablishDate', sql.NVarChar, orderData.OrderEstablishDate)
-                .execute('AddNewOfflineOrder'); // Thay đổi tên thủ tục nếu cần
+                .execute('AddNewOfflineOrder');
             return result.recordset;
         } catch (error) {
             throw new Error('Lỗi khi thêm đơn hàng offline: ' + error.message);
@@ -32,7 +32,7 @@ const OrderOffline = {
     
     async updateOrder(orderID, orderData) {
         try {
-            const pool = await sql.connect(config);
+            const pool = await connectToDB(); 
             const result = await pool.request()
                 .input('OrderID', sql.Int, orderID)
                 .input('EmployeeID', sql.Int, orderData.EmployeeID)
@@ -41,7 +41,7 @@ const OrderOffline = {
                 .input('DishName', sql.NVarChar, orderData.DishName)
                 .input('AmountDish', sql.Int, orderData.AmountDish)
                 .input('OrderEstablishDate', sql.NVarChar, orderData.OrderEstablishDate)
-                .execute('UpdateOrderOffline'); // Thay đổi tên thủ tục nếu cần
+                .execute('UpdateOrderOffline'); 
             return result.recordset;
         } catch (error) {
             throw new Error('Lỗi khi cập nhật đơn hàng offline: ' + error.message);
@@ -50,10 +50,10 @@ const OrderOffline = {
     
     async deleteOrder(orderID) {
         try {
-            const pool = await sql.connect(config);
+            const pool = await connectToDB(); 
             await pool.request()
                 .input('OrderID', sql.Int, orderID)
-                .execute('DeleteOrderOffline'); // Thay đổi tên thủ tục nếu cần
+                .execute('DeleteOrderOffline'); 
         } catch (error) {
             throw new Error('Lỗi khi xóa đơn hàng offline: ' + error.message);
         }

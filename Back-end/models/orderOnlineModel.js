@@ -1,16 +1,15 @@
 const sql = require('mssql');
-const config = require('../db/dbConfig'); // Đảm bảo bạn có tệp config cho kết nối DB
+const connectToDB = require('../db/dbConfig'); 
 
 const OrderOnline = {
     async getAllOrders() {
-        const pool = await sql.connect(config);
-        const result = await pool.request().execute('GetOrderOnline'); // Thay đổi tên thủ tục nếu cần
+        const pool = await connectToDB(); 
+        const result = await pool.request().execute('GetOrderOnline'); 
         return result.recordset;
     },
     async addOrder(orderData) {
-        const pool = await sql.connect(config);
+        const pool = await connectToDB(); 
         const result = await pool.request()
-            .input('OrderID', sql.Int, orderData.OrderID)
             .input('BranchID', sql.Int, orderData.BranchID)
             .input('EmployeeID', sql.Int, orderData.EmployeeID)
             .input('NumberTable', sql.Int, orderData.NumberTable)
@@ -20,11 +19,11 @@ const OrderOnline = {
             .input('AmountDish', sql.Int, orderData.AmountDish)
             .input('DateOrder', sql.NVarChar, orderData.DateOrder)
             .input('TimeOrder', sql.NVarChar, orderData.TimeOrder)
-            .execute('AddNewOrder10'); // Thay đổi tên thủ tục nếu cần
+            .execute('AddNewOrderOnline'); 
         return result.recordset;
     },
     async updateOrder(orderID, orderData) {
-        const pool = await sql.connect(config);
+        const pool = await connectToDB(); 
         const result = await pool.request()
             .input('OrderID', sql.Int, orderID)
             .input('BranchID', sql.Int, orderData.BranchID)
@@ -36,14 +35,14 @@ const OrderOnline = {
             .input('AmountDish', sql.Int, orderData.AmountDish)
             .input('DateOrder', sql.NVarChar, orderData.DateOrder)
             .input('TimeOrder', sql.NVarChar, orderData.TimeOrder)
-            .execute('UpdateOrder'); // Thay đổi tên thủ tục nếu cần
+            .execute('UpdateOrderOnline'); 
         return result.recordset;
     },
     async deleteOrder(orderID) {
-        const pool = await sql.connect(config);
+        const pool = await connectToDB();
         const result = await pool.request()
             .input('OrderID', sql.Int, orderID)
-            .execute('DeleteOrder'); // Thay đổi tên thủ tục nếu cần
+            .execute('DeleteOrderOnline'); 
         return result.recordset;
     }
 };
