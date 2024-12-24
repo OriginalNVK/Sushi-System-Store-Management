@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 
 const ReserveTableForm = () => {
-  // State để lưu dữ liệu từ form
   const [formData, setFormData] = useState({
     BranchID: 1,
-    EmployeeID: 1, // Mặc định là 0 nếu không có nhân viên chọn
+    EmployeeID: 1, 
     NumberTable: 1,
-    CardID: 2, // Mặc định null nếu không có thẻ thành viên
+    CardID: 2, 
     AmountCustomer: 1,
     DishName: "",
     AmountDish: 1,
