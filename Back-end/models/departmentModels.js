@@ -1,4 +1,4 @@
-const connectToDB = require("../utils/connectToDB");
+const connectToDB = require("../db/dbConfig");
 const sql = require("mssql");
 
 const getDepartmentModel = async () => {
