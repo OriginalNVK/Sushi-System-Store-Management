@@ -2,9 +2,10 @@ const sql = require("mssql");
 
 const config = {
   user: "sa",
-  password: "27072004",
-  server: "ORIGINALNVK\\SQLEXPRESS",
+  password: "12345",
+  server: "TH11\\SQLEXPRESS",
   database: "SUSHISTORE_MANAGEMENT",
+
   options: {
     encrypt: true, // Use this if you're on Windows Azure
     trustServerCertificate: true // Change to true for local dev / self-signed certs
