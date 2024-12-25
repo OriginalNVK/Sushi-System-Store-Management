@@ -28,7 +28,7 @@ const Customer = () => {
         <Decorate />
         </div>
         <table className="table text-center px-2 w-11/12 font-play shadow-lg">
-            <thead className="table-h eader-group border bg-red text-white">
+            <thead className="table-header-group border bg-red text-white">
                 <tr className="table-row border">
                     <th className="table-cell h-12">NO</th>
                     <th className="table-cell h-12">Name</th>
