@@ -11,15 +11,31 @@ const getOrderOnline = async (req, res) => {
 
 const postOrderOnline = async (req, res) => {
     try {
-        const newOrder = await orderOnlineModel.addOrder(req.body);
-        console.log("Backend response:", {
-            Status: "Success",
-            OrderID: req.body.OrderID, // Log để debug
-        });
+        const { BranchID, EmployeeID, NumberTable, CardID, AmountCustomer, DateOrder, TimeOrder, dishes } = req.body;
 
+        if (!dishes || dishes.length === 0) {
+            return res.status(400).json({
+                Status: "Error",
+                ErrorMessage: "Danh sách món ăn không được để trống.",
+            });
+        }
+
+        const dishNames = dishes.map((dish) => dish.dishName).join(",");
+        const dishAmounts = dishes.map((dish) => dish.dishAmount).join(",");
+
+        const newOrder = await orderOnlineModel.addOrder({
+            BranchID,
+            EmployeeID,
+            NumberTable,
+            CardID,
+            AmountCustomer,
+            DateOrder,
+            TimeOrder,
+            DishNames: dishNames,
+            DishAmounts: dishAmounts,
+        });
         res.status(201).json({
             Status: "Success",
-            OrderID: req.body.OrderID, // Đảm bảo OrderID được trả về
         });
     } catch (err) {
         res.status(500).json({
@@ -29,10 +45,8 @@ const postOrderOnline = async (req, res) => {
     }
 };
 
-
-
 const putOrderOnline = async (req, res) => {
-    const orderID = req.body.OrderID; // Giả sử OrderID được gửi trong body
+    const orderID = req.body.OrderID; 
     try {
         const updatedOrder = await orderOnlineModel.updateOrder(orderID, req.body);
         res.json(updatedOrder);
@@ -45,7 +59,7 @@ const deleteOrderOnline = async (req, res) => {
     const orderID = req.params.OrderID;
     try {
         await orderOnlineModel.deleteOrder(orderID);
-        res.status(204).send(); // Trả về 204 No Content
+        res.status(204).send(); 
     } catch (err) {
         res.status(500).send('Lỗi khi xóa đơn hàng: ' + err.message);
     }

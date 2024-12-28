@@ -1,16 +1,33 @@
 import React, { useState } from "react";
 
+// Chuyển đổi định dạng ngày thành yyyy-MM-dd
+const formatDate = (date) => {
+  const d = new Date(date);
+  return d.toISOString().split('T')[0]; // Lấy phần yyyy-MM-dd
+};
+
+// Chuyển đổi định dạng thời gian thành HH:mm
+const formatTime = (time) => {
+  const d = new Date(time);
+  return d.toTimeString().slice(0, 5); // Lấy phần HH:mm
+};
+
+
 const ReserveTableForm = () => {
   const [formData, setFormData] = useState({
     BranchID: 1,
-    EmployeeID: 1, 
+    EmployeeID: 2,
     NumberTable: 1,
-    CardID: 2, 
+    CardID: 2,
     AmountCustomer: 1,
-    DishName: "",
-    AmountDish: 1,
-    DateOrder: new Date("2022-12-12").toISOString(), // ISO format for DateOrder
-    TimeOrder: new Date(`1970-01-01T${"00:12"}:00Z`).toISOString(), // ISO format for TimeOrder
+    DateOrder: formatDate(new Date()), // Sử dụng formatDate để đảm bảo đúng định dạng yyyy-MM-dd
+    TimeOrder: formatTime(new Date()), // Sử dụng formatTime để đảm bảo đúng định dạng HH:mm
+    dishes: [],
+  });
+
+  const [currentDish, setCurrentDish] = useState({
+    dishName: "",
+    dishAmount: 1,
   });
 
   // Hàm xử lý thay đổi dữ liệu form
@@ -19,18 +36,32 @@ const ReserveTableForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+
+  // Hàm xử lý thay đổi món ăn hiện tại
+  const handleDishChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentDish({ ...currentDish, [name]: value });
+  };
+
+  // Thêm món ăn vào danh sách
+  const handleAddDish = () => {
+    setFormData({
+      ...formData,
+      dishes: [...formData.dishes, { ...currentDish }],
+    });
+    // Reset món ăn hiện tại
+    setCurrentDish({ dishName: "", dishAmount: 1 });
+  };
+
+  // Gửi yêu cầu đặt bàn
   const handleReserve = async () => {
-    // Chuyển đổi dữ liệu `DateOrder` và `TimeOrder` thành định dạng ISO 8601
     const transformedData = {
       ...formData,
-      DateOrder: new Date(`${formData.DateOrder}T00:00:00.000Z`).toISOString(), // Thêm thời gian mặc định T00:00:00
-      TimeOrder: new Date(`1970-01-01T${formData.TimeOrder}:00.000Z`).toISOString(), // Gắn ngày giả định cho TimeOrder
+      DateOrder: `${formData.DateOrder}T00:00:00.000Z`, // Thêm thời gian mặc định cho ngày
+      TimeOrder: formData.TimeOrder, // Giữ nguyên định dạng HH:mm
     };
   
-    console.log("Transformed Payload:", transformedData); // Log dữ liệu gửi đi để debug
-  
     try {
-      // Gửi dữ liệu đến backend
       const response = await fetch("http://localhost:3000/api/order-online", {
         method: "POST",
         headers: {
@@ -40,32 +71,25 @@ const ReserveTableForm = () => {
       });
   
       if (!response.ok) {
-        console.error("HTTP Error:", response.status, response.statusText);
         alert(`Error: ${response.status} ${response.statusText}`);
         return;
       }
   
       const result = await response.json();
-      console.log("Response JSON from backend:", result); // Log phản hồi từ backend
-  
       if (result.Status === "Success") {
         alert("Reservation successful!");
       } else {
         alert(`Error: ${result.ErrorMessage}`);
       }
     } catch (error) {
-      console.error("Error during reservation request:", error);
       alert("Network error or invalid response from server. Please try again.");
     }
-  };
-  
-  
-  
+  };  
+
 
   return (
     <div className="flex flex-col space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        {/* Chọn chi nhánh */}
         <select
           name="BranchID"
           className="p-3 border border-gray-300 rounded"
@@ -76,7 +100,6 @@ const ReserveTableForm = () => {
           <option value="2">Branch 02</option>
           <option value="3">Branch 03</option>
         </select>
-        {/* Số bàn */}
         <input
           type="number"
           name="NumberTable"
@@ -86,7 +109,6 @@ const ReserveTableForm = () => {
           onChange={handleChange}
         />
       </div>
-      {/* Số lượng khách */}
       <input
         type="number"
         name="AmountCustomer"
@@ -95,53 +117,64 @@ const ReserveTableForm = () => {
         value={formData.AmountCustomer}
         onChange={handleChange}
       />
-      {/* Ngày và giờ */}
-        <div className="grid grid-cols-2 gap-4">
-        {/* Ngày đặt bàn */}
+      <div className="grid grid-cols-2 gap-4">
         <input
           type="date"
           name="DateOrder"
-          value={formData.DateOrder}
+          value={formData.DateOrder} // Giá trị luôn ở định dạng yyyy-MM-dd
           onChange={handleChange}
           className="p-3 border border-gray-300 rounded"
         />
+
         {/* Giờ đặt bàn */}
         <input
           type="time"
           name="TimeOrder"
-          value={formData.TimeOrder}
+          value={formData.TimeOrder} // Giá trị luôn ở định dạng HH:mm
           onChange={handleChange}
           className="p-3 border border-gray-300 rounded"
         />
       </div>
 
-      {/* Tên món ăn */}
-      <input
-        type="text"
-        name="DishName"
-        placeholder="Dish Name"
-        className="p-3 border border-gray-300 rounded"
-        value={formData.DishName}
-        onChange={handleChange}
-      />
-      {/* Số lượng món ăn */}
-      <input
-        type="number"
-        name="AmountDish"
-        placeholder="Amount of Dish"
-        className="p-3 border border-gray-300 rounded"
-        value={formData.AmountDish}
-        onChange={handleChange}
-      />
-      {/* Ghi chú */}
-      <textarea
-        name="notes"
-        placeholder="Notes (Optional)"
-        rows={3}
-        className="p-3 border border-gray-300 rounded resize-none"
-        onChange={handleChange}
-      ></textarea>
-      {/* Nút đặt bàn */}
+      <div>
+        <h3 className="text-lg font-bold">Add Dishes</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="dishName"
+            placeholder="Dish Name"
+            className="p-3 border border-gray-300 rounded"
+            value={currentDish.dishName}
+            onChange={handleDishChange}
+          />
+          <input
+            type="number"
+            name="dishAmount"
+            placeholder="Amount of Dish"
+            className="p-3 border border-gray-300 rounded"
+            value={currentDish.dishAmount}
+            onChange={handleDishChange}
+          />
+        </div>
+        <button
+          className="bg-blue-500 text-white p-2 rounded mt-2"
+          onClick={handleAddDish}
+        >
+          Add Dish
+        </button>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-bold">Dishes List</h3>
+        <ul>
+          {formData.dishes.map((dish, index) => (
+            <li key={index}>
+              {dish.dishName} - {dish.dishAmount}
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <button
         className="bg-yellow text-white p-3 rounded hover:opacity-90"
         onClick={handleReserve}

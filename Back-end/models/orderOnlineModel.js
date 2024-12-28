@@ -15,12 +15,12 @@ const OrderOnline = {
             .input('NumberTable', sql.Int, orderData.NumberTable)
             .input('CardID', sql.Int, orderData.CardID)
             .input('AmountCustomer', sql.Int, orderData.AmountCustomer)
-            .input('DishName', sql.NVarChar, orderData.DishName)
-            .input('AmountDish', sql.Int, orderData.AmountDish)
+            .input('DishNames', sql.NVarChar, orderData.DishNames) 
+            .input('DishAmounts', sql.NVarChar, orderData.DishAmounts) 
             .input('DateOrder', sql.NVarChar, orderData.DateOrder)
             .input('TimeOrder', sql.NVarChar, orderData.TimeOrder)
             .execute('AddNewOrderOnline'); 
-        return result.recordset;
+        return;
     },
     async updateOrder(orderID, orderData) {
         const pool = await connectToDB(); 

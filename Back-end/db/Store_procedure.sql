@@ -41,11 +41,8 @@ AS
 BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
-
-        -- Tự động sinh OrderID
         DECLARE @OrderID INT;
         SELECT @OrderID = ISNULL(MAX(OrderID), 0) + 1 FROM ORDER_DIRECTORY;
-
         -- Kiểm tra tồn tại của BranchID, EmployeeID, CardID, DishName
         IF NOT EXISTS (SELECT 1 FROM BRANCH WHERE BranchID = @BranchID)
             THROW 50011, 'Branch does not exist.', 1;
