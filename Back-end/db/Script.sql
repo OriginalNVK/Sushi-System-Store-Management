@@ -275,3 +275,4 @@ ALTER COLUMN CCCD NVARCHAR(20)
 
 ALTER TABLE EMPLOYEE 
 ADD CONSTRAINT UC_Employee_Department_Branch UNIQUE (EmployeeID, DepartmentID, BranchID);
+
