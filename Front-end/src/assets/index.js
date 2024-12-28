@@ -9,7 +9,11 @@ import contactIcon from './icons/contact.png';
 import homeIcon from './icons/home.png';
 import introduceIcon from './icons/introduce.png';
 import menuIcon from './icons/menu.png';
-import reportIcon from './icons/report.png';
+import reportIcon from './icons/reportIcon.png';
+import orderIcon from './icons/orderIcon.png';
+import branchIcon from './icons/branchIcon.png';
+import customerIcon from './icons/customerIcon.png';
+import employeeIcon from './icons/employeeIcon.png';
 
 import facebook from './social/facebook.png';
 import instagram from './social/instagram.png';
@@ -31,6 +35,10 @@ export{
     introduceIcon,
     menuIcon,
     reportIcon,
+    orderIcon,
+    branchIcon,
+    customerIcon,
+    employeeIcon,
     facebook,
     instagram,
     x,

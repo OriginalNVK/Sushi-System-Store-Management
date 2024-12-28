@@ -10,6 +10,10 @@ import {
   introduceIcon,
   menuIcon,
   reportIcon,
+  orderIcon,
+  branchIcon,
+  customerIcon,
+  employeeIcon,
   facebook,
   instagram,
   x,
@@ -30,7 +34,7 @@ export const navLinks = [
     icon: menuIcon,
   },
   {
-    id: "reserve",
+    id: "booking",
     title: "Booking",
     icon: bookingIcon,
   },
@@ -44,6 +48,67 @@ export const navLinks = [
     title: "Contact",
     icon: contactIcon,
   },
+];
+
+export const navLinksEmployee = [
+  {
+    id: "",
+    title: "Home",
+    icon: homeIcon,
+  },
+  {
+    id: "Menu",
+    title: "Menu",
+    icon: menuIcon,
+  },
+  {
+    id: "Order",
+    title: "Order",
+    icon: orderIcon,
+  },
+  {
+    id: "introduction",
+    title: "About",
+    icon: introduceIcon,
+  },
+  {
+    id: "feedback",
+    title: "Contact",
+    icon: contactIcon,
+  },
+];
+
+export const navLinksManager = [
+  {
+    id: "",
+    title: "Home",
+    icon: homeIcon,
+  },
+  {
+    id: "Menu",
+    title: "Menu",
+    icon: menuIcon,
+  },
+  {
+    id: "Branch",
+    title: "Branch",
+    icon: branchIcon,
+  },
+  {
+    id: "Customer",
+    title: "Customer",
+    icon: customerIcon,
+  },
+  {
+    id: "Employee",
+    title: "Employee",
+    icon: employeeIcon,
+  },
+  {
+    id: "reports",
+    title: "Report",
+    icon: reportIcon,
+  }
 ];
 
 export const footerLinks = [
@@ -451,3 +516,119 @@ export const customerList = [
     password: "doepass456",
   },
 ];
+
+export const reportOverviewByDate = [
+  {
+    date: "25-12-2024",
+    totalRevenue: 1000000,
+    branchName: "Branch 1",
+  },
+  {
+    date: "24-12-2024",
+    totalRevenue: 1200000,
+    branchName: "Branch 1",
+  }
+];
+
+export const reportDetailByDate = {
+  branchName: "Branch 1",
+  date: "25-12-2024",
+  totalRevenue: 220000,
+  details: [
+  {
+    DishName: "Sushi cá hồi",
+    Revenue: 100000,
+  },
+  {
+    DishName: "Sushi thịt bò",
+    Revenue: 120000,
+  }
+  ]
+}
+
+export const reportOverviewByMonth = [
+  {
+    month: 12,
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    month: 11,
+    year: 2024,
+    totalRevenue: 1200000,
+  }
+];
+
+export const reportDetailByMonth = {
+  month: 12,
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+  {
+    DishName: "Sushi cá hồi",
+    Revenue: 100000,
+  },
+  {
+    DishName: "Sushi thịt bò",
+    Revenue: 120000,
+  }
+  ]
+}
+
+export const reportOverviewByQuarter = [
+  {
+    numberOfQuarter: 4,
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    numberOfQuarter: 4,
+    year: 2024,
+    totalRevenue: 1200000,
+  }
+]
+
+export const reportDetailByQuarter = {
+  numberOfQuarter: 4,
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+  {
+    DishName: "Sushi cá hồi",
+    Revenue: 100000,
+  },
+  {
+    DishName: "Sushi thịt bò",
+    Revenue: 120000,
+  }
+  ]
+}
+
+export const reportOverviewByYear = [
+  {
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    year: 2024,
+    totalRevenue: 1200000,
+  }
+];
+
+export const reportDetailByYear = {
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+    {
+      DishName: "Sushi cá hồi",
+      Revenue: 100000,
+    },
+    {
+      DishName: "Sushi thịt bò",
+      Revenue: 120000,
+    }
+  ]
+};
