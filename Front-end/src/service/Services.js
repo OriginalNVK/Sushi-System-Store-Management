@@ -244,14 +244,18 @@ export const getInvoicesByBranchID = async (branchID) => {
 
 export const getInvoiceDetail = async (invoiceID) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/invoice/detail/${invoiceID}`);
+    const response = await fetch(
+      `http://localhost:3000/api/invoice/detail/${invoiceID}`
+    );
+    console.log("response: ", response);
     const result = await response.json();
+    console.log("result: ", result);
     return result;
   } catch (error) {
     console.error("Error during getInvoiceDetail request:", error);
     return [];
   }
-}
+};
 
 export const updateInvoice = async (invoiceID) => {
   try {
@@ -263,6 +267,8 @@ export const updateInvoice = async (invoiceID) => {
       },
       body: JSON.stringify({ paymentDate: date, invoiceID: invoiceID }),
     });
+
+    // console.log(response);  
 
     return response;
   } catch (error) {
