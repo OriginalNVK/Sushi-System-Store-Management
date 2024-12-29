@@ -23,6 +23,23 @@ const getAllDishes = async (BranchID) => {
     return result.recordset
 };
 
+const getAllDishesForCus = async () => {
+    const pool = await connectToDB();
+    const result = await pool.request()
+    .query(`SELECT 
+        mnd.DirectoryName,
+        d.DishName, 
+        d.Price
+            FROM DISH d
+            JOIN MENU_DIRECTORY_DISH mnd ON mnd.DishID = d.DishID
+            JOIN BRANCH b ON b.BranchID = mnd.BranchID
+            WHERE mnd.StatusDish = 'YES'
+            ORDER BY mnd.DirectoryName, d.DishName, d.Price;`);
+    return result.recordset
+};
+
+
+
 const getDishById = async (DishID) => {
     const pool = await connectToDB();
     const result = await pool.request()
@@ -61,6 +78,7 @@ const updateDish = async (BranchID, DirectoryName, DishID, NewDishName, NewPrice
 };
 
 module.exports = {
+    getAllDishesForCus,
     getAllDishes,
     getDishById,
     addDish,

@@ -166,6 +166,19 @@ export const getDishes = async (branchID) => {
   }
 }
 
+export const getDishesForCus = async () => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/dishes/`);
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getDishes request:", error);
+    return [];
+  }
+}
+
 export const bookOrder = async (order) => {
   const response = await fetch("http://localhost:3000/api/order-online", {
     method: "POST",

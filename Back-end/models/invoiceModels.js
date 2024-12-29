@@ -1,5 +1,5 @@
-// const connectToDB = require("../db/dbConfig");
-// const sql = require("mssql");
+const connectToDB = require("../db/dbConfig");
+const sql = require("mssql");
 
 const getInvoices = async () => {
   const pool = await connectToDB();

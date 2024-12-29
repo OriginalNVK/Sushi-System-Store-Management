@@ -12,14 +12,51 @@ const Dish = () => {
   const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
   const dishesPerPage = 10; // Số món ăn mỗi trang
   const [error, setError] = useState(""); // Lỗi nếu có khi tải dữ liệu
+  const [branchID, setBranchID] = useState(1); // Mặc định branchID là 1 cho khách hàng
+  const [userRole, setUserRole] = useState(""); // Để lưu role của user
   const navigate = useNavigate();
+
+  // Danh sách 15 chi nhánh (code cứng)
+  const branchNames = [
+    "Hà Nội",
+    "Hồ Chí Minh",
+    "Đà Nẵng",
+    "Hải Phòng",
+    "Cần Thơ",
+    "Huế",
+    "Nha Trang",
+    "Vũng Tàu",
+    "Quảng Ninh",
+    "Thanh Hóa",
+    "Nghệ An",
+    "Quảng Nam",
+    "Bình Dương",
+    "Đồng Nai",
+    "Lâm Đồng",
+  ];
+  
+  const branches = branchNames.map((name, index) => ({
+    id: index + 1,
+    name,
+  }));
+  
 
   // Tải danh sách món ăn ban đầu
   useEffect(() => {
     const loadDishes = async () => {
       try {
-        const branchID = localStorage.getItem("BranchID"); // Lấy branchID từ localStorage
-        const data = await getDishes(branchID); // Lấy dữ liệu món ăn
+        const user = JSON.parse(localStorage.getItem("user")); // Lấy thông tin user từ localStorage
+        setUserRole(user.role); // Set role của user
+
+        // Kiểm tra role của user
+        let data;
+        if (user.role === "customer") {
+          data = await getDishes(branchID); // Gọi hàm với branchID
+        } else {
+          const branchIDFromStorage = localStorage.getItem("BranchID");
+          data = await getDishes(branchIDFromStorage); // Gọi hàm cho manager branch
+        }
+  
         setDishes(data);
         setAllDishes(data);
       } catch (err) {
@@ -28,7 +65,7 @@ const Dish = () => {
     };
 
     loadDishes();
-  }, []);
+  }, [branchID]); // Tải lại dữ liệu khi branchID thay đổi
 
   // Lấy món ăn của trang hiện tại
   const startIndex = (currentPage - 1) * dishesPerPage;
@@ -95,23 +132,38 @@ const Dish = () => {
           </p>
           <Decorate />
         </div>
-        <div className="flex items-center justify-end pb-6 w-8/12">
-          <div className="flex gap-6 lg:text-xl text-base font-play">
-            <input
-              type="text"
-              placeholder="🔍 Dish Name"
-              className="border rounded-md px-2 font-bold lg:w-52 w-[125px]"
-              value={searchDish}
-              onChange={(e) => setSearchDish(e.target.value)}
-            />
-            <button
-              className="border p-2 rounded-lg font-bold font-play bg-green text-white hover:bg-white hover:text-green transition-all duration-300"
-              onClick={handleReset}
-            >
-              🔄 Reset
-            </button>
+        
+        {/* Dropdown chọn chi nhánh chỉ hiện cho người có role là "customer" */}
+        {userRole === "customer" && (
+          <div className="flex items-center justify-end pb-6 w-8/12">
+            <div className="flex gap-4 lg:text-xl text-base font-play">
+              <select
+                value={branchID}
+                onChange={(e) => setBranchID(Number(e.target.value))}
+                className="border rounded-md px-2 font-bold lg:w-30 w-[125px]"
+              >
+                {branches.map((branch) => (
+                  <option key={branch.id} value={branch.id}>
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="🔍 Dish Name"
+                className="border rounded-md px-2 font-bold lg:w-52 w-[125px]"
+                value={searchDish}
+                onChange={(e) => setSearchDish(e.target.value)}
+              />
+              <button
+                className="border p-2 rounded-lg font-bold font-play bg-green text-white hover:bg-white hover:text-green transition-all duration-300"
+                onClick={handleReset}
+              >
+                🔄 Reset
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Hiển thị lỗi nếu có */}
         {error && <div className="text-red-500">{error}</div>}
