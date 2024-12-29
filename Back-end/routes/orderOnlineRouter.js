@@ -1,7 +1,6 @@
 const express = require('express');
-const orderOnlineController = require('../controllers/orderOnlineController');
-
 const router = express.Router();
+const orderOnlineController = require('../controllers/orderOnlineController');
 
 // Định nghĩa các route cho đơn hàng online
 router.get('/', orderOnlineController.getOrderOnline); // GET

@@ -64,22 +64,25 @@ const OrderOnline = {
 
   // Thêm đơn hàng mới
   async addOrder(orderData) {
-    const pool = await connectToDB();
-    const result = await pool
-      .request()
-      .input("OrderID", sql.Int, orderData.OrderID)
-      .input("BranchID", sql.Int, orderData.BranchID)
-      .input("EmployeeID", sql.Int, orderData.EmployeeID)
-      .input("NumberTable", sql.Int, orderData.NumberTable)
-      .input("CardID", sql.Int, orderData.CardID)
-      .input("AmountCustomer", sql.Int, orderData.AmountCustomer)
-      .input("DishName", sql.NVarChar, orderData.DishName)
-      .input("AmountDish", sql.Int, orderData.AmountDish)
-      .input("DateOrder", sql.NVarChar, orderData.DateOrder)
-      .input("TimeOrder", sql.NVarChar, orderData.TimeOrder)
-      .execute("AddNewOrder10");
-    return result.recordset;
-  },
+        const pool = await connectToDB(); 
+        const dishes = orderData.dishes;
+        for (let i = 0; i < dishes.length; i++)
+        {
+            const result = await pool
+              .request()
+              .input("BranchID", sql.Int, orderData.BranchID)
+              .input("NumberTable", sql.Int, orderData.NumberTable)
+              .input("CardID", sql.Int, orderData.CardID)
+              .input("AmountCustomer", sql.Int, orderData.AmountCustomer)
+              .input("DishName", sql.NVarChar, dishes[i].dishName)
+              .input("AmountDish", sql.Int, parseInt(dishes[i].dishAmount))
+              .input("DateOrder", sql.Date, orderData.DateOrder)
+              .input("TimeOrder", sql.Time, orderData.TimeOrder)
+                .execute("AddNewOnlineOrder"); 
+        }
+        
+        return;
+    },
 
   // Cập nhật đơn hàng
   async updateOrder(orderID, employeeID) {

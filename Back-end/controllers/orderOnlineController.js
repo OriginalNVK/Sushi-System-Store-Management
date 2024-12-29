@@ -31,10 +31,32 @@ const getOrderOnlinePendingDetail = async (req, res) => {
 
 const postOrderOnline = async (req, res) => {
     try {
-        const newOrder = await orderOnlineModel.addOrder(req.body);
-        res.status(201).json(newOrder);
+        const { BranchID, NumberTable, CardID, AmountCustomer, DateOrder, TimeOrder, dishes } = req.body;
+
+        if (!dishes || dishes.length === 0) {
+            return res.status(400).json({
+                Status: "Error",
+                ErrorMessage: "Danh sách món ăn không được để trống.",
+            });
+        }
+
+        const newOrder = await orderOnlineModel.addOrder({
+            BranchID,
+            NumberTable,
+            CardID,
+            AmountCustomer,
+            DateOrder,
+            TimeOrder,
+            dishes: dishes
+        });
+        res.status(201).json({
+            Status: "Success",
+        });
     } catch (err) {
-        res.status(500).send('Lỗi khi thêm đơn hàng: ' + err.message);
+        res.status(500).json({
+            Status: "Error",
+            ErrorMessage: "Lỗi khi thêm đơn hàng: " + err.message,
+        });
     }
 };
 
@@ -77,7 +99,7 @@ const deleteOrderOnline = async (req, res) => {
     const orderID = req.params.OrderID;
     try {
         await orderOnlineModel.deleteOrder(orderID);
-        res.status(204).send(); // Trả về 204 No Content
+        res.status(204).send(); 
     } catch (err) {
         res.status(500).send('Lỗi khi xóa đơn hàng: ' + err.message);
     }

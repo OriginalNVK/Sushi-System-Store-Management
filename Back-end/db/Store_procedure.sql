@@ -25,7 +25,6 @@ BEGIN
     ORDER BY OO.DateOrder, OO.TimeOrder;
 END;
 GO
-
 --Drop procedure GetOrderOnlinePendingOverview
 --Go
 
@@ -69,7 +68,6 @@ GO
 
 -- POST ORDER ONLINE
 CREATE PROCEDURE AddNewOrderOnline
-    @OrderID INT,
     @BranchID INT,
     @EmployeeID INT,
     @NumberTable INT,
@@ -83,50 +81,23 @@ AS
 BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
-
-        -- Check if OrderID already exists
-        IF EXISTS (SELECT 1 FROM ORDER_DIRECTORY WHERE OrderID = @OrderID)
-        BEGIN
-			THROW 50010, 'OrderID already exists in the system.', 1;
-			THROW 50010, 'OrderID already exists in the system.', 1;
-        END
-
-        -- Validate BranchID
+        DECLARE @OrderID INT;
+        SELECT @OrderID = ISNULL(MAX(OrderID), 0) + 1 FROM ORDER_DIRECTORY;
+        -- Kiểm tra tồn tại của BranchID, EmployeeID, CardID, DishName
         IF NOT EXISTS (SELECT 1 FROM BRANCH WHERE BranchID = @BranchID)
-        BEGIN
             THROW 50011, 'Branch does not exist.', 1;
-        END
 
-        -- Validate EmployeeID
         IF NOT EXISTS (SELECT 1 FROM EMPLOYEE WHERE EmployeeID = @EmployeeID)
-        BEGIN
             THROW 50012, 'Employee does not exist.', 1;
-        END
 
-        -- Validate CardID
-        IF NOT EXISTS (SELECT 1 FROM CARD_CUSTOMER WHERE CardID = @CardID)
-        BEGIN
+        IF @CardID IS NOT NULL AND NOT EXISTS (SELECT 1 FROM CARD_CUSTOMER WHERE CardID = @CardID)
             THROW 50013, 'Customer does not exist.', 1;
-        END
 
-        -- Validate Amounts
-        IF @AmountCustomer <= 0
-        BEGIN
-            THROW 50014, 'AmountCustomer must be greater than 0.', 1;
-        END
-        IF @AmountDish <= 0
-        BEGIN
-            THROW 50015, 'AmountDish must be greater than 0.', 1;
-        END
-
-        -- Get DishID from DishName
         DECLARE @DishID INT;
         SELECT @DishID = DishID FROM DISH WHERE DishName = @DishName;
 
         IF @DishID IS NULL
-        BEGIN
-            THROW 50016, 'Dish does not exist in the system.', 1;
-        END
+            THROW 50016, 'Dish does not exist.', 1;
 
         -- Insert into ORDER_DIRECTORY
         INSERT INTO ORDER_DIRECTORY (OrderID, EmployeeID, NumberTable, CardID, BranchID)
@@ -136,16 +107,19 @@ BEGIN
         INSERT INTO ORDER_ONLINE (OnOrderID, DateOrder, TimeOrder, AmountCustomer)
         VALUES (@OrderID, @DateOrder, @TimeOrder, @AmountCustomer);
 
-        -- Insert into ORDER_DISH_AMOUNT
+        -- Thêm dữ liệu vào ORDER_DISH_AMOUNT
         INSERT INTO ORDER_DISH_AMOUNT (OrderID, DishID, AmountDish)
         VALUES (@OrderID, @DishID, @AmountDish);
 
         PRINT 'Order added successfully!';
         COMMIT TRANSACTION;
+
+        RETURN @OrderID; -- Trả về OrderID vừa tạo
     END TRY
     BEGIN CATCH
         PRINT 'Error occurred while adding the order: ' + ERROR_MESSAGE();
         ROLLBACK TRANSACTION;
+        THROW;
     END CATCH
 END;
 GO

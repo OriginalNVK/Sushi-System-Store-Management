@@ -11,15 +11,40 @@ const getOrderOffline = async (req, res) => {
 
 const postOrderOffline = async (req, res) => {
     try {
-        const newOrder = await orderOfflineModel.addOrder(req.body);
-        res.status(201).json(newOrder);
+        const {EmployeeID, NumberTable, CardID, BranchID, dishes, OrderEstablishDate } = req.body;
+
+        if (!dishes || dishes.length === 0) {
+            return res.status(400).json({
+                Status: "Error",
+                ErrorMessage: "Danh sách món ăn không được để trống.",
+            });
+        }
+
+        const dishNames = dishes.map((dish) => dish.dishName).join(",");
+        const dishAmounts = dishes.map((dish) => dish.dishAmount).join(",");
+
+        const newOrder = await orderOfflineModel.addOrder({
+            EmployeeID, 
+            NumberTable, 
+            CardID, 
+            BranchID, 
+            DishNames: dishNames,
+            DishAmounts: dishAmounts,
+            OrderEstablishDate
+        });
+        res.status(201).json({
+            Status: "Success",
+        });
     } catch (err) {
-        res.status(500).send('Lỗi khi thêm đơn hàng: ' + err.message);
+        res.status(500).json({
+            Status: "Error",
+            ErrorMessage: "Lỗi khi thêm đơn hàng: " + err.message,
+        });
     }
 };
 
 const putOrderOffline = async (req, res) => {
-    const orderID = req.body.OrderID; // Giả sử OrderID được gửi trong body
+    const orderID = req.body.OrderID; 
     try {
         const updatedOrder = await orderOfflineModel.updateOrder(orderID, req.body);
         res.json(updatedOrder);
