@@ -1,13 +1,25 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 import Decorate from '../components/Decorate';
 import { logo } from '../assets';
 import { sushiInformation } from '../constants';
 import Footer from '../components/Footer';
-import { orderListDish } from '../constants';
+import { getInvoiceDetail } from '../service/Services';
 import html2pdf from 'html2pdf.js';
+import { useParams } from 'react-router-dom';
 
 const InvoiceDetails = () => {
+  const [invoiceDetail, setInvoiceDetail] = useState({});
+  const { id } = useParams(); 
+  useEffect(() => {
+    const loadData = async () => {
+      const result = await getInvoiceDetail(id);
+      setInvoiceDetail(result);
+      console.log(invoiceDetail);
+    }
+    loadData();
+  }, []);
+
   const invoiceRef = useRef();
 
   // Function to handle printing
@@ -49,15 +61,15 @@ const InvoiceDetails = () => {
         <div className="flex justify-between items-start bg-white w-1/2 mt-4 p-6 rounded-lg">
           <div className="flex flex-col text-xl font-play font-bold">
             <p className="text-gray">Billed to:</p>
-            <p>Nguyen Van A</p>
-            <p className="text-gray mt-2">Address:</p>
-            <p>KTX Khu A, DHQG HCM</p>
+            <p>{invoiceDetail.customerName}</p>
+            <p className="text-gray mt-2">Email:</p>
+            <p>{invoiceDetail.customerEmail}</p>
           </div>
           <div className="flex flex-col text-xl font-play font-bold text-right">
             <p className="text-gray">Invoice Number:</p>
-            <p>#3</p>
+            <p>#{invoiceDetail.invoiceId}</p>
             <p className="text-gray mt-2">Date:</p>
-            <p>21-12-2024</p>
+            <p>{ invoiceDetail.invoiceDate }</p>
           </div>
         </div>
         
@@ -79,12 +91,12 @@ const InvoiceDetails = () => {
               </tr>
             </thead>
             <tbody className="font-play">
-              {orderListDish.map((dish, index) => (
+              {invoiceDetail.dishDetail.map((dish, index) => (
                 <tr key={index} className="hover:bg-gray-100">
                   <td className="border px-2 py-2">{index + 1}</td>
                   <td className="border px-2 py-2">{dish.dishName}</td>
                   <td className="border px-2 py-2">{dish.quantity}</td>
-                  <td className="border px-2 py-2">{dish.price * dish.quantity}</td>
+                  <td className="border px-2 py-2">{dish.amount}</td>
                 </tr>
               ))}
             </tbody>
@@ -92,9 +104,9 @@ const InvoiceDetails = () => {
           
           {/* Total Amount */}
           <div className="mt-4 text-right font-play text-xl font-bold">
-            <p>Subtotal: <span className="text-gray-700">200,000</span></p>
-            <p>Discount: <span className="text-gray-700">10,000</span></p>
-            <p>Total: <span className="text-yellow-600">190,000</span></p>
+            <p>Subtotal: <span className="text-gray-700">{invoiceDetail.totalMoney}</span></p>
+            <p>Discount: <span className="text-gray-700">{invoiceDetail.discountMoney}</span></p>
+            <p>Total: <span className="text-yellow-600">{invoiceDetail.totalMoney - invoiceDetail.discountMoney}</span></p>
           </div>
         </div>
       </div>

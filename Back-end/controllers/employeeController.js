@@ -2,20 +2,26 @@ const employeeModel = require('../models/employeeModel');
 
   const getEmployeesBranch = async (req, res) => {
     try {
-        // Giả sử `BranchID` được lưu trong session sau khi quản lý đăng nhập
-        const { BranchID } = req.user; // Hoặc lấy từ token, session
-        if (!BranchID) {
-            return res.status(400).json({ error: 'BranchID is required' });
-        }
-
-        // Gọi hàm lấy danh sách nhân viên
-        const employees = await employeeModel.getEmployeesByBranch(BranchID);
-
-        res.status(200).json({ employees });
-    } catch (error) {
-        console.error('Error fetching employees:', error);
-        res.status(500).json({ error: 'Internal server error' });
+      const employee = await employeeModel.getAllEmployee();
+      res.json(employee);
+    } catch (err) {
+      console.error("Error fetching employee:", err);
+      res.status(500).json({ error: "An error occurred while fetching employee" });
     }
+};
+
+const getAllEmployeeByBranchID = async (req, res) => {
+  const { BranchID } = req.params;
+
+  try {
+    const employees = await employeeModel.getAllEmployeeByBranchID(BranchID);
+    res.status(200).json(employees);
+  } catch (err) {
+    console.error("Error fetching employees:", err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching employees" });
+  }
 };
 
 const getEmployee = async (req, res) => {
@@ -67,9 +73,10 @@ const deleteEmployee = async (req, res) => {
 };
 
 module.exports = {
-    getEmployeesBranch,
-    getEmployee,
-    addNewEmployee,
-    updateEmployee,
-    deleteEmployee
+  getAllEmployees,
+  getAllEmployeeByBranchID,
+  getEmployee,
+  addNewEmployee,
+  updateEmployee,
+  deleteEmployee,
 };

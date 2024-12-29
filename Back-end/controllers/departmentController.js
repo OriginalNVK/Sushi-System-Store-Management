@@ -13,5 +13,6 @@ const getDepartmentController = async (req, res) => {
     }
 }
 
-module.exports = {getDepartmentController}
-
+module.exports = {
+    getDepartmentController
+}

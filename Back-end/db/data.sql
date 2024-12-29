@@ -44,15 +44,14 @@ VALUES
 
 
 -- Dữ liệu mẫu cho ORDER_DIRECTORY:
-INSERT INTO ORDER_DIRECTORY
-    (OrderID, EmployeeID, NumberTable, CardID)
+INSERT INTO ORDER_DIRECTORY (OrderID, EmployeeID, NumberTable, CardID, BranchID)
 VALUES
-    (1, 1, 5, 1),
-    (2, 2, 2, 2),
-    (3, 3, 7, 3),
-    (4, 1, 10, 1),
-    (5, 2, 5, 1),
-    (6, 3, 8, 3);
+(1, NULL, 5, 1, 1),
+(2, NULL, 2, 2, 2),
+(3, NULL, 7, 3, 3),
+(4, NULL, 10, 1, 1),
+(5, NULL, 5, 1, 2),   
+(6, NULL, 8, 3, 3);   
 
 -- Thêm 3 món ăn vào bảng DISH
 INSERT INTO DISH
@@ -63,12 +62,11 @@ VALUES
     (3, 'Món Sashimi', 180000);
 
 -- Thêm 3 đơn hàng vào bảng ORDER_ONLINE
-INSERT INTO ORDER_ONLINE
-    (OnOrderID, BranchID, DateOrder, TimeOrder, AmountCustomer, Note)
+INSERT INTO ORDER_ONLINE (OnOrderID, DateOrder, TimeOrder, AmountCustomer, Note)
 VALUES
-    (1, 1, '2024-11-29', '12:30', 4, 'Đặt món cho 4 người tại chi nhánh Hà Nội'),
-    (2, 2, '2024-11-29', '18:00', 2, 'Đặt món cho 2 người tại chi nhánh Hồ Chí Minh'),
-    (3, 3, '2024-11-29', '20:15', 3, 'Đặt món cho 3 người tại chi nhánh Đà Nẵng');
+(1, '2024-11-29', '12:30', 4, 'Đặt món cho 4 người tại chi nhánh Hà Nội'),
+(2, '2024-11-29', '18:00', 2, 'Đặt món cho 2 người tại chi nhánh Hồ Chí Minh'),
+(3, '2024-11-29', '20:15', 3, 'Đặt món cho 3 người tại chi nhánh Đà Nẵng');
 
 -- Thêm 3 đơn hàng offline vào bảng ORDER_OFFLINE
 INSERT INTO ORDER_OFFLINE
@@ -94,18 +92,18 @@ VALUES
     (6, 1, 3)
 
 -- Thêm dữ liệu vào bảng INVOICE
-INSERT INTO INVOICE (InvoiceID, CardID, TotalMoney, DiscountMoney, PaymentDate, OrderID) 
-VALUES 
-    (1, NULL, 1000, NULL, '2024-01-10', NULL),
-    (2, NULL, 2000, NULL, '2024-01-11', NULL),
-    (3, NULL, 3000, NULL, '2024-01-12', NULL),
-    (4, NULL, 4000, NULL, '2024-01-13', NULL),
-    (5, NULL, 5000, NULL, '2024-01-14', NULL),
-    (6, NULL, 6000, NULL, '2024-01-15', NULL),
-    (7, NULL, 7000, NULL, '2024-01-16', NULL),
-    (8, NULL, 8000, NULL, '2024-01-17', NULL),
-    (9, NULL, 9000, NULL, '2024-01-18', NULL),
-    (10, NULL, 10000, NULL, '2024-01-19', NULL);
+--INSERT INTO INVOICE (InvoiceID, CardID, TotalMoney, DiscountMoney, PaymentDate, OrderID) 
+--VALUES 
+--    (1, NULL, 1000, NULL, '2024-01-10', NULL),
+--    (2, NULL, 2000, NULL, '2024-01-11', NULL),
+--    (3, NULL, 3000, NULL, '2024-01-12', NULL),
+--    (4, NULL, 4000, NULL, '2024-01-13', NULL),
+--    (5, NULL, 5000, NULL, '2024-01-14', NULL),
+--    (6, NULL, 6000, NULL, '2024-01-15', NULL),
+--    (7, NULL, 7000, NULL, '2024-01-16', NULL),
+--    (8, NULL, 8000, NULL, '2024-01-17', NULL),
+--    (9, NULL, 9000, NULL, '2024-01-18', NULL),
+--    (10, NULL, 10000, NULL, '2024-01-19', NULL);
 
 	-- Thêm dữ liệu vào bảng CUSTOMER
 INSERT INTO CUSTOMER (CardID, CustomerName, CustomerEmail, CustomerGender, CustomerPhone, CCCD) 
@@ -113,3 +111,78 @@ VALUES
     (1, 'Nguyen Van A', 'nguyenvana@example.com', 'male', '0123456789', '123456789012'),
     (2, 'Tran Thi B', 'tranthib@example.com', 'female', '0987654321', '234567890123'),
     (3, 'Le Van C', 'levanc@example.com', 'male', '0912345678', '345678901234');
+
+-- Thêm nhân viên mới vào bảng EMPLOYEE
+INSERT INTO EMPLOYEE (EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, LeaveDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone)
+VALUES
+(4, 'Hoàng Văn D', '1988-08-15', 'male', 5000000, '2018-11-10', NULL, 1, 2, 'Hồ Chí Minh', '0976543210'),
+(5, 'Phạm Thị E', '1995-04-20', 'female', 6000000, '2021-02-01', NULL, 2, 3, 'Đà Nẵng', '0932123456'),
+(6, 'Đỗ Minh F', '1993-07-07', 'male', 5500000, '2020-09-12', NULL, 3, 2, 'Hà Nội', '0923456789'),
+(7, 'Nguyễn Thanh G', '1991-12-25', 'male', 5000000, '2019-03-18', NULL, 1, 3, 'Đà Nẵng', '0981237890'),
+(8, 'Trần Thùy H', '1987-06-30', 'female', 6000000, '2017-05-20', NULL, 2, 1, 'Hà Nội', '0916789012');
+
+-- Cập nhật chi nhánh để thêm nhân viên quản lý
+UPDATE BRANCH
+SET ManagerID = 1
+WHERE BranchID = 1;
+
+UPDATE BRANCH
+SET ManagerID = 4
+WHERE BranchID = 2;
+
+UPDATE BRANCH
+SET ManagerID = 5
+WHERE BranchID = 3;
+
+INSERT INTO userWeb (userPhone, password, role)
+VALUES
+('0981234567', '123', 'manager branch'),
+('0976543210', '123', 'manager branch'),
+('0932123456', '123', 'manager branch')
+
+-- Thêm nhân viên còn lại với role là 'employee'
+INSERT INTO userWeb (userPhone, password, role)
+VALUES
+('0909876543', '123', 'employee'),
+('0923456789', '123', 'employee'),
+('0981237890', '123', 'employee'),
+('0916789012', '123', 'employee');
+
+-- Thêm khách hàng với role là 'customer'
+INSERT INTO userWeb (userPhone, password, role)
+VALUES
+('0123456789', '123', 'customer'),
+('0987654321', '123', 'customer'),
+('0912345678', '123', 'customer');
+
+INSERT INTO ORDER_DIRECTORY (OrderID, EmployeeID, NumberTable, CardID, BranchID)
+VALUES 
+    (11, NULL, 5, 1, 3);  -- NULL cho EmployeeID
+GO
+
+INSERT INTO ORDER_ONLINE (OnOrderID, DateOrder, TimeOrder, AmountCustomer, Note)
+VALUES 
+    (11, '2024-12-28', '14:30:00', 3, 'Order for delivery');
+GO
+
+INSERT INTO ORDER_DISH_AMOUNT (OrderID, DishID, AmountDish)
+VALUES 
+    (11, 1, 2),  
+    (11, 2, 1);  
+GO
+
+INSERT INTO ORDER_DIRECTORY (OrderID, EmployeeID, NumberTable, CardID, BranchID)
+VALUES 
+    (14, NULL, 5, 1, 3);  -- NULL cho EmployeeID
+GO
+
+INSERT INTO ORDER_ONLINE (OnOrderID, DateOrder, TimeOrder, AmountCustomer, Note)
+VALUES 
+    (14, '2024-12-28', '14:30:00', 3, 'Order for delivery');
+GO
+
+INSERT INTO ORDER_DISH_AMOUNT (OrderID, DishID, AmountDish)
+VALUES 
+    (14, 1, 2),  
+    (14, 2, 1);  
+GO

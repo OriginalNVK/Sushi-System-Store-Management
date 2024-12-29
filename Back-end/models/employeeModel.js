@@ -11,6 +11,12 @@ where d.DepartmentName != 'Quản lý' and b.BranchID = 1 `);
     return result.recordset; // Trả về bản ghi đầu tiên nếu có
 };
 
+const getAllEmployeeByBranchID = async (BranchID) => {
+    const pool = await connectToDB();
+    const result = await pool.request().input('BranchID', BranchID).query('SELECT * FROM EMPLOYEE WHERE BranchID = @BranchID');
+    return result.recordset; // Trả về bản ghi đầu tiên nếu có
+}
+
 const getEmployeeById = async (EmployeeID) => {
     const pool = await connectToDB();
     const result = await pool.request()
@@ -63,6 +69,7 @@ const deleteEmployeeById = async (EmployeeID) => {
 
 module.exports = {
     getAllEmployee,
+    getAllEmployeeByBranchID,
     getEmployeeById,
     addEmployee,
     updateEmployee,
