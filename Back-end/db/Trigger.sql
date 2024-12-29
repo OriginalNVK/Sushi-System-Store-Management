@@ -57,6 +57,7 @@ BEGIN
     FROM CARD_CUSTOMER
     INNER JOIN INSERTED ON CARD_CUSTOMER.CardID = INSERTED.CardID;
 END;
+GO
 
 
 -- Trigger Nâng cấp loại thẻ khách hàng
@@ -65,7 +66,7 @@ ON INVOICE
 AFTER INSERT, UPDATE
 AS
 BEGIN
-    -- Tính tổng tiêu dùng tích lũy của khách hàng
+    -- Calculate the total cumulative spending of each customer
     WITH TotalSpent AS (
         SELECT 
             c.CardID,
@@ -78,6 +79,7 @@ BEGIN
         GROUP BY 
             c.CardID
     )
+    -- Update the card type based on the total spent and other conditions
     UPDATE CARD_CUSTOMER
     SET CardType = 
         CASE 
@@ -85,10 +87,12 @@ BEGIN
             WHEN TotalSpent >= 10000000 
                  AND CardType = N'silver' 
                  AND DATEDIFF(YEAR, CardEstablishDate, GETDATE()) <= 1 THEN N'golden'
-            ELSE CardType -- Không thay đổi nếu không đạt điều kiện
+            ELSE CardType -- Keep the current type if conditions are not met
         END
     FROM TotalSpent
     WHERE CARD_CUSTOMER.CardID = TotalSpent.CardID;
+
+    -- Optional: Add logging or notification logic for debugging purposes
 END;
 GO
 

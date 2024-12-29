@@ -8,7 +8,21 @@ const getAllEmployees = async (req, res) => {
       console.error("Error fetching employee:", err);
       res.status(500).json({ error: "An error occurred while fetching employee" });
     }
-  };
+};
+
+const getAllEmployeeByBranchID = async (req, res) => {
+  const { BranchID } = req.params;
+
+  try {
+    const employees = await employeeModel.getAllEmployeeByBranchID(BranchID);
+    res.status(200).json(employees);
+  } catch (err) {
+    console.error("Error fetching employees:", err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching employees" });
+  }
+};
 
 const getEmployee = async (req, res) => {
     const { EmployeeID } = req.params;
@@ -59,9 +73,10 @@ const deleteEmployee = async (req, res) => {
 };
 
 module.exports = {
-    getAllEmployees,
-    getEmployee,
-    addNewEmployee,
-    updateEmployee,
-    deleteEmployee
+  getAllEmployees,
+  getAllEmployeeByBranchID,
+  getEmployee,
+  addNewEmployee,
+  updateEmployee,
+  deleteEmployee,
 };

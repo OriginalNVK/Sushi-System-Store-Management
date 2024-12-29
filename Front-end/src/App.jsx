@@ -16,6 +16,8 @@ import BookingDish from "./pages/BookingDish";
 import Invoice from "./pages/Invoice";
 import InvoiceDetails from "./pages/InvoiceDetails";
 import AddEmployee from "./pages/AddEmployee";
+import OrderPage from "./pages/OrderPage";
+import OrderDetailPage from "./pages/OrderDetailPage";  
 
 const App = () => {
   return (
@@ -35,8 +37,10 @@ const App = () => {
         <Route path="/booking" element={<Booking />} />
         <Route path="/bookingdish" element={<BookingDish />} />
         <Route path="/invoices" element={<Invoice />} />
-        <Route path="/invoice/detail" element={<InvoiceDetails />} />
+        <Route path="/invoice/detail/:id" element={<InvoiceDetails />} />
         <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/order" element={<OrderPage />} />
+        <Route path="/order/detail/:id" element={<OrderDetailPage />} />
       </Routes>
     </Router>
   );

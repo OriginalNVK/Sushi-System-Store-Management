@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Decorate from "../components/Decorate";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { getEmployees, deleteEmployee } from "../service/Services"; // Ensure `deleteEmployee` is imported
+import { getEmployees, deleteEmployee, getEmployeeByBranchID } from "../service/Services"; // Ensure `deleteEmployee` is imported
 import { useNavigate } from "react-router-dom";
 
 const Employee = () => {
@@ -13,9 +13,10 @@ const Employee = () => {
   const [filterDepartment, setFilterDepartment] = useState("all");
   const navigate = useNavigate();
 
-  useEffect(() => {
+    useEffect(() => {
+    const branchID = localStorage.getItem("BranchID");
     const loadEmployees = async () => {
-      const data = await getEmployees();
+      const data = await getEmployeeByBranchID(branchID);
       setEmployees(data);
       setAllEmployees(data);
     };
