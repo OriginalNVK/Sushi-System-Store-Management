@@ -1,12 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 
+const reportRevenueRouter = require("./routes/reportRevenueRouter");
 const branchRoutes = require("./routes/branchRoutes");
 const invoiceRoutes = require("./routes/invoiceRoutes");
-const orderOfflineRouter = require('./routes/orderOfflineRouter');
-const orderOnlineRouter = require('./routes/orderOnlineRouter');
-const dishRouter = require('./routes/dishRouter');
-const employeeRouter = require('./routes/employeeRouter');
+const orderOfflineRouter = require("./routes/orderOfflineRouter");
+const orderOnlineRouter = require("./routes/orderOnlineRouter");
+const dishRouter = require("./routes/dishRouter");
+const employeeRouter = require("./routes/employeeRouter");
 const customerRoutes = require("./routes/customerRouter");
 const cardCustomerRouter = require("./routes/cardCustomerRouter");
 const registerRouter = require("./routes/registerRouter");
@@ -34,7 +35,8 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/cards", cardCustomerRouter);
 app.use("/api/register", registerRouter);
 app.use("/api/login", loginRouter);
-app.use("/api/departments", departmentRouter);  
+app.use("/api/departments", departmentRouter);
+app.use("/api/reports/revenue", reportRevenueRouter);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

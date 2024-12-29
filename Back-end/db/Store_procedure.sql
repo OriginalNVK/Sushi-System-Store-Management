@@ -1,4 +1,4 @@
-﻿USE SUSHISTORE_MANAGEMENT
+USE SUSHISTORE_MANAGEMENT
 GO
 ---------------------------------------------------------------------------------
 -- GET DATA FROM OrderDirectory, OrderOnline, Dish, OrderDishAmount
@@ -11,17 +11,17 @@ BEGIN
         OD.EmployeeID, 
         OD.NumberTable,
         OD.CardID,
-        OO.AmountCustomer, 
-        D.DishName, 
-        ODA.AmountDish, 
-        OO.DateOrder, 
+        OO.AmountCustomer,
+        D.DishName,
+        ODA.AmountDish,
+        OO.DateOrder,
         OO.TimeOrder
-    FROM 
+    FROM
         ORDER_DIRECTORY OD
-    INNER JOIN ORDER_ONLINE OO ON OD.OrderID = OO.OnOrderID
-    INNER JOIN ORDER_DISH_AMOUNT ODA ON OD.OrderID = ODA.OrderID
-    INNER JOIN DISH D ON ODA.DishID = D.DishID
-    INNER JOIN CARD_CUSTOMER CC ON OD.CardID = CC.CardID
+        INNER JOIN ORDER_ONLINE OO ON OD.OrderID = OO.OnOrderID
+        INNER JOIN ORDER_DISH_AMOUNT ODA ON OD.OrderID = ODA.OrderID
+        INNER JOIN DISH D ON ODA.DishID = D.DishID
+        INNER JOIN CARD_CUSTOMER CC ON OD.CardID = CC.CardID
     ORDER BY OO.DateOrder, OO.TimeOrder;
 END;
 GO
@@ -169,7 +169,9 @@ BEGIN
         BEGIN TRANSACTION;
 
         -- Validate if OrderID exists
-        IF NOT EXISTS (SELECT 1 FROM ORDER_DIRECTORY WHERE OrderID = @OrderID)
+        IF NOT EXISTS (SELECT 1
+    FROM ORDER_DIRECTORY
+    WHERE OrderID = @OrderID)
         BEGIN
             THROW 50020, 'Order does not exist.', 1;
         END
@@ -185,10 +187,11 @@ BEGIN
 
         PRINT 'Order deleted successfully!';
         COMMIT TRANSACTION;
-    END TRY
+    END
+    TRY
     BEGIN CATCH
-        PRINT 'Error occurred while deleting the order: ' + ERROR_MESSAGE();
-        ROLLBACK TRANSACTION;
+    PRINT 'Error occurred while deleting the order: ' + ERROR_MESSAGE();
+    ROLLBACK TRANSACTION;
     END CATCH
 END;
 GO
@@ -211,31 +214,41 @@ BEGIN
         BEGIN TRANSACTION;
 
         -- Validate Order and other IDs
-        IF NOT EXISTS (SELECT 1 FROM ORDER_DIRECTORY WHERE OrderID = @OrderID)
+        IF NOT EXISTS (SELECT 1
+    FROM ORDER_DIRECTORY
+    WHERE OrderID = @OrderID)
         BEGIN
             THROW 50021, 'Order does not exist.', 1;
         END
-        IF NOT EXISTS (SELECT 1 FROM BRANCH WHERE BranchID = @BranchID)
+        IF NOT EXISTS (SELECT 1
+    FROM BRANCH
+    WHERE BranchID = @BranchID)
         BEGIN
             THROW 50022, 'Branch does not exist.', 1;
         END
-        IF NOT EXISTS (SELECT 1 FROM EMPLOYEE WHERE EmployeeID = @EmployeeID)
+    IF NOT EXISTS (SELECT 1
+    FROM EMPLOYEE
+    WHERE EmployeeID = @EmployeeID)
         BEGIN
-            THROW 50023, 'Employee does not exist.', 1;
-        END
-        IF NOT EXISTS (SELECT 1 FROM CARD_CUSTOMER WHERE CardID = @CardID)
+    THROW 50023, 'Employee does not exist.', 1;
+END
+IF NOT EXISTS (SELECT 1
+FROM CARD_CUSTOMER
+WHERE CardID = @CardID)
         BEGIN
-            THROW 50024, 'Customer does not exist.', 1;
-        END
+THROW 50024, 'Customer does not exist.', 1;
+END
 
-        -- Get DishID
-        DECLARE @DishID INT;
-        SELECT @DishID = DishID FROM DISH WHERE DishName = @DishName;
+-- Get DishID
+DECLARE @DishID INT;
+SELECT @DishID = DishID
+FROM DISH
+WHERE DishName = @DishName;
 
-        IF @DishID IS NULL
+IF @DishID IS NULL
         BEGIN
-            THROW 50025, 'Dish does not exist.', 1;
-        END
+THROW 50025, 'Dish does not exist.', 1;
+END
 
         -- Update ORDER_DIRECTORY
         UPDATE ORDER_DIRECTORY
@@ -247,26 +260,30 @@ BEGIN
         SET AmountCustomer = @AmountCustomer, DateOrder = @DateOrder, TimeOrder = @TimeOrder
         WHERE OnOrderID = @OrderID;
 
-        -- Update or Insert ORDER_DISH_AMOUNT
-        IF EXISTS (SELECT 1 FROM ORDER_DISH_AMOUNT WHERE OrderID = @OrderID AND DishID = @DishID)
+-- Update or Insert ORDER_DISH_AMOUNT
+IF EXISTS (SELECT 1
+FROM ORDER_DISH_AMOUNT
+WHERE OrderID = @OrderID AND DishID = @DishID)
         BEGIN
-            UPDATE ORDER_DISH_AMOUNT
+    UPDATE ORDER_DISH_AMOUNT
             SET AmountDish = @AmountDish
             WHERE OrderID = @OrderID AND DishID = @DishID;
-        END
+END
         ELSE
         BEGIN
-            INSERT INTO ORDER_DISH_AMOUNT (OrderID, DishID, AmountDish)
-            VALUES (@OrderID, @DishID, @AmountDish);
-        END
+    INSERT INTO ORDER_DISH_AMOUNT
+        (OrderID, DishID, AmountDish)
+    VALUES
+        (@OrderID, @DishID, @AmountDish);
+END
 
-        PRINT 'Order updated successfully!';
-        COMMIT TRANSACTION;
-    END TRY
+PRINT 'Order updated successfully!';
+COMMIT TRANSACTION;
+END TRY
     BEGIN CATCH
-        PRINT 'Error occurred while updating the order: ' + ERROR_MESSAGE();
-        ROLLBACK TRANSACTION;
-    END CATCH
+PRINT 'Error occurred while updating the order: ' + ERROR_MESSAGE();
+ROLLBACK TRANSACTION;
+END CATCH
 END;
 GO
 
@@ -486,8 +503,8 @@ GO
 --GO
 --===================================================================================================================
 CREATE OR ALTER PROC New_Employee
-	@EmployeeID INT,
-	@EmployeeName NVARCHAR(255),
+    @EmployeeID INT,
+    @EmployeeName NVARCHAR(255),
     @EmployeeBirth DATE,
     @EmployeeGender NVARCHAR(10),
     @Salary INT,
@@ -498,13 +515,15 @@ CREATE OR ALTER PROC New_Employee
     @EmployeePhone CHAR(15)
 AS
 BEGIN
-    INSERT INTO EMPLOYEE (
-        EmployeeID,EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, 
+    INSERT INTO EMPLOYEE
+        (
+        EmployeeID,EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate,
         DepartmentID, BranchID, EmployeeAddress, EmployeePhone
-    )
-    VALUES (
-        @EmployeeID,@EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, 
-        @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone
+        )
+    VALUES
+        (
+            @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate,
+            @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone
     );
 END;
 GO
@@ -545,7 +564,9 @@ CREATE OR ALTER PROCEDURE Delete_Employee
     @EmployeeID INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM EMPLOYEE WHERE EmployeeID = @EmployeeID)
+    IF EXISTS (SELECT 1
+    FROM EMPLOYEE
+    WHERE EmployeeID = @EmployeeID)
     BEGIN
         DELETE FROM EMPLOYEE WHERE EmployeeID = @EmployeeID;
         PRINT 'Employee deleted successfully.';
@@ -561,48 +582,72 @@ GO
 CREATE OR ALTER PROCEDURE AddNewDish
     @BranchID INT,
     @DirectoryName NVARCHAR(255),
-    @DishID INT, -- Thêm DishID vào tham số đầu vào
+    @DishID INT,
+    -- Thêm DishID vào tham số đầu vào
     @DishName NVARCHAR(255),
     @Price INT
 AS
 BEGIN
     DECLARE @DirectoryID INT;
     -- Kiểm tra nếu Directory không tồn tại, nếu không tồn tại thì thêm mới và lấy DirectoryID
-    IF NOT EXISTS (SELECT 1 FROM DIRECTORY WHERE DirectoryName = @DirectoryName)
+    IF NOT EXISTS (SELECT 1
+    FROM DIRECTORY
+    WHERE DirectoryName = @DirectoryName)
     BEGIN
-        INSERT INTO DIRECTORY (DirectoryName) VALUES (@DirectoryName);
+        INSERT INTO DIRECTORY
+            (DirectoryName)
+        VALUES
+            (@DirectoryName);
         SET @DirectoryID = SCOPE_IDENTITY();
     END
     ELSE
     BEGIN
-        SELECT @DirectoryID = DirectoryID FROM DIRECTORY WHERE DirectoryName = @DirectoryName;
+        SELECT @DirectoryID = DirectoryID
+        FROM DIRECTORY
+        WHERE DirectoryName = @DirectoryName;
     END
 
     -- Kiểm tra nếu Dish không tồn tại, nếu không thì thêm mới và lấy DishID
     DECLARE @NewDishID INT;
-    IF NOT EXISTS (SELECT 1 FROM DISH WHERE DishID = @DishID) -- Kiểm tra DishID
+    IF NOT EXISTS (SELECT 1
+    FROM DISH
+    WHERE DishID = @DishID) -- Kiểm tra DishID
     BEGIN
-        INSERT INTO DISH (DishID, DishName, Price)
-        VALUES (@DishID, @DishName, @Price);  -- Chèn Dish với DishID
-        SET @NewDishID = @DishID;  -- Đặt DishID mới
+        INSERT INTO DISH
+            (DishID, DishName, Price)
+        VALUES
+            (@DishID, @DishName, @Price);
+        -- Chèn Dish với DishID
+        SET @NewDishID = @DishID;
+    -- Đặt DishID mới
     END
     ELSE
     BEGIN
-        SELECT @NewDishID = DishID FROM DISH WHERE DishID = @DishID;
+        SELECT @NewDishID = DishID
+        FROM DISH
+        WHERE DishID = @DishID;
     END
 
     -- Thêm vào DIRECTORY_DISH nếu chưa tồn tại mối quan hệ giữa Directory và Dish
-    IF NOT EXISTS (SELECT 1 FROM DIRECTORY_DISH WHERE DirectoryID = @DirectoryID AND DishID = @NewDishID)
+    IF NOT EXISTS (SELECT 1
+    FROM DIRECTORY_DISH
+    WHERE DirectoryID = @DirectoryID AND DishID = @NewDishID)
     BEGIN
-        INSERT INTO DIRECTORY_DISH (DirectoryID, DishID)
-        VALUES (@DirectoryID, @NewDishID);
+        INSERT INTO DIRECTORY_DISH
+            (DirectoryID, DishID)
+        VALUES
+            (@DirectoryID, @NewDishID);
     END
 
     -- Thêm vào MENU_DIRECTORY nếu chưa tồn tại mối quan hệ giữa Branch và Directory
-    IF NOT EXISTS (SELECT 1 FROM MENU_DIRECTORY WHERE BranchID = @BranchID AND DirectoryID = @DirectoryID)
+    IF NOT EXISTS (SELECT 1
+    FROM MENU_DIRECTORY
+    WHERE BranchID = @BranchID AND DirectoryID = @DirectoryID)
     BEGIN
-        INSERT INTO MENU_DIRECTORY (BranchID, DirectoryID)
-        VALUES (@BranchID, @DirectoryID);
+        INSERT INTO MENU_DIRECTORY
+            (BranchID, DirectoryID)
+        VALUES
+            (@BranchID, @DirectoryID);
     END
 END;
 GO
@@ -619,15 +664,20 @@ GO
 
 --Cap nhat mon
 CREATE PROCEDURE Update_Dish
-	@BranchID INT,
-	@DirectoryName NVARCHAR(255),
-    @DishID INT,                  -- ID của món cần cập nhật
-    @NewDishName NVARCHAR(255),   -- Tên món mới
-    @NewPrice INT              -- Giá mới
+    @BranchID INT,
+    @DirectoryName NVARCHAR(255),
+    @DishID INT,
+    -- ID của món cần cập nhật
+    @NewDishName NVARCHAR(255),
+    -- Tên món mới
+    @NewPrice INT
+-- Giá mới
 AS
 BEGIN
     -- Kiểm tra món ăn có tồn tại hay không
-    IF NOT EXISTS (SELECT 1 FROM DISH WHERE DishID = @DishID)
+    IF NOT EXISTS (SELECT 1
+    FROM DISH
+    WHERE DishID = @DishID)
     BEGIN
         PRINT 'Dish not found!';
         RETURN;
@@ -642,27 +692,33 @@ BEGIN
     DECLARE @DirectoryID INT;
     SELECT @DirectoryID = MD.DirectoryID
     FROM MENU_DIRECTORY MD
-    INNER JOIN DIRECTORY D ON MD.DirectoryID = D.DirectoryID
+        INNER JOIN DIRECTORY D ON MD.DirectoryID = D.DirectoryID
     WHERE MD.BranchID = @BranchID AND D.DirectoryName = @DirectoryName;
 
     IF @DirectoryID IS NULL
     BEGIN
         -- Thêm mục mới nếu chưa tồn tại
-        INSERT INTO DIRECTORY (DirectoryName)
-        VALUES (@DirectoryName);
+        INSERT INTO DIRECTORY
+            (DirectoryName)
+        VALUES
+            (@DirectoryName);
 
         SET @DirectoryID = SCOPE_IDENTITY();
 
         -- Liên kết mục mới với chi nhánh
-        INSERT INTO MENU_DIRECTORY (BranchID, DirectoryID)
-        VALUES (@BranchID, @DirectoryID);
+        INSERT INTO MENU_DIRECTORY
+            (BranchID, DirectoryID)
+        VALUES
+            (@BranchID, @DirectoryID);
     END
 
     -- Cập nhật mối liên kết món ăn với mục mới trong DIRECTORY_DISH
     DELETE FROM DIRECTORY_DISH WHERE DishID = @DishID;
 
-    INSERT INTO DIRECTORY_DISH (DirectoryID, DishID)
-    VALUES (@DirectoryID, @DishID);
+    INSERT INTO DIRECTORY_DISH
+        (DirectoryID, DishID)
+    VALUES
+        (@DirectoryID, @DishID);
 
     PRINT 'Dish updated successfully.';
 END;
@@ -721,6 +777,7 @@ EXEC GetInvoiceDetail 1
 --===============================================================================================================================
 
 ----------------------REVENUE PROC----------------------------------------------------------------------------------------------
+CREATE PROCEDURE InsertRevenueByDate
 CREATE PROCEDURE InsertRevenueByDate
 AS
 BEGIN

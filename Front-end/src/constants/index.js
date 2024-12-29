@@ -518,37 +518,118 @@ export const customerList = [
   },
 ];
 
-
-export const invoiceList = [
+export const reportOverviewByDate = [
   {
-    invoiceId: 1,
-    CustomerName: "Nguyen Van A",
-    DiscountMoney: 10000,
-    SubTotal: 200000,
+    date: "25-12-2024",
+    totalRevenue: 1000000,
+    branchName: "Branch 1",
   },
   {
-    invoiceId: 2,
-    CustomerName: "Nguyen Van B",
-    DiscountMoney: 20000,
-    SubTotal: 300000,
-  },
-  {
-    invoiceId: 3,
-    CustomerName: "Nguyen Van C",
-    DiscountMoney: 30000,
-    SubTotal: 400000,
+    date: "24-12-2024",
+    totalRevenue: 1200000,
+    branchName: "Branch 1",
   }
 ];
 
-export const orderListDish = [
+export const reportDetailByDate = {
+  branchName: "Branch 1",
+  date: "25-12-2024",
+  totalRevenue: 220000,
+  details: [
   {
-    dishName: "Sushi cá hồi",
-    quantity: 2,
-    price: 20000
+    DishName: "Sushi cá hồi",
+    Revenue: 100000,
   },
   {
-    dishName: "Cơm cuộn bào ngư",
-    quantity: 4,
-    price: 40000
+    DishName: "Sushi thịt bò",
+    Revenue: 120000,
+  }
+  ]
+}
+
+export const reportOverviewByMonth = [
+  {
+    month: 12,
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    month: 11,
+    year: 2024,
+    totalRevenue: 1200000,
   }
 ];
+
+export const reportDetailByMonth = {
+  month: 12,
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+  {
+    DishName: "Sushi cá hồi",
+    Revenue: 100000,
+  },
+  {
+    DishName: "Sushi thịt bò",
+    Revenue: 120000,
+  }
+  ]
+}
+
+export const reportOverviewByQuarter = [
+  {
+    numberOfQuarter: 4,
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    numberOfQuarter: 4,
+    year: 2024,
+    totalRevenue: 1200000,
+  }
+]
+
+export const reportDetailByQuarter = {
+  numberOfQuarter: 4,
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+  {
+    DishName: "Sushi cá hồi",
+    Revenue: 100000,
+  },
+  {
+    DishName: "Sushi thịt bò",
+    Revenue: 120000,
+  }
+  ]
+}
+
+export const reportOverviewByYear = [
+  {
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    year: 2024,
+    totalRevenue: 1200000,
+  }
+];
+
+export const reportDetailByYear = {
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+    {
+      DishName: "Sushi cá hồi",
+      Revenue: 100000,
+    },
+    {
+      DishName: "Sushi thịt bò",
+      Revenue: 120000,
+    }
+  ]
+};
