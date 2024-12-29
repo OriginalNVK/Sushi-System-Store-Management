@@ -6,7 +6,7 @@ const OrderOnline = {
   // Lấy tất cả đơn hàng
   async getAllOrders() {
     const pool = await connectToDB();
-    const result = await pool.request().execute("GetOrderOnline");
+    const result = await pool.request().execute("GetOnlineOrder");
     return result.recordset;
   },
 
@@ -21,13 +21,13 @@ const OrderOnline = {
   },
 
   // Lấy chi tiết đơn hàng chưa xác nhận theo ID
-  async getOrderOnlinePendingDetail(orderID) {
+  async getOrderPendingDetail(orderID) {
     const pool = await connectToDB();
     try {
       const result = await pool
         .request()
         .input("OrderID", sql.Int, orderID)
-        .execute("GetOrderOnlinePendingDetail");
+        .execute("GetOrderPendingDetail");
 
       // Kiểm tra nếu không có dữ liệu trả về
       if (result.recordset.length === 0) {
@@ -35,8 +35,14 @@ const OrderOnline = {
       }
 
       // Lấy các thông tin chung từ bản ghi đầu tiên
-      const { OrderID, NumberTable, AmountCustomer } = result.recordset[0];
-
+      const { OrderID } = result.recordset[0];
+      let NumberTable = null;
+      let AmountCustomer = null;
+      if (result.recordset[0].NumberTable !== null)
+      {
+        NumberTable = result.recordset[0].NumberTable;
+        AmountCustomer = result.recordset[0].AmountCustomer;
+      }
       // Nhóm các món ăn (DishName và AmountDish) vào mảng DetailDishs
       const DetailDishs = result.recordset.map((row) => ({
         DishName: row.DishName,
@@ -64,22 +70,25 @@ const OrderOnline = {
 
   // Thêm đơn hàng mới
   async addOrder(orderData) {
-    const pool = await connectToDB();
-    const result = await pool
-      .request()
-      .input("OrderID", sql.Int, orderData.OrderID)
-      .input("BranchID", sql.Int, orderData.BranchID)
-      .input("EmployeeID", sql.Int, orderData.EmployeeID)
-      .input("NumberTable", sql.Int, orderData.NumberTable)
-      .input("CardID", sql.Int, orderData.CardID)
-      .input("AmountCustomer", sql.Int, orderData.AmountCustomer)
-      .input("DishName", sql.NVarChar, orderData.DishName)
-      .input("AmountDish", sql.Int, orderData.AmountDish)
-      .input("DateOrder", sql.NVarChar, orderData.DateOrder)
-      .input("TimeOrder", sql.NVarChar, orderData.TimeOrder)
-      .execute("AddNewOrder10");
-    return result.recordset;
-  },
+        const pool = await connectToDB(); 
+        const dishes = orderData.dishes;
+        for (let i = 0; i < dishes.length; i++)
+        {
+            const result = await pool
+              .request()
+              .input("BranchID", sql.Int, orderData.BranchID)
+              .input("NumberTable", sql.Int, orderData.NumberTable)
+              .input("CardID", sql.Int, orderData.CardID)
+              .input("AmountCustomer", sql.Int, orderData.AmountCustomer)
+              .input("DishName", sql.NVarChar, dishes[i].dishName)
+              .input("AmountDish", sql.Int, parseInt(dishes[i].dishAmount))
+              .input("DateOrder", sql.Date, orderData.DateOrder)
+              .input("TimeOrder", sql.Time, orderData.TimeOrder)
+                .execute("AddNewOnlineOrder"); 
+        }
+        
+        return;
+    },
 
   // Cập nhật đơn hàng
   async updateOrder(orderID, employeeID) {
@@ -143,6 +152,28 @@ const OrderOnline = {
       .input("OrderID", sql.Int, orderID)
       .execute("DeleteOrder");
     return result.recordset;
+  },
+
+  // Thêm đơn hàng mới bằng Store Procedure PlaceOnlineOrder
+  async placeOrder(orderData) {
+    const pool = await connectToDB();
+    try {
+        const { BranchID, DishNames, DishAmounts, AmountCustomer, DateOrder, TimeOrder } = orderData;
+
+        await pool.request()
+            .input("BranchID", sql.Int, BranchID)
+            .input("DishNames", sql.NVarChar, DishNames)
+            .input("DishAmounts", sql.NVarChar, DishAmounts)
+            .input("AmountCustomer", sql.Int, AmountCustomer || null)
+            .input("DateOrder", sql.Date, DateOrder || null)
+            .input("TimeOrder", sql.Time, TimeOrder || null)
+            .execute("PlaceOnlineOrder");
+
+        return { success: true, message: "Order placed successfully" };
+    } catch (error) {
+        console.error("Error placing order:", error.message);
+        throw new Error("Error placing order: " + error.message);
+    }
   },
 };
 

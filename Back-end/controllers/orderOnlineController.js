@@ -19,10 +19,10 @@ const getOrderOnlinePendingOverview = async (req, res) => {
     }
 }
 
-const getOrderOnlinePendingDetail = async (req, res) => {
+const getOrderPendingDetail = async (req, res) => {
     const orderID = req.params.OrderID;
     try {
-        const order = await orderOnlineModel.getOrderOnlinePendingDetail(orderID);
+        const order = await orderOnlineModel.getOrderPendingDetail(orderID);
         res.status(200).json(order);
     } catch (err) {
         res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
@@ -31,10 +31,32 @@ const getOrderOnlinePendingDetail = async (req, res) => {
 
 const postOrderOnline = async (req, res) => {
     try {
-        const newOrder = await orderOnlineModel.addOrder(req.body);
-        res.status(201).json(newOrder);
+        const { BranchID, NumberTable, CardID, AmountCustomer, DateOrder, TimeOrder, dishes } = req.body;
+
+        if (!dishes || dishes.length === 0) {
+            return res.status(400).json({
+                Status: "Error",
+                ErrorMessage: "Danh sách món ăn không được để trống.",
+            });
+        }
+
+        const newOrder = await orderOnlineModel.addOrder({
+            BranchID,
+            NumberTable,
+            CardID,
+            AmountCustomer,
+            DateOrder,
+            TimeOrder,
+            dishes: dishes
+        });
+        res.status(201).json({
+            Status: "Success",
+        });
     } catch (err) {
-        res.status(500).send('Lỗi khi thêm đơn hàng: ' + err.message);
+        res.status(500).json({
+            Status: "Error",
+            ErrorMessage: "Lỗi khi thêm đơn hàng: " + err.message,
+        });
     }
 };
 
@@ -77,17 +99,57 @@ const deleteOrderOnline = async (req, res) => {
     const orderID = req.params.OrderID;
     try {
         await orderOnlineModel.deleteOrder(orderID);
-        res.status(204).send(); // Trả về 204 No Content
+        res.status(204).send(); 
     } catch (err) {
         res.status(500).send('Lỗi khi xóa đơn hàng: ' + err.message);
+    }
+};
+
+const postPlaceOrder = async (req, res) => {
+    try {
+        const { BranchID, dishes, AmountCustomer, DateOrder, TimeOrder } = req.body;
+
+        // Kiểm tra dữ liệu đầu vào
+        if (!BranchID || !dishes || dishes.length === 0) {
+            return res.status(400).json({
+                Status: "Error",
+                ErrorMessage: "BranchID và danh sách món ăn là bắt buộc.",
+            });
+        }
+
+        // Chuyển đổi danh sách món ăn và số lượng thành chuỗi
+        const DishNames = dishes.map((dish) => dish.dishName).join(",");
+        const DishAmounts = dishes.map((dish) => dish.dishAmount).join(",");
+
+        // Gọi model để thêm đơn hàng
+        const result = await orderOnlineModel.placeOrder({
+            BranchID,
+            DishNames,
+            DishAmounts,
+            AmountCustomer,
+            DateOrder,
+            TimeOrder,
+        });
+
+        res.status(201).json({
+            Status: "Success",
+            Message: result.message,
+        });
+    } catch (err) {
+        console.error("Error placing order:", err.message);
+        res.status(500).json({
+            Status: "Error",
+            ErrorMessage: "Lỗi khi đặt đơn hàng: " + err.message,
+        });
     }
 };
 
 module.exports = {
     getOrderOnline,
     getOrderOnlinePendingOverview,
-    getOrderOnlinePendingDetail,
+    getOrderPendingDetail,
     postOrderOnline,
     putOrderOnline,
-    deleteOrderOnline
+    deleteOrderOnline,
+    postPlaceOrder
 };

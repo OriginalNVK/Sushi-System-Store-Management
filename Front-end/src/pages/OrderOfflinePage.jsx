@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react'
 import Header from '../components/Header'
 import Decorate from '../components/Decorate'
 import Footer from '../components/Footer'
-import { getOrderOnlinePendingOverview, updateOrder } from '../service/Services'
+import { getOrderOfflinePendingOverview, updateOrder } from '../service/Services'
 import { useNavigate } from 'react-router-dom'
 
-const OrderPage = () => {
+const OrderOfflinePage = () => {
 
     const [selectedOrder, setSelectedOrder] = useState(null);
   const [order, setOrder] = useState([]);
@@ -13,7 +13,7 @@ const OrderPage = () => {
     useEffect(() => {
         const branchID = localStorage.getItem('BranchID');
         const loadData = async (branchID) => {
-            const data = await getOrderOnlinePendingOverview(branchID);
+            const data = await getOrderOfflinePendingOverview(branchID);
             setOrder(data);
         }
         loadData(branchID);
@@ -46,12 +46,6 @@ const OrderPage = () => {
         }
     }
 
-    const handleTime = (time, date) => {
-        const formattedTime = new Date(time).toISOString().split("T")[1].split(".")[0];
-        const formattedDate = new Date(date).toISOString().split("T")[0];
-        return `${formattedTime} - ${formattedDate.split("-").reverse().join("/")}`;
-    }
-
   return (
       <div>
           <div className="min-h-screen flex flex-col">
@@ -59,8 +53,8 @@ const OrderPage = () => {
                 <div className="flex flex-1 items-center justify-center flex-col py-6">
                     <div className="flex flex-col pb-6 justify-center items-center">
                         <p className="text-yellow text-4xl font-play py-2 font-bold ">
-                            ORDER LIST BRANCH {localStorage.getItem('BranchID')}
-                        </p>
+                          ORDER ONLINE LIST
+                      </p>
                       <Decorate />
                   </div>
                     <div className="w-11/12 flex flex-col items-center justify-center">
@@ -71,7 +65,6 @@ const OrderPage = () => {
                                     <th className="table-cell h-12 border">Order ID</th>
                                     <th className="table-cell h-12 border">Branch ID</th>
                                     <th className="table-cell h-12 border">Customer Name</th>
-                                    <th className="table-cell h-12 border">Time</th>
                                     <th className="table-cell h-12 border">Action</th>
                                 </tr>
                             </thead>
@@ -82,7 +75,6 @@ const OrderPage = () => {
                                         <td className="table-cell border">{item.OrderID}</td>
                                         <td className="table-cell border">{item.BranchID}</td>
                                         <td className="table-cell border">{item.CUSTOMERNAME}</td>
-                                        <td className="table-cell border">{handleTime(item.TimeOrder, item.DateOrder)}</td>
                                         <td className="table-cell border">
                                             <input
                                               type="radio"
@@ -117,4 +109,4 @@ const OrderPage = () => {
   )
 }
 
-export default OrderPage
+export default OrderOfflinePage

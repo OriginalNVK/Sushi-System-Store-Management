@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Decorate from "../components/Decorate";
 import Footer from "../components/Footer";
 import { updateOrder } from "../service/Services";
-import { getOrderOnlinePendingDetail } from "../service/Services";
+import { getOrderPendingDetail } from "../service/Services";
 
 const OrderDetailPage = () => {
   const { id } = useParams(); // Get "id" from the route "/order/detail/:id"
@@ -14,7 +14,7 @@ const OrderDetailPage = () => {
   useEffect(() => {
     const loadData = async (orderID) => {
       try {
-        const data = await getOrderOnlinePendingDetail(orderID);
+        const data = await getOrderPendingDetail(orderID);
         setOrderDetail(data);
       } catch (error) {
         console.error("Error fetching order detail:", error);

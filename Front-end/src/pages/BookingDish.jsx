@@ -1,69 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { getDishes, bookOrder } from '../service/Services'; // Assuming these APIs exist.
-import Decorate from '../components/Decorate';
+import React, { useState } from "react";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Decorate from "../components/Decorate";
 
 const BookingDish = () => {
+  const [branchID, setBranchID] = useState(1); // Giả định BranchID là 1 (có thể lấy từ API)
+  const [amountCustomer, setAmountCustomer] = useState(null); // Để null nếu không cần
+  const [dishName, setDishName] = useState("");
+  const [dishAmount, setDishAmount] = useState(1);
   const [dishes, setDishes] = useState([]);
-  const [selectedDishID, setSelectedDishID] = useState('');
-  const [quantity, setQuantity] = useState(1);
-  const [order, setOrder] = useState([]);
-  const [cardID, setCardID] = useState(null);
-
-  // Fetch dishes from API on component mount
-  useEffect(() => {
-    const loadDishes = async () => {
-      const data = await getDishes();
-      setDishes(data);
-    };
-
-    loadDishes();
-
-    // Mock CardID retrieval (replace with real customer CardID logic)
-    const mockCardID = 1234; // Replace with actual card fetching logic
-    setCardID(mockCardID);
-  }, []);
+  const [orderDate, setOrderDate] = useState(null); // Để null
+  const [orderTime, setOrderTime] = useState(null); // Để null
 
   const handleAddDish = () => {
-    if (!selectedDishID || quantity <= 0) {
-      alert('Please select a valid dish and quantity.');
+    if (!dishName.trim() || dishAmount <= 0) {
+      alert("Please enter a valid dish name and quantity.");
       return;
     }
 
-    const selectedDish = dishes.find((dish) => dish.DishID === selectedDishID);
-
-    // Add dish to the order
-    setOrder((prevOrder) => [
-      ...prevOrder,
-      { DishID: selectedDishID, DishName: selectedDish.DishName, Quantity: quantity },
+    // Thêm món ăn vào danh sách
+    setDishes((prevDishes) => [
+      ...prevDishes,
+      { dishName: dishName.trim(), dishAmount: dishAmount },
     ]);
 
-    // Reset selection and quantity
-    setSelectedDishID('');
-    setQuantity(1);
+    // Reset input
+    setDishName("");
+    setDishAmount(1);
   };
 
   const handleBooking = async () => {
-    if (order.length === 0) {
-      alert('Your order is empty. Please add dishes.');
+    if (dishes.length === 0) {
+      alert("Your order is empty. Please add dishes.");
       return;
     }
 
-    if (!cardID) {
-      alert('Unable to identify your CardID.');
-      return;
-    }
+    // Dữ liệu gửi đến API
+    const orderData = {
+      BranchID: branchID,
+      AmountCustomer: amountCustomer,
+      DateOrder: orderDate,
+      TimeOrder: orderTime,
+      dishes,
+    };
 
-    const response = await bookOrder({ cardID, order });
+    try {
+      const response = await fetch("http://localhost:3000/api/order-online/place-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
 
-    if (response.ok) {
-      alert('Order booked successfully!');
-      setOrder([]); // Clear the order after booking
-    } else {
-      alert('Failed to book the order.');
-      const message = await response.text();
-      console.error(message);
+      if (response.ok) {
+        alert("Order booked successfully!");
+        setDishes([]); // Xóa danh sách món ăn sau khi đặt hàng thành công
+      } else {
+        const error = await response.text();
+        alert("Failed to book the order: " + error);
+      }
+    } catch (err) {
+      console.error("Error booking order:", err);
+      alert("Failed to connect to the server.");
     }
   };
 
@@ -76,34 +75,41 @@ const BookingDish = () => {
           <Decorate />
         </div>
 
-        {/* Dish Selection */}
+        {/* BranchID (cố định hoặc nhập) */}
+        <div className="w-full max-w-lg mb-4">
+          <label className="block text-lg font-semibold text-gray-700 mb-2">
+            Branch ID
+          </label>
+          <input
+            type="number"
+            value={branchID}
+            onChange={(e) => setBranchID(Number(e.target.value))}
+            className="w-full border border-gray-300 rounded-lg p-2 mb-4"
+            placeholder="Enter Branch ID"
+          />
+        </div>
+
+        {/* Dish Input */}
         <div className="w-full max-w-lg">
           <label className="block text-lg font-semibold text-gray-700 mb-2">
-            Select Dish
+            Enter Dish Name
           </label>
-          <select
-            value={selectedDishID}
-            onChange={(e) => setSelectedDishID(e.target.value)}
+          <input
+            type="text"
+            value={dishName}
+            onChange={(e) => setDishName(e.target.value)}
+            placeholder="Enter dish name"
             className="w-full border border-gray-300 rounded-lg p-2 mb-4"
-          >
-            <option value="" disabled>
-              Choose a dish
-            </option>
-            {dishes.map((dish) => (
-              <option key={dish.DishID} value={dish.DishID}>
-                {dish.DishName} - {dish.Price}$
-              </option>
-            ))}
-          </select>
+          />
 
-          {/* Quantity */}
+          {/* Dish Amount */}
           <label className="block text-lg font-semibold text-gray-700 mb-2">
             Quantity
           </label>
           <input
             type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(Math.max(1, e.target.value))}
+            value={dishAmount}
+            onChange={(e) => setDishAmount(Math.max(1, parseInt(e.target.value)))}
             className="w-full border border-gray-300 rounded-lg p-2 mb-4"
           />
 
@@ -119,12 +125,12 @@ const BookingDish = () => {
         {/* Order Summary */}
         <div className="w-full max-w-lg mt-8">
           <h3 className="text-2xl font-bold mb-4">Order Summary</h3>
-          {order.length > 0 ? (
+          {dishes.length > 0 ? (
             <ul className="border border-gray-300 rounded-lg p-4">
-              {order.map((item, index) => (
+              {dishes.map((item, index) => (
                 <li key={index} className="flex justify-between items-center mb-2">
-                  <span>{item.DishName}</span>
-                  <span>Qty: {item.Quantity}</span>
+                  <span>{item.dishName}</span>
+                  <span>Qty: {item.dishAmount}</span>
                 </li>
               ))}
             </ul>
