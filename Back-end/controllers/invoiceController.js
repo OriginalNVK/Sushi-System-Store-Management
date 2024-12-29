@@ -101,5 +101,5 @@ module.exports = {
   addInvoiceController,
   updateInvoiceController,
   deleteInvoiceController,
-  getInvoiceDetailController,
+  getInvoiceDetailController, 
 };
