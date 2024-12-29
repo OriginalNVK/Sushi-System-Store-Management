@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Feedback from "./pages/Feedback";
+import HomeClient from "./pages/HomeClient";
+import Introduction from "./pages/Introduction";
+import LoginPage from "./pages/LoginPage";
+import MenuDish from "./pages/MenuDish";
+import RegisterPage from "./pages/RegisterPage";
+import ReserveTable from "./pages/ReserveTable";
+import React from "react";
+import Employee from "./pages/Employee";
+import Customer from "./pages/Customer";
+import ReportOverview from "./pages/ReportOverview";
+import Branch from "./pages/Branch";
+import Booking from "./pages/Booking";
+import BookingDish from "./pages/BookingDish";
+import Invoice from "./pages/Invoice";
+import InvoiceDetails from "./pages/InvoiceDetails";
+import AddEmployee from "./pages/AddEmployee";
+import OrderPage from "./pages/OrderPage";
+import OrderDetailPage from "./pages/OrderDetailPage";  
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomeClient />} />
+        <Route path="/introduction" element={<Introduction />} />
+        <Route path="/menu" element={<MenuDish />} />
+        <Route path="/reserve" element={<ReserveTable />} />
+        <Route path="/feedback" element={<Feedback />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/employee" element={<Employee />} />
+        <Route path="/customer" element={<Customer />} />
+        <Route path="/reports" element={<ReportOverview />} />
+        <Route path="/branch" element={<Branch />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/bookingdish" element={<BookingDish />} />
+        <Route path="/invoices" element={<Invoice />} />
+        <Route path="/invoice/detail/:id" element={<InvoiceDetails />} />
+        <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/order" element={<OrderPage />} />
+        <Route path="/order/detail/:id" element={<OrderDetailPage />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;
