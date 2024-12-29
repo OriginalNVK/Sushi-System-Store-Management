@@ -2,9 +2,9 @@ const sql = require("mssql");
 
 const config = {
   user: "sa",
-  password: "123456",
-  server: "LAPTOP-S3VQSE6D\\SQLEXPRESS",
-  database: "SUSHISTORE_MANAGEMENT_MAIN_2004",
+  password: "27072004",
+  server: "ORIGINALNVK\\SQLEXPRESS",
+  database: "SUSHISTORE_MANAGEMENT",
   port: 1433, // Move port inside the config object
 
   options: {

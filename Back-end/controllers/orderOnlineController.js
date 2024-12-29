@@ -20,16 +20,6 @@ const postOrderOnline = async (req, res) => {
             });
         }
 
-        const dishNames = dishes.map((dish) => dish.dishName).join(",");
-        const dishAmounts = dishes.map((dish) => dish.dishAmount).join(",");
-
-        console.log( BranchID,
-            NumberTable,
-            CardID,
-            AmountCustomer,
-            DateOrder,
-            TimeOrder,dishNames, dishAmounts);
-
         const newOrder = await orderOnlineModel.addOrder({
             BranchID,
             NumberTable,
@@ -37,8 +27,7 @@ const postOrderOnline = async (req, res) => {
             AmountCustomer,
             DateOrder,
             TimeOrder,
-            DishNames: dishNames,
-            DishAmounts: dishAmounts,
+            dishes: dishes
         });
         res.status(201).json({
             Status: "Success",
