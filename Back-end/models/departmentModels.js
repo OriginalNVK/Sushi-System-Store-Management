@@ -10,3 +10,5 @@ const getDepartmentModel = async () => {
             DEPARTMENT;
     `);
 }
+
+module.exports = {getDepartmentModel}

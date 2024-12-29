@@ -2,8 +2,9 @@ const dishModel = require('../models/dishModel');
 
 
 const getAllDish = async (req, res) => {
+    const { BranchID } = req.params;
     try {
-      const dish = await dishModel.getAllDishes();
+      const dish = await dishModel.getAllDishes(BranchID);
       res.json(dish);
     } catch (err) {
       console.error("Error fetching dish:", err);

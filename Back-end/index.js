@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const branchRoutes = require("./routes/branchRoutes");
-const invoiceRoutes = require("./routes/invoiceRoutes");
+// const invoiceRoutes = require("./routes/invoiceRoutes");
 const orderOfflineRouter = require('./routes/orderOfflineRouter');
 const orderOnlineRouter = require('./routes/orderOnlineRouter');
 const dishRouter = require('./routes/dishRouter');
@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/branch", branchRoutes);
-app.use("/api/invoice", invoiceRoutes);
+// app.use("/api/invoice", invoiceRoutes);
 app.use("/api/order-offline", orderOfflineRouter);
 app.use("/api/order-online", orderOnlineRouter);
 app.use("/api/dishes", dishRouter);
