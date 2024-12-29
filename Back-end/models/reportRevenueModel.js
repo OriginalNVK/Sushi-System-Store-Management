@@ -1,5 +1,3 @@
-// models/revenueModel.js
-
 const { poolPromise } = require('../db/dbConfig');
 
 async function executeProcedure(procedureName, params) {
