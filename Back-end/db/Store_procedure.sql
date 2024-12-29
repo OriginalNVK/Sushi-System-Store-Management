@@ -773,11 +773,11 @@ BEGIN
 END
 GO
 
-EXEC GetInvoiceDetail 1
+-- EXEC GetInvoiceDetail 1
 --===============================================================================================================================
 
 ----------------------REVENUE PROC----------------------------------------------------------------------------------------------
-CREATE PROCEDURE InsertRevenueByDate
+-- CREATE PROCEDURE InsertRevenueByDate
 CREATE PROCEDURE InsertRevenueByDate
 AS
 BEGIN
