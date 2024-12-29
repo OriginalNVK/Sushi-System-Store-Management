@@ -14,7 +14,7 @@ const OrderOffline = {
     
     async addOrder(orderData) {
         try {
-            const pool = await connectToDB(); 
+            const pool = await connectToDB(); ;
             const result = await pool.request()
                 .input('EmployeeID', sql.Int, orderData.EmployeeID)
                 .input('NumberTable', sql.Int, orderData.NumberTable)
