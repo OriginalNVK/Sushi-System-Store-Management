@@ -1,19 +1,9 @@
 const sql = require('mssql');
 const connectToDB = require('../db/dbConfig');
 
-const getAllEmployee = async () => {
-    const pool = await connectToDB();
-    const result = await pool.request().query(`select e.EmployeeID, e.EmployeeName, e.EmployeeBirth, e.EmployeeGender, e.Salary, e.EntryDate, e.LeaveDate, d.DepartmentName , e.BranchID, e.EmployeeAddress, e.EmployeePhone
-from EMPLOYEE e
-join BRANCH b on b.BranchID = e.BranchID
-join DEPARTMENT d on d.DepartmentID = e.DepartmentID
-where d.DepartmentName != 'Quản lý' and b.BranchID = 1 `);
-    return result.recordset; // Trả về bản ghi đầu tiên nếu có
-};
-
 const getAllEmployeeByBranchID = async (BranchID) => {
     const pool = await connectToDB();
-    const result = await pool.request().input('BranchID', BranchID).query('SELECT * FROM EMPLOYEE WHERE BranchID = @BranchID');
+    const result = await pool.request().input('BranchID', BranchID).query(`EXEC GetEmployeesByBranchID @BranchID`);
     return result.recordset; // Trả về bản ghi đầu tiên nếu có
 }
 
@@ -68,7 +58,6 @@ const deleteEmployeeById = async (EmployeeID) => {
 };
 
 module.exports = {
-    getAllEmployee,
     getAllEmployeeByBranchID,
     getEmployeeById,
     addEmployee,

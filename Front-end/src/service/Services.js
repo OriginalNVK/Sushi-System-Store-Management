@@ -26,9 +26,9 @@ export const loginUser = async (phone, password) => {
   }
 };
 
-export const getCustomer = async () => {
+export const getCustomer = async (branchID) => {
   try {
-    const response = await fetch('http://localhost:3000/api/customers');
+    const response = await fetch(`http://localhost:3000/api/customers/${branchID}`);
 
     const result = await response.json();
     return result;
