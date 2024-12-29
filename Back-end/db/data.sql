@@ -1,4 +1,4 @@
-﻿﻿USE SUSHISTORE_MANAGEMENT
+﻿USE SUSHISTORE_MANAGEMENT
 GO
 
 -- Thêm 3 khu vực vào bảng AREA
@@ -94,9 +94,8 @@ VALUES
     (6, 1, 3)
 
 -- Thêm dữ liệu vào bảng INVOICE
-INSERT INTO INVOICE
-    (InvoiceID, CardID, TotalMoney, DiscountMoney, PaymentDate, OrderID)
-VALUES
+INSERT INTO INVOICE (InvoiceID, CardID, TotalMoney, DiscountMoney, PaymentDate, OrderID) 
+VALUES 
     (1, NULL, 1000, NULL, '2024-01-10', NULL),
     (2, NULL, 2000, NULL, '2024-01-11', NULL),
     (3, NULL, 3000, NULL, '2024-01-12', NULL),
@@ -108,10 +107,9 @@ VALUES
     (9, NULL, 9000, NULL, '2024-01-18', NULL),
     (10, NULL, 10000, NULL, '2024-01-19', NULL);
 
--- Thêm dữ liệu vào bảng CUSTOMER
-INSERT INTO CUSTOMER
-    (CardID, CustomerName, CustomerEmail, CustomerGender, CustomerPhone, CCCD)
-VALUES
+	-- Thêm dữ liệu vào bảng CUSTOMER
+INSERT INTO CUSTOMER (CardID, CustomerName, CustomerEmail, CustomerGender, CustomerPhone, CCCD) 
+VALUES 
     (1, 'Nguyen Van A', 'nguyenvana@example.com', 'male', '0123456789', '123456789012'),
     (2, 'Tran Thi B', 'tranthib@example.com', 'female', '0987654321', '234567890123'),
     (3, 'Le Van C', 'levanc@example.com', 'male', '0912345678', '345678901234');

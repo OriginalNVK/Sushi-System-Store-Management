@@ -704,31 +704,26 @@ GO
 CREATE PROCEDURE InsertRevenueByDate
 AS
 BEGIN
-    INSERT INTO RevenueByDate
-        (RevenueDate, TotalRevenue)
-    SELECT
-        PaymentDate AS RevenueDate,
+    INSERT INTO RevenueByDate (RevenueDate, TotalRevenue)
+    SELECT 
+        PaymentDate AS RevenueDate, 
         SUM(TotalMoney - DiscountMoney) AS TotalRevenue
-    FROM
+    FROM 
         INVOICE
     GROUP BY 
         PaymentDate;
 END;
 GO
---EXEC InsertRevenueByDate;
 
------------------------------------------------------------------
-GO
 CREATE PROCEDURE InsertRevenueByMontht
 AS
 BEGIN
-    INSERT INTO RevenueByMonth
-        (RevenueMonth, RevenueYear, TotalRevenue)
-    SELECT
-        MONTH(RevenueDate) AS RevenueMonth,
-        YEAR(RevenueDate) AS RevenueYear,
+    INSERT INTO RevenueByMonth (RevenueMonth, RevenueYear, TotalRevenue)
+    SELECT 
+        MONTH(RevenueDate) AS RevenueMonth, 
+        YEAR(RevenueDate) AS RevenueYear, 
         SUM(TotalRevenue) AS TotalRevenue
-    FROM
+    FROM 
         RevenueByDate
     GROUP BY 
         MONTH(RevenueDate), YEAR(RevenueDate)
@@ -736,19 +731,16 @@ BEGIN
 END;
 GO
 
---EXEC InsertRevenueByMonth
-
 GO
 CREATE PROCEDURE InsertRevenueByQuarter
 AS
 BEGIN
-    INSERT INTO RevenueByQuarter
-        (RevenueQuarter, RevenueYear, TotalRevenue)
-    SELECT
-        CEILING(MONTH(RevenueDate) / 3.0) AS RevenueQuarter,
-        YEAR(RevenueDate) AS RevenueYear,
+    INSERT INTO RevenueByQuarter (RevenueQuarter, RevenueYear, TotalRevenue)
+    SELECT 
+        CEILING(MONTH(RevenueDate) / 3.0) AS RevenueQuarter, 
+        YEAR(RevenueDate) AS RevenueYear, 
         SUM(TotalRevenue) AS TotalRevenue
-    FROM
+    FROM 
         RevenueByDate
     GROUP BY 
         CEILING(MONTH(RevenueDate) / 3.0), YEAR(RevenueDate)
@@ -756,18 +748,14 @@ BEGIN
 END;
 GO
 
---EXEC InsertRevenueByQuarter
-
-
 CREATE PROCEDURE InsertRevenueByYear
 AS
 BEGIN
-    INSERT INTO RevenueByYear
-        (RevenueYear, TotalRevenue)
-    SELECT
-        YEAR(RevenueDate) AS RevenueYear,
+    INSERT INTO RevenueByYear (RevenueYear, TotalRevenue)
+    SELECT 
+        YEAR(RevenueDate) AS RevenueYear, 
         SUM(TotalRevenue) AS TotalRevenue
-    FROM
+    FROM 
         RevenueByDate
     GROUP BY 
         YEAR(RevenueDate)
@@ -775,35 +763,28 @@ BEGIN
 END;
 GO
 
---EXEC InsertRevenueByYear
-
-
 -- Procedure to calculate revenue by day
-CREATE PROCEDURE CalRevenueByDay
-    (@InputDate DATE)
+CREATE PROCEDURE CalRevenueByDay (@InputDate DATE)
 AS
 BEGIN
-    SELECT
+    SELECT 
         RevenueDate AS [Date],
         TotalRevenue AS [Total Revenue]
-    FROM
+    FROM 
         RevenueByDate
     WHERE 
         RevenueDate = @InputDate;
 END;
 GO
-
 -- Procedure to calculate revenue by month
-CREATE PROCEDURE CalRevenueByMonth
-    (@InputMonth INT,
-    @InputYear INT)
+CREATE PROCEDURE CalRevenueByMonth (@InputMonth INT, @InputYear INT)
 AS
 BEGIN
-    SELECT
+    SELECT 
         RevenueMonth AS [Month],
         RevenueYear AS [Year],
         TotalRevenue AS [Total Revenue]
-    FROM
+    FROM 
         RevenueByMonth
     WHERE 
         RevenueMonth = @InputMonth AND RevenueYear = @InputYear;
@@ -811,16 +792,14 @@ END;
 GO
 
 -- Procedure to calculate revenue by quarter
-CREATE PROCEDURE CalRevenueByQuarter
-    (@InputQuarter INT,
-    @InputYear INT)
+CREATE PROCEDURE CalRevenueByQuarter (@InputQuarter INT, @InputYear INT)
 AS
 BEGIN
-    SELECT
+    SELECT 
         RevenueQuarter AS [Quarter],
         RevenueYear AS [Year],
         TotalRevenue AS [Total Revenue]
-    FROM
+    FROM 
         RevenueByQuarter
     WHERE 
         RevenueQuarter = @InputQuarter AND RevenueYear = @InputYear;
@@ -828,70 +807,16 @@ END;
 GO
 
 -- Procedure to calculate revenue by year
-CREATE PROCEDURE CalRevenueByYear
-    (@InputYear INT)
+CREATE PROCEDURE CalRevenueByYear (@InputYear INT)
 AS
 BEGIN
-    SELECT
+    SELECT 
         RevenueYear AS [Year],
         TotalRevenue AS [Total Revenue]
-    FROM
+    FROM 
         RevenueByYear
     WHERE 
         RevenueYear = @InputYear;
 END;
 GO
 
---EXEC CalRevenueByDay @InputDate = '2024-11-30';
---EXEC CalRevenueByMonth @InputMonth = 12, @InputYear = 2024;
---EXEC CalRevenueByQuarter @InputQuarter = 4, @InputYear = 2024;
---EXEC CalRevenueByYear @InputYear = 2024;
-
-----------------------REVENUE PROC----------------------------------------------------------------------------------------------
-
-CREATE PROCEDURE UPDATEDISHREVENUE
-    @INVOICEID INT -- Tham số ID hóa đơn
-AS
-BEGIN
-    BEGIN TRY
-        -- Bắt đầu transaction để đảm bảo tính nhất quán dữ liệu
-        BEGIN TRANSACTION;
-
-        -- Xử lý: Duyệt từng bản ghi để thực hiện chèn hoặc cập nhật
-        MERGE DISHREVENUE AS DR
-        USING (
-            SELECT 
-                COALESCE(OL.BRANCHID, OFL.BRANCHID) AS BRANCHID,
-                D.DISHID,
-                I.PAYMENTDATE AS PAYDATE,
-                O.AMOUNTDISH * D.PRICE AS NEW_REVENUE
-            FROM INVOICE I
-            JOIN ORDER_DISH_AMOUNT O ON I.ORDERID = O.ORDERID
-            JOIN DISH D ON O.DISHID = D.DISHID
-            LEFT JOIN ORDER_ONLINE OL ON I.ORDERID = OL.OnOrderID
-            LEFT JOIN ORDER_OFFLINE OFL ON I.ORDERID = OFL.OffOrderID
-            WHERE I.INVOICEID = @INVOICEID
-        ) AS SourceData
-        ON DR.BRANCHID = SourceData.BRANCHID 
-           AND DR.DISHID = SourceData.DISHID 
-           AND DR.PAYDATE = SourceData.PAYDATE
-        WHEN MATCHED THEN
-            -- Nếu đã tồn tại, cập nhật REVENUE
-            UPDATE SET DR.REVENUE = DR.REVENUE + SourceData.NEW_REVENUE
-        WHEN NOT MATCHED THEN
-            -- Nếu chưa tồn tại, thêm bản ghi mới
-            INSERT (BRANCHID, DISHID, PAYDATE, REVENUE)
-            VALUES (SourceData.BRANCHID, SourceData.DISHID, SourceData.PAYDATE, SourceData.NEW_REVENUE);
-
-        -- Commit transaction nếu không có lỗi
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        -- Rollback transaction nếu có lỗi
-        ROLLBACK TRANSACTION;
-
-        -- Ném lỗi ra ngoài
-        THROW;
-    END CATCH
-END;
-GO

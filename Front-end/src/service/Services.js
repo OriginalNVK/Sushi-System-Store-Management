@@ -16,17 +16,6 @@ export const loginUser = async (phone, password) => {
   }
 };
 
-export const getEmployees = async () => {
-  try {
-    const response = await fetch("http://localhost:3000/api/employees");
-    const result = await response.json();
-    return result;
-  } catch (err) {
-    console.error("Error during getEmployees request:", err);
-    return [];
-  }
-};
-
 export const getCustomer = async () => {
   try {
     const response = await fetch('http://localhost:3000/api/customers');
@@ -65,6 +54,47 @@ export const deleteBranch = async (branchID) => {
   catch (error)
   {
     console.error("Error during deleteBranch request:", error);
+    return { success: false, error: "Network error" };
+  }
+}
+
+export const getDepartments = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/departments');
+    const result = await response.json();
+    return result;
+  }
+  catch(error)
+  {
+    console.error("Error during getDepartments request:", error);
+    return [];
+  }
+}
+
+export const getEmployees = async () => {
+  try {
+    const response = await fetch("http://localhost:3000/api/employees");
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    console.error("Error during getEmployees request:", err);
+    return [];
+  }
+};
+
+export const createEmployee = async (employee) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/employees', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(employee),
+    })
+  }
+  catch(error)
+  {
+    console.error("Error during createEmployee request:", error);
     return { success: false, error: "Network error" };
   }
 }

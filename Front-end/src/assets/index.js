@@ -14,6 +14,7 @@ import orderIcon from './icons/orderIcon.png';
 import branchIcon from './icons/branchIcon.png';
 import customerIcon from './icons/customerIcon.png';
 import employeeIcon from './icons/employeeIcon.png';
+import invoiceIcon from './icons/invoiceIcon.png';
 
 import facebook from './social/facebook.png';
 import instagram from './social/instagram.png';
@@ -39,6 +40,7 @@ export{
     branchIcon,
     customerIcon,
     employeeIcon,
+    invoiceIcon,
     facebook,
     instagram,
     x,
