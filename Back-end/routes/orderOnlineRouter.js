@@ -8,7 +8,7 @@ router.post('/', orderOnlineController.postOrderOnline); // POST
 router.put('/:OrderID', orderOnlineController.putOrderOnline); // PUT
 router.delete('/:OrderID', orderOnlineController.deleteOrderOnline); // DELETE
 router.get('/overview/:BranchID', orderOnlineController.getOrderOnlinePendingOverview); // GET
-router.get('/detail/:OrderID', orderOnlineController.getOrderOnlinePendingDetail); // GET
+router.get('/detail/:OrderID', orderOnlineController.getOrderPendingDetail); // GET
 router.post('/place-order', orderOnlineController.postPlaceOrder); //POST
 
 module.exports = router;
