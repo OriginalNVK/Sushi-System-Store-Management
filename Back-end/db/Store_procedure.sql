@@ -47,24 +47,60 @@ BEGIN
 END;
 GO 
 
-CREATE PROCEDURE GetOrderOnlinePendingDetail
-	@ORDERID INT
-AS 
+DROP PROCEDURE GetOrderOnlinePendingDetail
+GO
+
+CREATE PROCEDURE GetOrderPendingDetail
+    @ORDERID INT
+AS
 BEGIN
-	SELECT 
-        OD.OrderID, 
-        OD.NumberTable,
-        OO.AmountCustomer, 
-        D.DishName, 
-        ODA.AmountDish
-    FROM 
-        ORDER_DIRECTORY OD
-    INNER JOIN ORDER_ONLINE OO ON OD.OrderID = OO.OnOrderID
-    INNER JOIN ORDER_DISH_AMOUNT ODA ON OD.OrderID = ODA.OrderID
-    INNER JOIN DISH D ON ODA.DishID = D.DishID
-	WHERE OD.ORDERID = @ORDERID;
+    -- Check if the ORDERID belongs to an Order Online
+    IF EXISTS (
+        SELECT 1
+        FROM ORDER_DIRECTORY OD
+        INNER JOIN ORDER_ONLINE OO ON OD.OrderID = OO.OnOrderID
+        WHERE OD.OrderID = @ORDERID
+    )
+    BEGIN
+        -- Retrieve Order Online details
+        SELECT 
+            OD.OrderID, 
+            OD.NumberTable,
+            OO.AmountCustomer, 
+            D.DishName, 
+            ODA.AmountDish
+        FROM 
+            ORDER_DIRECTORY OD
+        INNER JOIN ORDER_ONLINE OO ON OD.OrderID = OO.OnOrderID
+        INNER JOIN ORDER_DISH_AMOUNT ODA ON OD.OrderID = ODA.OrderID
+        INNER JOIN DISH D ON ODA.DishID = D.DishID
+        WHERE OD.OrderID = @ORDERID;
+    END
+
+    -- Check if the ORDERID belongs to an Order Offline
+    ELSE IF EXISTS (
+        SELECT 1
+        FROM ORDER_DIRECTORY OD
+        INNER JOIN ORDER_OFFLINE OO ON OD.OrderID = OO.OffOrderID
+        WHERE OD.OrderID = @ORDERID
+    )
+    BEGIN
+        -- Retrieve Order Offline details
+        SELECT 
+            OD.OrderID, 
+            D.DishName, 
+            ODA.AmountDish
+        FROM 
+            ORDER_DIRECTORY OD
+        INNER JOIN ORDER_OFFLINE OO ON OD.OrderID = OO.OffOrderID
+        INNER JOIN ORDER_DISH_AMOUNT ODA ON OD.OrderID = ODA.OrderID
+        INNER JOIN DISH D ON ODA.DishID = D.DishID
+        WHERE OD.OrderID = @ORDERID;
+    END
 END;
 GO
+
+
 
 -- POST ORDER ONLINE
 CREATE PROCEDURE AddNewOrderOnline
@@ -1058,3 +1094,87 @@ BEGIN
 END;
 GO
 --EXEC GetReportDetailByYear @Year = 2024;
+
+-- ADD ORDER DISH
+CREATE PROCEDURE PlaceOnlineOrder
+    @BranchID INT,
+    @DishNames NVARCHAR(MAX),
+    @DishAmounts NVARCHAR(MAX),
+    @AmountCustomer INT = NULL,
+    @DateOrder DATE = NULL,
+    @TimeOrder TIME = NULL
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Tự động sinh OrderID
+        DECLARE @OrderID INT;
+        SELECT @OrderID = ISNULL(MAX(OrderID), 0) + 1 FROM ORDER_DIRECTORY;
+
+        -- Kiểm tra sự tồn tại của BranchID
+        IF NOT EXISTS (SELECT 1 FROM BRANCH WHERE BranchID = @BranchID)
+            THROW 50001, N'Chi nhánh không tồn tại.', 1;
+
+        -- Thêm thông tin vào bảng ORDER_DIRECTORY
+        INSERT INTO ORDER_DIRECTORY (OrderID, BranchID, EmployeeID, NumberTable, CardID)
+        VALUES (@OrderID, @BranchID, NULL, NULL, NULL); -- Các trường khác để NULL
+
+        -- Thêm thông tin vào bảng ONLINE_ORDER
+        INSERT INTO ORDER_ONLINE (OnOrderID, DateOrder, TimeOrder, AmountCustomer)
+        VALUES (@OrderID, @DateOrder, @TimeOrder, @AmountCustomer);
+
+        -- Xử lý danh sách món ăn và số lượng
+        DECLARE @DishName NVARCHAR(255);
+        DECLARE @DishAmount INT;
+        DECLARE @DishID INT;
+
+        -- Tách danh sách món ăn và số lượng
+        DECLARE @DishNameTable TABLE (ID INT IDENTITY(1,1), DishName NVARCHAR(255));
+        DECLARE @DishAmountTable TABLE (ID INT IDENTITY(1,1), DishAmount INT);
+
+        INSERT INTO @DishNameTable (DishName)
+        SELECT TRIM(VALUE) AS DishName FROM STRING_SPLIT(@DishNames, ',');
+
+        INSERT INTO @DishAmountTable (DishAmount)
+        SELECT CAST(VALUE AS INT) AS DishAmount FROM STRING_SPLIT(@DishAmounts, ',');
+
+        -- Kiểm tra số lượng món ăn và số lượng tương ứng
+        IF (SELECT COUNT(*) FROM @DishNameTable) != (SELECT COUNT(*) FROM @DishAmountTable)
+            THROW 50002, N'Mismatch between dish names and amounts.', 1;
+
+        -- Lặp qua từng món ăn để thêm vào ORDER_DISH_AMOUNT
+        DECLARE @RowCount INT = (SELECT COUNT(*) FROM @DishNameTable);
+        DECLARE @Index INT = 1;
+
+        WHILE @Index <= @RowCount
+        BEGIN
+            SELECT @DishName = DishName FROM @DishNameTable WHERE ID = @Index;
+            SELECT @DishAmount = DishAmount FROM @DishAmountTable WHERE ID = @Index;
+
+            -- Lấy DishID từ DishName
+            SELECT @DishID = DishID FROM DISH WHERE LTRIM(RTRIM(DishName)) = LTRIM(RTRIM(@DishName));
+
+            -- Kiểm tra nếu món ăn không tồn tại
+            IF @DishID IS NULL
+                THROW 50003, N'Món ăn không tồn tại hoặc tên không khớp.', 1;
+
+            -- Thêm thông tin vào ORDER_DISH_AMOUNT
+            INSERT INTO ORDER_DISH_AMOUNT (OrderID, DishID, AmountDish)
+            VALUES (@OrderID, @DishID, @DishAmount);
+
+            SET @Index = @Index + 1;
+        END;
+
+        -- Cam kết giao dịch
+        COMMIT TRANSACTION;
+        PRINT N'Đặt đơn hàng thành công!';
+    END TRY
+    BEGIN CATCH
+        -- Xử lý lỗi nếu có
+        ROLLBACK TRANSACTION;
+        PRINT N'Đã xảy ra lỗi khi đặt đơn hàng: ' + ERROR_MESSAGE();
+        THROW;
+    END CATCH
+END;
+GO

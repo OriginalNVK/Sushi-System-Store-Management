@@ -17,7 +17,7 @@ const getEmployeeById = async (EmployeeID) => {
     const pool = await connectToDB();
     const result = await pool.request()
         .input('EmployeeID', sql.Int, EmployeeID)
-        .query('SELECT * FROM EMPLOYEE WHERE EmployeeID = @EmployeeID');
+        .execute('GetEmployeeByID');  
     return result.recordset[0]; // Trả về bản ghi đầu tiên nếu có
 };
 
@@ -47,8 +47,6 @@ const updateEmployee = async (Employee) => {
         .input('EmployeeBirth', sql.Date, EmployeeBirth)
         .input('EmployeeGender', sql.NVarChar, EmployeeGender)
         .input('Salary', sql.Decimal, Salary)
-        .input('EntryDate', sql.Date, EntryDate)
-        .input('LeaveDate', sql.Date, LeaveDate)
         .input('DepartmentID', sql.Int, DepartmentID)
         .input('BranchID', sql.Int, BranchID)
         .input('EmployeeAddress', sql.NVarChar, EmployeeAddress)

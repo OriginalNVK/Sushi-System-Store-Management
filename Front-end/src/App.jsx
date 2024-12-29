@@ -20,6 +20,7 @@ import OrderOnlinePage from "./pages/OrderOnlinePage";
 import OrderOfflinePage from "./pages/OrderOfflinePage";
 import OrderDetailPage from "./pages/OrderDetailPage"; 
 import OrderOverview from "./pages/OrderOverview";
+import UpdateEmployee from "./pages/UpdateEmployee";
 
 const App = () => {
   return (
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/order-online" element={<OrderOnlinePage />} />
         <Route path="/order-offline" element={<OrderOfflinePage />} />
         <Route path="/order/detail/:id" element={<OrderDetailPage />} />
+        <Route path="/employee/update" element={<UpdateEmployee />} />
       </Routes>
     </Router>
   );
