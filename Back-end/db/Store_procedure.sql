@@ -233,6 +233,24 @@ BEGIN
     END CATCH
 END;
 GO
+
+CREATE PROCEDURE GetOrderOfflinePendingOverview
+	@BranchID INT
+AS
+BEGIN
+	SELECT 
+        OD.OrderID, 
+        OD.BranchID, 
+        C.CUSTOMERNAME
+    FROM 
+        ORDER_DIRECTORY OD
+    INNER JOIN ORDER_OFFLINE OO ON OD.OrderID = OO.OffOrderID
+    INNER JOIN CUSTOMER C ON OD.CardID = C.CardID
+	WHERE OD.EmployeeID IS NULL AND OD.BranchID = @BranchID
+END;
+GO 
+
+--EXEC GetOrderOfflinePendingOverview 1
 ----GET DATA FROM OrderDirectory, OrderOnline, Dish, OrderDishAmount
 --CREATE PROCEDURE GetOrderOffline 
 --AS

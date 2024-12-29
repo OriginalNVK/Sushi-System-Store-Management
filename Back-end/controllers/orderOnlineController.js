@@ -19,10 +19,10 @@ const getOrderOnlinePendingOverview = async (req, res) => {
     }
 }
 
-const getOrderOnlinePendingDetail = async (req, res) => {
+const getOrderPendingDetail = async (req, res) => {
     const orderID = req.params.OrderID;
     try {
-        const order = await orderOnlineModel.getOrderOnlinePendingDetail(orderID);
+        const order = await orderOnlineModel.getOrderPendingDetail(orderID);
         res.status(200).json(order);
     } catch (err) {
         res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
@@ -108,7 +108,7 @@ const deleteOrderOnline = async (req, res) => {
 module.exports = {
     getOrderOnline,
     getOrderOnlinePendingOverview,
-    getOrderOnlinePendingDetail,
+    getOrderPendingDetail,
     postOrderOnline,
     putOrderOnline,
     deleteOrderOnline

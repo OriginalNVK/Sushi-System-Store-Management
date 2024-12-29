@@ -11,6 +11,20 @@ const OrderOffline = {
             throw new Error('Lỗi khi lấy tất cả đơn hàng offline: ' + error.message);
         }
     },
+
+    async getOrderOfflinePendingOverview(branchID) {
+        try {
+            const pool = await connectToDB();
+            const result = await pool
+              .request()
+              .input("BranchID", sql.Int, branchID)
+                .execute("GetOrderOfflinePendingOverview");
+            return result.recordset;
+        }
+        catch (error) {
+            throw new Error('Lỗi khi lấy tất cả đơn hàng offline chờ xác nhận: ' + error.message);
+        }
+    },
     
     async addOrder(orderData) {
         try {
@@ -27,19 +41,6 @@ const OrderOffline = {
             return result.recordset;
         } catch (error) {
             throw new Error('Lỗi khi thêm đơn hàng offline: ' + error.message);
-        }
-    },
-    
-    async updateOrder(orderID, orderData) {
-        try {
-            const pool = await connectToDB(); 
-            const result = await pool.request()
-                .input('OrderID', sql.Int, orderID)
-                .input('EmployeeID', sql.Int, orderData.EmployeeID)
-                .execute('UpdateOfflineOrder'); 
-            return result.recordset;
-        } catch (error) {
-            throw new Error('Lỗi khi cập nhật đơn hàng offline: ' + error.message);
         }
     },
     

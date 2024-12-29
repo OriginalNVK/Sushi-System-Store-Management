@@ -217,7 +217,7 @@ export const getOrderOnlinePendingOverview = async (branchID) => {
   }
 }
 
-export const getOrderOnlinePendingDetail = async (orderID) => {
+export const getOrderPendingDetail = async (orderID) => {
   try {
     const response = await fetch(
       `http://localhost:3000/api/order-online/detail/${orderID}`
@@ -226,6 +226,19 @@ export const getOrderOnlinePendingDetail = async (orderID) => {
     return result;
   } catch (error) {
     console.error("Error during getOrrderOnlinePendingDetail request:", error);
+    return [];
+  }
+}
+
+export const getOrderOfflinePendingOverview = async (branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/order-offline/overview/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error during getOrderOfflinePendingOverview request:", error);
     return [];
   }
 }

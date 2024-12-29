@@ -63,7 +63,7 @@ export const navLinksEmployee = [
     icon: menuIcon,
   },
   {
-    id: "Order",
+    id: "order-overview",
     title: "Order",
     icon: orderIcon,
   },
