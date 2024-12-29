@@ -6,7 +6,7 @@ const OrderOnline = {
   // Lấy tất cả đơn hàng
   async getAllOrders() {
     const pool = await connectToDB();
-    const result = await pool.request().execute("GetOrderOnline");
+    const result = await pool.request().execute("GetOnlineOrder");
     return result.recordset;
   },
 
@@ -146,6 +146,28 @@ const OrderOnline = {
       .input("OrderID", sql.Int, orderID)
       .execute("DeleteOrder");
     return result.recordset;
+  },
+
+  // Thêm đơn hàng mới bằng Store Procedure PlaceOnlineOrder
+  async placeOrder(orderData) {
+    const pool = await connectToDB();
+    try {
+        const { BranchID, DishNames, DishAmounts, AmountCustomer, DateOrder, TimeOrder } = orderData;
+
+        await pool.request()
+            .input("BranchID", sql.Int, BranchID)
+            .input("DishNames", sql.NVarChar, DishNames)
+            .input("DishAmounts", sql.NVarChar, DishAmounts)
+            .input("AmountCustomer", sql.Int, AmountCustomer || null)
+            .input("DateOrder", sql.Date, DateOrder || null)
+            .input("TimeOrder", sql.Time, TimeOrder || null)
+            .execute("PlaceOnlineOrder");
+
+        return { success: true, message: "Order placed successfully" };
+    } catch (error) {
+        console.error("Error placing order:", error.message);
+        throw new Error("Error placing order: " + error.message);
+    }
   },
 };
 

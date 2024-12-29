@@ -105,11 +105,51 @@ const deleteOrderOnline = async (req, res) => {
     }
 };
 
+const postPlaceOrder = async (req, res) => {
+    try {
+        const { BranchID, dishes, AmountCustomer, DateOrder, TimeOrder } = req.body;
+
+        // Kiểm tra dữ liệu đầu vào
+        if (!BranchID || !dishes || dishes.length === 0) {
+            return res.status(400).json({
+                Status: "Error",
+                ErrorMessage: "BranchID và danh sách món ăn là bắt buộc.",
+            });
+        }
+
+        // Chuyển đổi danh sách món ăn và số lượng thành chuỗi
+        const DishNames = dishes.map((dish) => dish.dishName).join(",");
+        const DishAmounts = dishes.map((dish) => dish.dishAmount).join(",");
+
+        // Gọi model để thêm đơn hàng
+        const result = await orderOnlineModel.placeOrder({
+            BranchID,
+            DishNames,
+            DishAmounts,
+            AmountCustomer,
+            DateOrder,
+            TimeOrder,
+        });
+
+        res.status(201).json({
+            Status: "Success",
+            Message: result.message,
+        });
+    } catch (err) {
+        console.error("Error placing order:", err.message);
+        res.status(500).json({
+            Status: "Error",
+            ErrorMessage: "Lỗi khi đặt đơn hàng: " + err.message,
+        });
+    }
+};
+
 module.exports = {
     getOrderOnline,
     getOrderOnlinePendingOverview,
     getOrderOnlinePendingDetail,
     postOrderOnline,
     putOrderOnline,
-    deleteOrderOnline
+    deleteOrderOnline,
+    postPlaceOrder
 };
