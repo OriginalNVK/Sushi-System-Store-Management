@@ -1,17 +1,16 @@
 const sql = require('mssql');
-const connectToDB = require('../db/dbConfig'); 
+const connectToDB = require('../db/dbConfig.js'); 
 
 const OrderOnline = {
     async getAllOrders() {
         const pool = await connectToDB(); 
-        const result = await pool.request().execute('GetOrderOnline'); 
+        const result = await pool.request().execute('GetOnlineOrder'); 
         return result.recordset;
     },
     async addOrder(orderData) {
         const pool = await connectToDB(); 
         const result = await pool.request()
             .input('BranchID', sql.Int, orderData.BranchID)
-            .input('EmployeeID', sql.Int, orderData.EmployeeID)
             .input('NumberTable', sql.Int, orderData.NumberTable)
             .input('CardID', sql.Int, orderData.CardID)
             .input('AmountCustomer', sql.Int, orderData.AmountCustomer)
@@ -19,30 +18,22 @@ const OrderOnline = {
             .input('DishAmounts', sql.NVarChar, orderData.DishAmounts) 
             .input('DateOrder', sql.NVarChar, orderData.DateOrder)
             .input('TimeOrder', sql.NVarChar, orderData.TimeOrder)
-            .execute('AddNewOrderOnline'); 
+            .execute('AddNewOnlineOrder'); 
         return;
     },
     async updateOrder(orderID, orderData) {
         const pool = await connectToDB(); 
         const result = await pool.request()
             .input('OrderID', sql.Int, orderID)
-            .input('BranchID', sql.Int, orderData.BranchID)
             .input('EmployeeID', sql.Int, orderData.EmployeeID)
-            .input('NumberTable', sql.Int, orderData.NumberTable)
-            .input('CardID', sql.Int, orderData.CardID)
-            .input('AmountCustomer', sql.Int, orderData.AmountCustomer)
-            .input('DishName', sql.NVarChar, orderData.DishName)
-            .input('AmountDish', sql.Int, orderData.AmountDish)
-            .input('DateOrder', sql.NVarChar, orderData.DateOrder)
-            .input('TimeOrder', sql.NVarChar, orderData.TimeOrder)
-            .execute('UpdateOrderOnline'); 
+            .execute('UpdateOnlineOrder'); 
         return result.recordset;
     },
     async deleteOrder(orderID) {
         const pool = await connectToDB();
         const result = await pool.request()
             .input('OrderID', sql.Int, orderID)
-            .execute('DeleteOrderOnline'); 
+            .execute('DeleteOnlineOrder'); 
         return result.recordset;
     }
 };

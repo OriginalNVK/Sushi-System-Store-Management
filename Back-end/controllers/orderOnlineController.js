@@ -11,7 +11,7 @@ const getOrderOnline = async (req, res) => {
 
 const postOrderOnline = async (req, res) => {
     try {
-        const { BranchID, EmployeeID, NumberTable, CardID, AmountCustomer, DateOrder, TimeOrder, dishes } = req.body;
+        const { BranchID, NumberTable, CardID, AmountCustomer, DateOrder, TimeOrder, dishes } = req.body;
 
         if (!dishes || dishes.length === 0) {
             return res.status(400).json({
@@ -23,9 +23,15 @@ const postOrderOnline = async (req, res) => {
         const dishNames = dishes.map((dish) => dish.dishName).join(",");
         const dishAmounts = dishes.map((dish) => dish.dishAmount).join(",");
 
+        console.log( BranchID,
+            NumberTable,
+            CardID,
+            AmountCustomer,
+            DateOrder,
+            TimeOrder,dishNames, dishAmounts);
+
         const newOrder = await orderOnlineModel.addOrder({
             BranchID,
-            EmployeeID,
             NumberTable,
             CardID,
             AmountCustomer,
