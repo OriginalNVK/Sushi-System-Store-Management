@@ -26,8 +26,14 @@ const Employee = () => {
       const data = await getEmployeeByBranchID(branchID);
       setEmployees(data);
       setAllEmployees(data);
+  
+      // Tự động tạo danh sách phòng ban từ dữ liệu nhân viên
+      const uniqueDepartments = [
+        ...new Set(data.map((employee) => employee.DepartmentName)),
+      ];
+      setDepartments(uniqueDepartments);
     };
-
+  
     loadEmployees();
   }, []);
 
@@ -97,13 +103,13 @@ const Employee = () => {
   // Tìm kiếm và lọc nhân viên
   const searchEmployees = () => {
     let filtered = allEmployees;
-
+  
     if (searchEmployee) {
       filtered = filtered.filter((employee) =>
         employee.EmployeeName.toLowerCase().includes(searchEmployee.toLowerCase())
       );
     }
-
+  
     if (filterDepartment !== "all") {
       filtered = filtered.filter(
         (employee) =>
@@ -111,10 +117,11 @@ const Employee = () => {
           employee.DepartmentName.toLowerCase() === filterDepartment.toLowerCase()
       );
     }
-
+  
     setEmployees(filtered);
     setCurrentPage(1); // Reset về trang đầu
   };
+  
 
   useEffect(() => {
     searchEmployees();
@@ -125,6 +132,8 @@ const Employee = () => {
     setFilterDepartment("all");
     setEmployees(allEmployees); // Khôi phục danh sách nhân viên ban đầu
   };
+
+  
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -152,15 +161,15 @@ const Employee = () => {
               onChange={(e) => setSearchEmployee(e.target.value)}
             />
             <select
-              className="border rounded-md font-bold px-2"
-              value={filterDepartment}
-              onChange={(e) => setFilterDepartment(e.target.value)}
-            >
-              <option value="all">All Departments</option>
-              {departments.map((department, index) => (
-                <option key={index} value={department.toLowerCase()}>
-                  {department}
-                </option>
+  className="border rounded-md font-bold px-2"
+  value={filterDepartment}
+  onChange={(e) => setFilterDepartment(e.target.value)}
+>
+  <option value="all">All Departments</option>
+           {departments.map((department, index) => (
+    <option key={index} value={department.toLowerCase()}>
+      {department}
+         </option>
               ))}
             </select>
             <button
