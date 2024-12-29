@@ -4,6 +4,7 @@ import image1 from "../assets/content/homeClient/image-content-1.png"
 import image2 from "../assets/content/homeClient/image-content-2.png"
 import { HomeDish, Homeown } from "../constants"
 import Decorate from "../components/Decorate"
+import { Link } from 'react-router-dom';
 
 const HomeClient = () => {
   return (
@@ -49,9 +50,12 @@ const HomeClient = () => {
                       <p className="text-right text-gray-900 font-bold">{dish.price}</p>
                       </div>
                   ))}
-                  <button className="bg-yellow text-white text-sm py-4 px-8 rounded-xl hover:opacity-80 w-[200px] mx-[660px]">
-                      <a href="/menu">View More</a>
-                    </button>
+                    <Link
+                        to="/Menu" // Chuyển hướng đến trang Dish
+                        className="bg-yellow text-white text-sm py-4 px-8 rounded-xl hover:opacity-80 w-[200px] mx-[660px] text-center inline-block"
+                        >
+                        View More
+                    </Link>
               </div>
               </section>
               

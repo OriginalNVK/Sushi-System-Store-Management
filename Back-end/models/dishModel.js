@@ -1,32 +1,26 @@
 const sql = require('mssql');
 const connectToDB = require('../db/dbConfig');
 
-const getAllDishes = async () => {
+const getAllDishes = async (BranchID) => {
     const pool = await connectToDB();
-    const result = await pool.request().query(`
-        SELECT mnd.DirectoryName, d.DishName, d.Price
-        FROM DISH d
-        JOIN MENU_DIRECTORY_DISH mnd ON mnd.DishID = d.DishID
-        JOIN BRANCH b ON b.BranchID = mnd.BranchID
-        WHERE mnd.StatusDish = 'YES' AND b.BranchID = 1
-        ORDER BY mnd.DirectoryName, d.DishName, d.Price
-    `);
+    const result = await pool.request().input('BranchID', BranchID).query(`GetActiveDishesByBranchID @BranchID`);
 
     // Process the data to group by DirectoryName
-    const groupedData = result.recordset.reduce((acc, item) => {
-        const { DirectoryName, DishName, Price } = item;
-        // Find if the DirectoryName already exists
-        let directory = acc.find(group => group.DirectoryName === DirectoryName);
-        if (!directory) {
-            // If not, create a new directory group
-            directory = { DirectoryName, Dishes: [] };
-            acc.push(directory);
-        }
-        // Add the dish to the directory's Dishes array
-        directory.Dishes.push({ DishName, Price });
-        return acc;
-    }, []);
-    return groupedData; // Return the grouped data
+    // const groupedData = result.recordset.reduce((acc, item) => {
+    //     const { DirectoryName, DishName, Price } = item;
+    //     // Find if the DirectoryName already exists
+    //     let directory = acc.find(group => group.DirectoryName === DirectoryName);
+    //     if (!directory) {
+    //         // If not, create a new directory group
+    //         directory = { DirectoryName, Dishes: [] };
+    //         acc.push(directory);
+    //     }
+    //     // Add the dish to the directory's Dishes array
+    //     directory.Dishes.push({ DishName, Price });
+    //     return acc;
+    // }, []);
+    // return groupedData; // Return the grouped data
+    return result.recordset
 };
 
 const getDishById = async (DishID) => {
