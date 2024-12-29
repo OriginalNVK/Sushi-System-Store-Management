@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Decorate from '../components/Decorate';
 import Footer from '../components/Footer';
-import { getInvoicesByBranchID } from '../service/Services';
+import { getInvoicesByBranchID, updateInvoice } from '../service/Services';
 import { useNavigate } from 'react-router-dom';
 
 const Invoice = () => {
@@ -49,7 +49,14 @@ const Invoice = () => {
       return;
     }
 
-    navigate(`/invoice/detail/${selectedInvoice}`);
+    const response = await updateInvoice(selectedInvoice);
+    if (response.ok) {
+      alert("Create invoice successfully");
+      navigate(`/invoice/detail/${selectedInvoice}`);
+    }
+    else {
+      alert("Create invoice failed");
+    }
   };
 
   return (
@@ -73,24 +80,24 @@ const Invoice = () => {
           <table className='table text-center px-2 w-11/12 font-play shadow-lg py-4'>
             <thead className='table-header-group md:text-xl text-lg text-white bg-red'>
               <tr className='table-row'>
-                <th className='table-cell border px-1'>No.</th>
-                <th className='table-cell border px-1'>Customer name</th>
-                <th className='table-cell border px-1'>Discount money</th>
-                <th className='table-cell border px-1'>Sub total</th>
-                <th className='table-cell border px-1'>Total Money</th>
-                <th className='table-cell border px-1'>ACTION</th>
+                <th className='table-cell border px-1 h-12'>No.</th>
+                <th className='table-cell border px-1 h-12'>Customer name</th>
+                <th className='table-cell border px-1 h-12'>Discount money</th>
+                <th className='table-cell border px-1 h-12'>Sub total</th>
+                <th className='table-cell border px-1 h-12'>Total Money</th>
+                <th className='table-cell border px-1 h-12'>ACTION</th>
               </tr>
             </thead>
             <tbody className='md:text-lg text-base'>
               {filterInvoice.length > 0 ? (
                 filterInvoice.map((invoice, index) => (
                   <tr key={invoice.INVOICEID}>
-                    <td className='border px-1'>{index + 1}</td>
-                    <td className='border px-1'>{invoice.CustomerName}</td>
-                    <td className='border px-1'>{invoice.DiscountMoney}</td>
-                    <td className='border px-1'>{invoice.TotalMoney}</td>
-                    <td className='border px-1'>{invoice.TotalMoney - invoice.DiscountMoney}</td>
-                    <td className='border px-1'>
+                    <td className='border px-1 h-12'>{index + 1}</td>
+                    <td className='border px-1 h-12'>{invoice.CustomerName}</td>
+                    <td className='border px-1 h-12'>{invoice.DiscountMoney}</td>
+                    <td className='border px-1 h-12'>{invoice.TotalMoney}</td>
+                    <td className='border px-1 h-12'>{invoice.TotalMoney - invoice.DiscountMoney}</td>
+                    <td className='border px-1 h-12'>
                       <input
                         type="radio"
                         checked={selectedInvoice === invoice.INVOICEID}

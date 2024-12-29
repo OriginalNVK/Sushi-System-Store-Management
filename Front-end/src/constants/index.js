@@ -63,7 +63,7 @@ export const navLinksEmployee = [
     icon: menuIcon,
   },
   {
-    id: "Order",
+    id: "order-overview",
     title: "Order",
     icon: orderIcon,
   },
@@ -552,3 +552,119 @@ export const orderListDish = [
     price: 40000
   }
 ];
+
+export const reportOverviewByDate = [
+  {
+    date: "25-12-2024",
+    totalRevenue: 1000000,
+    branchName: "Branch 1",
+  },
+  {
+    date: "24-12-2024",
+    totalRevenue: 1200000,
+    branchName: "Branch 1",
+  },
+];
+
+export const reportDetailByDate = {
+  branchName: "Branch 1",
+  date: "25-12-2024",
+  totalRevenue: 220000,
+  details: [
+    {
+      DishName: "Sushi cá hồi",
+      Revenue: 100000,
+    },
+    {
+      DishName: "Sushi thịt bò",
+      Revenue: 120000,
+    },
+  ],
+};
+
+export const reportOverviewByMonth = [
+  {
+    month: 12,
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    month: 11,
+    year: 2024,
+    totalRevenue: 1200000,
+  },
+];
+
+export const reportDetailByMonth = {
+  month: 12,
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+    {
+      DishName: "Sushi cá hồi",
+      Revenue: 100000,
+    },
+    {
+      DishName: "Sushi thịt bò",
+      Revenue: 120000,
+    },
+  ],
+};
+
+export const reportOverviewByQuarter = [
+  {
+    numberOfQuarter: 4,
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    numberOfQuarter: 4,
+    year: 2024,
+    totalRevenue: 1200000,
+  },
+];
+
+export const reportDetailByQuarter = {
+  numberOfQuarter: 4,
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+    {
+      DishName: "Sushi cá hồi",
+      Revenue: 100000,
+    },
+    {
+      DishName: "Sushi thịt bò",
+      Revenue: 120000,
+    },
+  ],
+};
+
+export const reportOverviewByYear = [
+  {
+    year: 2024,
+    totalRevenue: 1000000,
+  },
+  {
+    year: 2024,
+    totalRevenue: 1200000,
+  },
+];
+
+export const reportDetailByYear = {
+  year: 2024,
+  branchName: "Branch 1",
+  totalRevenue: 220000,
+  details: [
+    {
+      DishName: "Sushi cá hồi",
+      Revenue: 100000,
+    },
+    {
+      DishName: "Sushi thịt bò",
+      Revenue: 120000,
+    },
+  ],
+};

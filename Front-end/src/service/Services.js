@@ -217,7 +217,7 @@ export const getOrderOnlinePendingOverview = async (branchID) => {
   }
 }
 
-export const getOrderOnlinePendingDetail = async (orderID) => {
+export const getOrderPendingDetail = async (orderID) => {
   try {
     const response = await fetch(
       `http://localhost:3000/api/order-online/detail/${orderID}`
@@ -226,6 +226,19 @@ export const getOrderOnlinePendingDetail = async (orderID) => {
     return result;
   } catch (error) {
     console.error("Error during getOrrderOnlinePendingDetail request:", error);
+    return [];
+  }
+}
+
+export const getOrderOfflinePendingOverview = async (branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/order-offline/overview/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error during getOrderOfflinePendingOverview request:", error);
     return [];
   }
 }
@@ -244,14 +257,18 @@ export const getInvoicesByBranchID = async (branchID) => {
 
 export const getInvoiceDetail = async (invoiceID) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/invoice/detail/${invoiceID}`);
+    const response = await fetch(
+      `http://localhost:3000/api/invoice/detail/${invoiceID}`
+    );
+    console.log("response: ", response);
     const result = await response.json();
+    console.log("result: ", result);
     return result;
   } catch (error) {
     console.error("Error during getInvoiceDetail request:", error);
     return [];
   }
-}
+};
 
 export const updateInvoice = async (invoiceID) => {
   try {
@@ -263,6 +280,8 @@ export const updateInvoice = async (invoiceID) => {
       },
       body: JSON.stringify({ paymentDate: date, invoiceID: invoiceID }),
     });
+
+    // console.log(response);  
 
     return response;
   } catch (error) {

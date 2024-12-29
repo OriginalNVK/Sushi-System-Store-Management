@@ -1,4 +1,5 @@
 const orderOfflineModel = require('../models/orderOfflineModel');
+const orderOnlineModel = require('../models/orderOnlineModel');
 
 const getOrderOffline = async (req, res) => {
     try {
@@ -9,22 +10,47 @@ const getOrderOffline = async (req, res) => {
     }
 };
 
+const getOrderOfflinePendingOverview = async (req, res) => {
+    const branchID = req.params.BranchID;
+    try {
+        const orders = await orderOfflineModel.getOrderOfflinePendingOverview(branchID);
+        res.status(200).json(orders);
+    } catch (err) {
+        res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
+    }
+}
+
 const postOrderOffline = async (req, res) => {
     try {
-        const newOrder = await orderOfflineModel.addOrder(req.body);
-        res.status(201).json(newOrder);
-    } catch (err) {
-        res.status(500).send('Lỗi khi thêm đơn hàng: ' + err.message);
-    }
-};
+        const {EmployeeID, NumberTable, CardID, BranchID, dishes, OrderEstablishDate } = req.body;
 
-const putOrderOffline = async (req, res) => {
-    const orderID = req.body.OrderID; // Giả sử OrderID được gửi trong body
-    try {
-        const updatedOrder = await orderOfflineModel.updateOrder(orderID, req.body);
-        res.json(updatedOrder);
+        if (!dishes || dishes.length === 0) {
+            return res.status(400).json({
+                Status: "Error",
+                ErrorMessage: "Danh sách món ăn không được để trống.",
+            });
+        }
+
+        const dishNames = dishes.map((dish) => dish.dishName).join(",");
+        const dishAmounts = dishes.map((dish) => dish.dishAmount).join(",");
+
+        const newOrder = await orderOfflineModel.addOrder({
+            EmployeeID, 
+            NumberTable, 
+            CardID, 
+            BranchID, 
+            DishNames: dishNames,
+            DishAmounts: dishAmounts,
+            OrderEstablishDate
+        });
+        res.status(201).json({
+            Status: "Success",
+        });
     } catch (err) {
-        res.status(500).send('Lỗi khi cập nhật đơn hàng: ' + err.message);
+        res.status(500).json({
+            Status: "Error",
+            ErrorMessage: "Lỗi khi thêm đơn hàng: " + err.message,
+        });
     }
 };
 
@@ -39,8 +65,8 @@ const deleteOrderOffline = async (req, res) => {
 };
 
 module.exports = {
-    getOrderOffline,
-    postOrderOffline,
-    putOrderOffline,
-    deleteOrderOffline
+  getOrderOffline,
+  postOrderOffline,
+  deleteOrderOffline,
+  getOrderOfflinePendingOverview,
 };
