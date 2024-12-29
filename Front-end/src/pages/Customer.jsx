@@ -30,12 +30,12 @@ const Customer = () => {
         <table className="table text-center px-2 w-11/12 font-play shadow-lg">
             <thead className="table-h eader-group border bg-red text-white">
                 <tr className="table-row border">
-                    <th className="table-cell h-12">NO</th>
-                    <th className="table-cell h-12">Name</th>
-                    <th className="table-cell h-12">Email</th>
-                    <th className="table-cell h-12">Gender</th>
-                    <th className="table-cell h-12">CCCD</th>
-                    <th className="table-cell h-12">Mobile Phone</th>
+                    <th className="table-cell h-12 border">NO</th>
+                    <th className="table-cell h-12 border">Name</th>
+                    <th className="table-cell h-12 border">Email</th>
+                    <th className="table-cell h-12 border">Gender</th>
+                    <th className="table-cell h-12 border">CCCD</th>
+                    <th className="table-cell h-12 border">Mobile Phone</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,12 +43,12 @@ const Customer = () => {
                     customers.map((customer, index) => {
                         return (
                             <tr key={index} className="border border-gray">
-                                <td className="table-cell p-2">{index + 1}</td>
-                                <td className="table-cell p-2">{customer.CustomerName}</td>
-                                <td className="table-cell p-2">{customer.CustomerEmail}</td>
-                                <td className="table-cell p-2">{customer.CustomerGender}</td>
-                                <td className="table-cell p-2">{customer.CCCD}</td>
-                                <td className="table-cell p-2">{customer.CustomerPhone}</td>
+                                <td className="table-cell p-2 border">{index + 1}</td>
+                                <td className="table-cell p-2 border">{customer.CustomerName}</td>
+                                <td className="table-cell p-2 border">{customer.CustomerEmail}</td>
+                                <td className="table-cell p-2 border">{customer.CustomerGender}</td>
+                                <td className="table-cell p-2 border">{customer.CCCD}</td>
+                                <td className="table-cell p-2 border">{customer.CustomerPhone}</td>
                             </tr>
                         )
                     })

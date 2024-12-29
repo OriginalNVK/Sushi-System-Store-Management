@@ -162,7 +162,7 @@ export const imgUrl = {
     avatar5,
 }
 
-export const sushiInformation = {
+export const sushiInformation= {
   name: "Oishii Sushi",
   phone: "0123456789",
   email: "contact@oishii-sushi.com",

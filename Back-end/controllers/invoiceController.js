@@ -1,8 +1,10 @@
-const { 
-  getInvoices, 
-  addInvoice, 
-  deleteInvoiceById, 
-  updateInvoiceById 
+const {
+  getInvoices,
+  addInvoice,
+  deleteInvoiceById,
+  updateInvoiceById,
+  getInvoiceUnpaidByBranchID,
+  getInvoiceDetail
 } = require("../models/invoiceModels");
 
 // Lấy tất cả hóa đơn
@@ -15,6 +17,29 @@ const getInvoicesController = async (req, res) => {
     res.status(500).json({ error: "An error occurred while fetching invoices" });
   }
 };
+
+const getInvoicesByBranchIDController = async (req, res) => {
+  try {
+    const { branchID } = req.params;
+    const invoices = await getInvoiceUnpaidByBranchID(branchID); // Gọi phương thức từ models
+    res.status(200).json(invoices);
+  } catch (err) {
+    console.error("Error fetching invoices:", err);
+    res.status(500).json({ error: "An error occurred while fetching invoices" });
+  }
+}
+
+const getInvoiceDetailController = async (req, res) => {  
+  try {
+    const { invoiceID } = req.params;
+    const invoiceDetail = await getInvoiceDetail(invoiceID); // Gọi phương thức từ models
+    res.status(200).json(invoiceDetail);
+  }
+  catch (err) {
+    console.error("Error fetching invoice detail:", err);
+    res.status(500).json({ error: "An error occurred while fetching invoice detail" });
+  }
+}
 
 // Thêm hóa đơn mới
 const addInvoiceController = async (req, res) => {
@@ -36,18 +61,19 @@ const addInvoiceController = async (req, res) => {
 // Cập nhật hóa đơn
 const updateInvoiceController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const invoiceData = req.body;
+    const {paymentDate, invoiceID} = req.body;
 
-    if (!invoiceData) {
+    if (!invoiceID || !paymentDate) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const result = await updateInvoiceById(id, invoiceData); // Gọi phương thức từ models
+    console.log(paymentDate, invoiceID);
+
+    const result = await updateInvoiceById(invoiceID, paymentDate); // Gọi phương thức từ models
     if (!result) {
       return res.status(404).json({ error: "Invoice not found" });
     }
-    res.status(200).json({ message: `Invoice with ID ${id} updated successfully` });
+    res.status(200).json({ message: `Invoice with ID ${invoiceID} updated successfully` });
   } catch (err) {
     console.error("Error updating invoice:", err);
     res.status(500).json({ error: "An error occurred while updating the invoice" });
@@ -69,9 +95,11 @@ const deleteInvoiceController = async (req, res) => {
   }
 };
 
-module.exports = { 
-  getInvoicesController, 
-  addInvoiceController, 
-  updateInvoiceController, 
-  deleteInvoiceController 
+module.exports = {
+  getInvoicesController,
+  getInvoicesByBranchIDController,
+  addInvoiceController,
+  updateInvoiceController,
+  deleteInvoiceController,
+  getInvoiceDetailController,
 };

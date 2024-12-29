@@ -9,7 +9,17 @@ export const loginUser = async (phone, password) => {
     });
 
     const result = await response.json();
-    return { success: true, role: result.user.role };
+
+    if (response.ok && result.token)
+    {
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("BranchID", result.user.branchID);
+      localStorage.setItem("EmployeeID", result.user.employeeID);
+      return { success: true, role: result.user.role };
+    }
+    else {
+      return { success: false, error: result.error };
+    }
   } catch (err) {
     console.error("Error during login request:", err);
     return { success: false, error: "Network error" };
@@ -81,6 +91,17 @@ export const getEmployees = async () => {
     return [];
   }
 };
+
+export const getEmployeeByBranchID = async (branchID) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/employees/branch/${branchID}`);
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    console.error("Error during getEmployeeByBranchID request:", err);
+    return [];
+  }
+}
 
 export const createEmployee = async (employee) => {
   try {
@@ -154,4 +175,98 @@ export const bookOrder = async (order) => {
     body: JSON.stringify(data),
   });
   return response;
+}
+
+export const updateOrder = async (orderID, employeeID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/order-online/${orderID}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ OrderID: orderID, EmployeeID: employeeID }),
+      }
+    );
+
+    if (!response.ok) {
+      // Handle unsuccessful response
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error updating order");
+    }
+
+    const data = await response.json();
+    return data; // Return success message or data from the API
+  } catch (error) {
+    console.error("Error during updateOrder request:", error);
+    return { success: false, error: error.message || "Network error" };
+  }
+};
+
+export const getOrderOnlinePendingOverview = async (branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/order-online/overview/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error during getOrderOnlinePendingOverview request:", error);
+    return [];
+  }
+}
+
+export const getOrderOnlinePendingDetail = async (orderID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/order-online/detail/${orderID}`
+    );
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error during getOrrderOnlinePendingDetail request:", error);
+    return [];
+  }
+}
+
+// invoice
+export const getInvoicesByBranchID = async (branchID) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/invoice/branch/${branchID}`);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error during getInvoicesByBranchID request:", error);
+    return [];
+  }
+}
+
+export const getInvoiceDetail = async (invoiceID) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/invoice/detail/${invoiceID}`);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error during getInvoiceDetail request:", error);
+    return [];
+  }
+}
+
+export const updateInvoice = async (invoiceID) => {
+  try {
+    const date = new Date();
+    const response = await fetch(`http://localhost:3000/api/invoice/${invoiceID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ paymentDate: date, invoiceID: invoiceID }),
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error during updateInvoice request:", error);
+    return { success: false, error: "Network error" };
+  }
 }
