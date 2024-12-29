@@ -21,6 +21,14 @@ import OrderOfflinePage from "./pages/OrderOfflinePage";
 import OrderDetailPage from "./pages/OrderDetailPage"; 
 import OrderOverview from "./pages/OrderOverview";
 import UpdateEmployee from "./pages/UpdateEmployee";
+import ReportByDate from "./pages/ReportByDate";
+import ReportDetailByDate from "./pages/ReportDetailByDate";
+import ReportByMonth from "./pages/ReportByMonth";
+import ReportDetailByMonth from "./pages/ReportDetailByMonth";
+import ReportByQuarter from "./pages/ReportByQuarter";
+import ReportDetailByQuarter from "./pages/ReportDetailByQuarter";
+import ReportByYear from "./pages/ReportByYear";
+import ReportDetailByYear from "./pages/ReportDetailByYear";
 
 const App = () => {
   return (
@@ -46,7 +54,15 @@ const App = () => {
         <Route path="/order-online" element={<OrderOnlinePage />} />
         <Route path="/order-offline" element={<OrderOfflinePage />} />
         <Route path="/order/detail/:id" element={<OrderDetailPage />} />
-        <Route path="/employee/update" element={<UpdateEmployee />} />
+        <Route path="/employee/:id" element={<UpdateEmployee />} />
+        <Route path="/reports/date" element={<ReportByDate />} />
+        <Route path="/report-detail/25-12-2024" element={<ReportDetailByDate />} /> 
+        <Route path="/reports/month" element={<ReportByMonth />} />
+        <Route path="/report-detail/12-2024" element={<ReportDetailByMonth />} />
+        <Route path="/reports/quarter" element={<ReportByQuarter />} />
+        <Route path="/report-detail/4-2024" element={<ReportDetailByQuarter />} />
+        <Route path="/reports/year" element={<ReportByYear />} />
+        <Route path="/report-detail/2024" element={<ReportDetailByYear />} />
       </Routes>
     </Router>
   );
