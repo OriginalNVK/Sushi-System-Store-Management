@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 
+const dishRevenueRouter = require("./routes/dishRevenueRouter");
 const reportRevenueRouter = require("./routes/reportRevenueRouter");
 const branchRoutes = require("./routes/branchRoutes");
 const invoiceRoutes = require("./routes/invoiceRoutes");
@@ -37,6 +38,7 @@ app.use("/api/register", registerRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/departments", departmentRouter);
 app.use("/api/reports/revenue", reportRevenueRouter);
+app.use("/api/dish-revenue", dishRevenueRouter);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
