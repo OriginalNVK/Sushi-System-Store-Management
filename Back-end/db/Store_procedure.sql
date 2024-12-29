@@ -346,7 +346,6 @@ GO
 
 -- DELETE ORDER OFFLINE
 CREATE OR ALTER PROCEDURE DeleteOrderOffline
-CREATE OR ALTER PROCEDURE DeleteOrderOffline
     @OrderID INT
 -- Nhận giá trị OrderID cần xóa
 AS
