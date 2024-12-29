@@ -21,13 +21,13 @@ const OrderOnline = {
   },
 
   // Lấy chi tiết đơn hàng chưa xác nhận theo ID
-  async getOrderOnlinePendingDetail(orderID) {
+  async getOrderPendingDetail(orderID) {
     const pool = await connectToDB();
     try {
       const result = await pool
         .request()
         .input("OrderID", sql.Int, orderID)
-        .execute("GetOrderOnlinePendingDetail");
+        .execute("GetOrderPendingDetail");
 
       // Kiểm tra nếu không có dữ liệu trả về
       if (result.recordset.length === 0) {
@@ -35,8 +35,14 @@ const OrderOnline = {
       }
 
       // Lấy các thông tin chung từ bản ghi đầu tiên
-      const { OrderID, NumberTable, AmountCustomer } = result.recordset[0];
-
+      const { OrderID } = result.recordset[0];
+      let NumberTable = null;
+      let AmountCustomer = null;
+      if (result.recordset[0].NumberTable !== null)
+      {
+        NumberTable = result.recordset[0].NumberTable;
+        AmountCustomer = result.recordset[0].AmountCustomer;
+      }
       // Nhóm các món ăn (DishName và AmountDish) vào mảng DetailDishs
       const DetailDishs = result.recordset.map((row) => ({
         DishName: row.DishName,

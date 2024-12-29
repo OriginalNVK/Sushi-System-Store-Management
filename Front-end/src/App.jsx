@@ -16,8 +16,10 @@ import BookingDish from "./pages/BookingDish";
 import Invoice from "./pages/Invoice";
 import InvoiceDetails from "./pages/InvoiceDetails";
 import AddEmployee from "./pages/AddEmployee";
-import OrderPage from "./pages/OrderPage";
-import OrderDetailPage from "./pages/OrderDetailPage";  
+import OrderOnlinePage from "./pages/OrderOnlinePage";
+import OrderOfflinePage from "./pages/OrderOfflinePage";
+import OrderDetailPage from "./pages/OrderDetailPage"; 
+import OrderOverview from "./pages/OrderOverview";
 
 const App = () => {
   return (
@@ -39,7 +41,9 @@ const App = () => {
         <Route path="/invoices" element={<Invoice />} />
         <Route path="/invoice/detail/:id" element={<InvoiceDetails />} />
         <Route path="/add-employee" element={<AddEmployee />} />
-        <Route path="/order" element={<OrderPage />} />
+        <Route path="/order-overview" element={<OrderOverview />} />
+        <Route path="/order-online" element={<OrderOnlinePage />} />
+        <Route path="/order-offline" element={<OrderOfflinePage />} />
         <Route path="/order/detail/:id" element={<OrderDetailPage />} />
       </Routes>
     </Router>

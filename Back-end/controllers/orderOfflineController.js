@@ -1,4 +1,5 @@
 const orderOfflineModel = require('../models/orderOfflineModel');
+const orderOnlineModel = require('../models/orderOnlineModel');
 
 const getOrderOffline = async (req, res) => {
     try {
@@ -8,6 +9,16 @@ const getOrderOffline = async (req, res) => {
         res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
     }
 };
+
+const getOrderOfflinePendingOverview = async (req, res) => {
+    const branchID = req.params.BranchID;
+    try {
+        const orders = await orderOfflineModel.getOrderOfflinePendingOverview(branchID);
+        res.status(200).json(orders);
+    } catch (err) {
+        res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
+    }
+}
 
 const postOrderOffline = async (req, res) => {
     try {
@@ -43,16 +54,6 @@ const postOrderOffline = async (req, res) => {
     }
 };
 
-const putOrderOffline = async (req, res) => {
-    const orderID = req.body.OrderID; 
-    try {
-        const updatedOrder = await orderOfflineModel.updateOrder(orderID, req.body);
-        res.json(updatedOrder);
-    } catch (err) {
-        res.status(500).send('Lỗi khi cập nhật đơn hàng: ' + err.message);
-    }
-};
-
 const deleteOrderOffline = async (req, res) => {
     const orderID = req.params.OrderID;
     try {
@@ -64,8 +65,8 @@ const deleteOrderOffline = async (req, res) => {
 };
 
 module.exports = {
-    getOrderOffline,
-    postOrderOffline,
-    putOrderOffline,
-    deleteOrderOffline
+  getOrderOffline,
+  postOrderOffline,
+  deleteOrderOffline,
+  getOrderOfflinePendingOverview,
 };
