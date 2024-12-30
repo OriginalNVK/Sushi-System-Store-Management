@@ -31,7 +31,7 @@ const addEmployee = async (Employee) => {
 };
 
 const updateEmployee = async (Employee) => {
-    const { EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, LeaveDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = Employee;
+    const { EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = Employee;
     const pool = await connectToDB();
     await pool.request()
         .input('EmployeeID', sql.Int, EmployeeID)
@@ -43,7 +43,7 @@ const updateEmployee = async (Employee) => {
         .input('BranchID', sql.Int, BranchID)
         .input('EmployeeAddress', sql.NVarChar, EmployeeAddress)
         .input('EmployeePhone', sql.NVarChar, EmployeePhone)
-        .query('EXEC Update_Employee @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, @LeaveDate, @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone');
+        .query('EXEC Update_Employee @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary,@DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone');
 };
 
 const deleteEmployeeById = async (EmployeeID) => {
