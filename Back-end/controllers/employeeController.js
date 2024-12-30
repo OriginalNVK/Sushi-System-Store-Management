@@ -51,10 +51,11 @@ const addNewEmployee = async (req, res) => {
 };
 
 const updateEmployee = async (req, res) => {
-    const employee = req.body;
+    const { EmployeeID } = req.params;
+    const employeeData = req.body;
 
     try {
-        await employeeModel.updateEmployee(employee);
+        await employeeModel.updateEmployee(EmployeeID, employeeData);
         res.status(200).json({ message: 'Employee updated successfully.' });
     } catch (err) {
         res.status(500).json({ error: err.message });

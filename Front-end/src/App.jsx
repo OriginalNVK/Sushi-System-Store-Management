@@ -46,7 +46,7 @@ const App = () => {
         <Route path="/order-online" element={<OrderOnlinePage />} />
         <Route path="/order-offline" element={<OrderOfflinePage />} />
         <Route path="/order/detail/:id" element={<OrderDetailPage />} />
-        <Route path="/employee/update" element={<UpdateEmployee />} />
+        <Route path="/employee/:id" element={<UpdateEmployee />} />
       </Routes>
     </Router>
   );

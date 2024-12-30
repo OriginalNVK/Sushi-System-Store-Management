@@ -38,19 +38,20 @@ const addEmployee = async (Employee) => {
         .query('EXEC New_Employee @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone');
 };
 
-const updateEmployee = async (Employee) => {
-    const { EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, LeaveDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = Employee;
+const updateEmployee = async (EmployeeID, employeeData) => {
     const pool = await connectToDB();
     await pool.request()
         .input('EmployeeID', sql.Int, EmployeeID)
-        .input('EmployeeName', sql.NVarChar, EmployeeName)
-        .input('EmployeeBirth', sql.Date, EmployeeBirth)
-        .input('EmployeeGender', sql.NVarChar, EmployeeGender)
-        .input('Salary', sql.Decimal, Salary)
-        .input('DepartmentID', sql.Int, DepartmentID)
-        .input('BranchID', sql.Int, BranchID)
-        .input('EmployeeAddress', sql.NVarChar, EmployeeAddress)
-        .input('EmployeePhone', sql.NVarChar, EmployeePhone)
+        .input('EmployeeName', sql.NVarChar, employeeData.EmployeeName)
+        .input('EmployeeBirth', sql.Date, employeeData.EmployeeBirth)
+        .input('EmployeeGender', sql.NVarChar, employeeData.EmployeeGender)
+        .input('Salary', sql.Decimal, employeeData.Salary)
+        .input('EntryDate', sql.Date, employeeData.EntryDate)
+        .input('LeaveDate', sql.Date, employeeData.LeaveDate)
+        .input('DepartmentID', sql.Int, employeeData.DepartmentID)
+        .input('BranchID', sql.Int, employeeData.BranchID)
+        .input('EmployeeAddress', sql.NVarChar, employeeData.EmployeeAddress)
+        .input('EmployeePhone', sql.NVarChar, employeeData.EmployeePhone)
         .query('EXEC Update_Employee @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, @LeaveDate, @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone');
 };
 
