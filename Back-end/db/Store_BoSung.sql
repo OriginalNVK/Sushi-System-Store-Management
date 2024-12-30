@@ -48,6 +48,7 @@ BEGIN
     WHERE b.BranchID = @BranchID
     GROUP BY c.CustomerName, c.CustomerEmail, c.CustomerGender, c.CustomerPhone, c.CCCD;
 END;
+GO
 
 
 --Update lich su chuyen cong tac nv
@@ -113,26 +114,27 @@ BEGIN
     WHERE mnd.StatusDish = 'YES' AND b.BranchID = @BranchID
     ORDER BY mnd.DirectoryName, d.DishName, d.Price;
 END
+GO
 
-EXEC GetActiveDishesByBranchID @BranchID =1
----------------------------------------------
-    SELECT 
-        b.BranchName,
-        b.BranchAddress,
-        b.OpenHour,
-        b.CloseHour,
-        b.PhoneNumber,
-        b.HasCarParking,
-        b.HasMotorParking,
-        AREA.AreaName,
-        b.HasDeliveryService,
-        e.EmployeeName
-    FROM 
-        BRANCH b
-    JOIN 
-        AREA ON b.AreaID = AREA.AreaID
-    JOIN 
-        EMPLOYEE e ON b.ManagerID = e.EmployeeID;
+--EXEC GetActiveDishesByBranchID @BranchID =1
+-----------------------------------------------
+--    SELECT 
+--        b.BranchName,
+--        b.BranchAddress,
+--        b.OpenHour,
+--        b.CloseHour,
+--        b.PhoneNumber,
+--        b.HasCarParking,
+--        b.HasMotorParking,
+--        AREA.AreaName,
+--        b.HasDeliveryService,
+--        e.EmployeeName
+--    FROM 
+--        BRANCH b
+--    JOIN 
+--        AREA ON b.AreaID = AREA.AreaID
+--    JOIN 
+--        EMPLOYEE e ON b.ManagerID = e.EmployeeID;
 
 CREATE PROCEDURE GetEmployeeByID(@EmployeeID INT)
 AS
@@ -141,4 +143,3 @@ BEGIN
     FROM EMPLOYEE
     WHERE EmployeeID = @EmployeeID;
 END
-

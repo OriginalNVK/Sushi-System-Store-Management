@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { getBranches } from "../service/Services";  
+import { getBranches } from "../service/Services";
 
 const formatDate = (date) => {
   const d = new Date(date);
-  return d.toISOString().split('T')[0]; // Lấy phần yyyy-MM-dd
+  return d.toISOString().split("T")[0]; // Format: yyyy-MM-dd
 };
 
 const formatTime = (time) => {
   const d = new Date(time);
-  return d.toISOString().split('T')[0] + "T" + d.toTimeString().slice(0, 8); // Lấy phần yyyy-MM-ddTHH:mm:ss
+  return d.toTimeString().slice(0, 5); // Format: HH:mm
 };
 
 const ReserveTableForm = () => {
@@ -18,15 +18,15 @@ const ReserveTableForm = () => {
     NumberTable: 1,
     CardID: 2,
     AmountCustomer: 1,
-    DateOrder: formatDate(new Date()), // Sử dụng formatDate để đảm bảo đúng định dạng yyyy-MM-dd
-    TimeOrder: formatTime(new Date()), // Sử dụng formatTime để đảm bảo đúng định dạng HH:mm
+    DateOrder: formatDate(new Date()), // yyyy-MM-dd
+    TimeOrder: formatTime(new Date()), // HH:mm
     dishes: [],
   });
 
   useEffect(() => {
     const loadData = async () => {
       const data = await getBranches();
-      setBranch(data); // Lưu thông tin chi nhánh vào state
+      setBranch(data);
     };
     loadData();
   }, []);
@@ -57,12 +57,12 @@ const ReserveTableForm = () => {
   const handleReserve = async () => {
     const transformedData = {
       ...formData,
-      DateOrder: `${formData.DateOrder}T00:00:00.000Z`, // Thêm thời gian mặc định cho ngày
-      TimeOrder: `${formData.DateOrder}T${formData.TimeOrder}:00.000Z`, // Giữ nguyên định dạng HH:mm
+      DateOrder: `${formData.DateOrder}T00:00:00.000Z`,
+      TimeOrder: `${formData.DateOrder}T${formData.TimeOrder}:00.000Z`,
     };
 
-    console.log(transformedData); 
-  
+    console.log(transformedData);
+
     try {
       const response = await fetch("http://localhost:3000/api/order-online", {
         method: "POST",
@@ -71,12 +71,12 @@ const ReserveTableForm = () => {
         },
         body: JSON.stringify(transformedData),
       });
-  
+
       if (!response.ok) {
         alert(`Error: ${response.status} ${response.statusText}`);
         return;
       }
-  
+
       const result = await response.json();
       if (result.Status === "Success") {
         alert("Reservation successful!");
@@ -86,15 +86,15 @@ const ReserveTableForm = () => {
     } catch (error) {
       alert("Network error or invalid response from server. Please try again.");
     }
-  };  
+  };
 
   return (
     <div className="flex flex-col space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <select 
-          name="BranchID" 
-          className="p-3 border border-gray-300 rounded" 
-          value={formData.BranchID}  // Liên kết với BranchID trong formData
+        <select
+          name="BranchID"
+          className="p-3 border border-gray-300 rounded"
+          value={formData.BranchID}
           onChange={handleChange}
         >
           {branch.map((branchItem) => (
@@ -112,7 +112,7 @@ const ReserveTableForm = () => {
           onChange={handleChange}
         />
       </div>
-      
+
       <input
         type="number"
         name="AmountCustomer"
@@ -121,21 +121,19 @@ const ReserveTableForm = () => {
         value={formData.AmountCustomer}
         onChange={handleChange}
       />
-      
+
       <div className="grid grid-cols-2 gap-4">
         <input
           type="date"
           name="DateOrder"
-          value={formData.DateOrder} // Giá trị luôn ở định dạng yyyy-MM-dd
+          value={formData.DateOrder}
           onChange={handleChange}
           className="p-3 border border-gray-300 rounded"
         />
-
-        {/* Giờ đặt bàn */}
         <input
           type="time"
           name="TimeOrder"
-          value={formData.TimeOrder} // Giá trị luôn ở định dạng HH:mm
+          value={formData.TimeOrder}
           onChange={handleChange}
           className="p-3 border border-gray-300 rounded"
         />
