@@ -20,8 +20,8 @@ drop index INDEX_MDD_D on MENU_DIRECTORY_DISH
 ----------------------------------------
 --Kich ban 3 Lấy ds khách hàng tới branch 
 EXEC GetCustomersByBranchID @BranchID = 1
-create nonclustered index INDEX_INVOICE_BRANCH on ORDER_DIRECTORY(BranchID) include(CardID)
-drop index INDEX_INVOICE_BRANCH on INVOICE
+create nonclustered index INDEX_OD_BRANCH on ORDER_DIRECTORY(BranchID) include(CardID)
+drop index INDEX_INVOICE_BRANCH on ORDER_DIRECTORY
 -----------------------------------------
 
 -- Chạy truy vấn để tạo lệnh xóa

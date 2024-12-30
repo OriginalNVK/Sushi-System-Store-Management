@@ -103,9 +103,8 @@ GO
 
 
 -- POST ORDER ONLINE
-CREATE PROCEDURE AddNewOrderOnline
+CREATE OR ALTER PROCEDURE AddNewOrderOnline
     @BranchID INT,
-    @EmployeeID INT,
     @NumberTable INT,
     @CardID INT,
     @AmountCustomer INT,
@@ -123,9 +122,6 @@ BEGIN
         IF NOT EXISTS (SELECT 1 FROM BRANCH WHERE BranchID = @BranchID)
             THROW 50011, 'Branch does not exist.', 1;
 
-        IF NOT EXISTS (SELECT 1 FROM EMPLOYEE WHERE EmployeeID = @EmployeeID)
-            THROW 50012, 'Employee does not exist.', 1;
-
         IF @CardID IS NOT NULL AND NOT EXISTS (SELECT 1 FROM CARD_CUSTOMER WHERE CardID = @CardID)
             THROW 50013, 'Customer does not exist.', 1;
 
@@ -137,7 +133,7 @@ BEGIN
 
         -- Insert into ORDER_DIRECTORY
         INSERT INTO ORDER_DIRECTORY (OrderID, EmployeeID, NumberTable, CardID, BranchID)
-        VALUES (@OrderID, @EmployeeID, @NumberTable, @CardID, @BranchID);
+        VALUES (@OrderID,NULL, @NumberTable, @CardID, @BranchID);
 
         -- Insert into ORDER_ONLINE
         INSERT INTO ORDER_ONLINE (OnOrderID, DateOrder, TimeOrder, AmountCustomer)
