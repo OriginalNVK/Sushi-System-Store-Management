@@ -110,7 +110,6 @@ GO
 
 CREATE TABLE ORDER_ONLINE (
     OnOrderID INT PRIMARY KEY,
-    BranchID INT,
     DateOrder DATE,
     TimeOrder TIME,
     AmountCustomer INT,
@@ -140,13 +139,11 @@ CREATE TABLE INVOICE (
     DiscountMoney INT CHECK(DiscountMoney >= 0),
     PaymentDate DATE,
     OrderID INT,
-	BranchID INT
 );
 GO
 
 CREATE TABLE ORDER_OFFLINE (
     OffOrderID INT PRIMARY KEY,
-	BranchId INT,
     OrderEstablishDate DATE
 );
 GO
