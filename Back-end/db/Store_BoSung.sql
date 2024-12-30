@@ -52,7 +52,7 @@ GO
 
 
 --Update lich su chuyen cong tac nv
-CREATE PROCEDURE TransferEmployee
+CREATE OR ALTER PROCEDURE TransferEmployee
     @EmployeeID INT,            -- ID của nhân viên cần chuyển
     @OldBranchID INT,           -- Chi nhánh hiện tại
     @NewBranchID INT,           -- Chi nhánh mới
@@ -115,26 +115,6 @@ BEGIN
     ORDER BY mnd.DirectoryName, d.DishName, d.Price;
 END
 GO
-
---EXEC GetActiveDishesByBranchID @BranchID =1
------------------------------------------------
---    SELECT 
---        b.BranchName,
---        b.BranchAddress,
---        b.OpenHour,
---        b.CloseHour,
---        b.PhoneNumber,
---        b.HasCarParking,
---        b.HasMotorParking,
---        AREA.AreaName,
---        b.HasDeliveryService,
---        e.EmployeeName
---    FROM 
---        BRANCH b
---    JOIN 
---        AREA ON b.AreaID = AREA.AreaID
---    JOIN 
---        EMPLOYEE e ON b.ManagerID = e.EmployeeID;
 
 CREATE PROCEDURE GetEmployeeByID(@EmployeeID INT)
 AS
