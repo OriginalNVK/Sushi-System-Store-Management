@@ -132,4 +132,3 @@ EXEC GetActiveDishesByBranchID @BranchID =1
     JOIN 
         EMPLOYEE e ON b.ManagerID = e.EmployeeID;
 
-
