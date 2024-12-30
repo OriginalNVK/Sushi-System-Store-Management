@@ -30,8 +30,7 @@ BEGIN
 END;
 GO
 
---Lay ds khach hang theo branch cho kb 2
-CREATE PROCEDURE GetCustomersByBranchID (
+CREATE OR ALTER PROCEDURE GetCustomersByBranchID (
     @BranchID INT
 )
 AS
@@ -41,12 +40,15 @@ BEGIN
         c.CustomerEmail, 
         c.CustomerGender, 
         c.CustomerPhone, 
-        CAST(c.CCCD AS FLOAT) AS CCCD
+        c.CCCD
     FROM CUSTOMER c
-    JOIN INVOICE i ON i.CardID = c.CardID
-    JOIN BRANCH b ON b.BranchID = i.BranchID
-    WHERE b.BranchID = @BranchID;
-END
+    JOIN CARD_CUSTOMER cc ON c.CardID = cc.CardID
+    JOIN ORDER_DIRECTORY od ON od.CardID = cc.CardID
+    JOIN BRANCH b ON b.BranchID = od.BranchID
+    WHERE b.BranchID = @BranchID
+    GROUP BY c.CustomerName, c.CustomerEmail, c.CustomerGender, c.CustomerPhone, c.CCCD;
+END;
+
 
 --Update lich su chuyen cong tac nv
 CREATE PROCEDURE TransferEmployee
@@ -131,4 +133,12 @@ EXEC GetActiveDishesByBranchID @BranchID =1
         AREA ON b.AreaID = AREA.AreaID
     JOIN 
         EMPLOYEE e ON b.ManagerID = e.EmployeeID;
+
+CREATE PROCEDURE GetEmployeeByID(@EmployeeID INT)
+AS
+BEGIN
+    SELECT *
+    FROM EMPLOYEE
+    WHERE EmployeeID = @EmployeeID;
+END
 

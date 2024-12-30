@@ -14,11 +14,18 @@ join BRANCH b on b.BranchID = mnd.BranchID
 where mnd.StatusDish = 'YES' and b.BranchID = 1
 Order by mnd.DirectoryName,d.DishName, d.Price
 
+
 create nonclustered index INDEX_MDD_D on MENU_DIRECTORY_DISH(BranchID,StatusDish) include(DirectoryName)
-drop index dishname on DISH
+drop index INDEX_MDD_D on MENU_DIRECTORY_DISH
 ----------------------------------------
 --Kich ban 3 Lấy ds khách hàng tới branch 
 EXEC GetCustomersByBranchID @BranchID = 1
-create nonclustered index INDEX_INVOICE_BRANCH on INVOICE(BranchID) include(CardID)
+create nonclustered index INDEX_INVOICE_BRANCH on ORDER_DIRECTORY(BranchID) include(CardID)
 drop index INDEX_INVOICE_BRANCH on INVOICE
 -----------------------------------------
+
+-- Chạy truy vấn để tạo lệnh xóa
+SELECT CONCAT('DROP PROCEDURE IF EXISTS ', ROUTINE_NAME, ';') AS DropStatement
+FROM information_schema.ROUTINES
+WHERE ROUTINE_TYPE = 'PROCEDURE' AND ROUTINE_SCHEMA = 'SUSHISTORE_MANAGEMENT';
+
