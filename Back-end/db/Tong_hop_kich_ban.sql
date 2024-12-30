@@ -23,9 +23,3 @@ EXEC GetCustomersByBranchID @BranchID = 1
 create nonclustered index INDEX_OD_BRANCH on ORDER_DIRECTORY(BranchID) include(CardID)
 drop index INDEX_INVOICE_BRANCH on ORDER_DIRECTORY
 -----------------------------------------
-
--- Chạy truy vấn để tạo lệnh xóa
-SELECT CONCAT('DROP PROCEDURE IF EXISTS ', ROUTINE_NAME, ';') AS DropStatement
-FROM information_schema.ROUTINES
-WHERE ROUTINE_TYPE = 'PROCEDURE' AND ROUTINE_SCHEMA = 'SUSHISTORE_MANAGEMENT';
-

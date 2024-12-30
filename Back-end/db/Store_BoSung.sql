@@ -40,7 +40,7 @@ BEGIN
         c.CustomerEmail, 
         c.CustomerGender, 
         c.CustomerPhone, 
-        c.CCCD
+        CAST(c.CCCD as float) as CCCD
     FROM CUSTOMER c
     JOIN CARD_CUSTOMER cc ON c.CardID = cc.CardID
     JOIN ORDER_DIRECTORY od ON od.CardID = cc.CardID

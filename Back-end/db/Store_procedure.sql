@@ -457,27 +457,69 @@ END;
 GO
 --===================================================================================================================
 CREATE OR ALTER PROC New_Employee
-    @EmployeeID INT,
     @EmployeeName NVARCHAR(255),
     @EmployeeBirth DATE,
     @EmployeeGender NVARCHAR(10),
-    @Salary INT,
     @EntryDate DATE,
-    @DepartmentID INT,
-    @BranchID INT,
+    @DepartmentName NVARCHAR(255),
+    @BranchName NVARCHAR(255),
     @EmployeeAddress NVARCHAR(255),
-    @EmployeePhone CHAR(15)
+    @EmployeePhone NVARCHAR(20)
 AS
 BEGIN
+    DECLARE @NewEmployeeID INT;
+    DECLARE @DepartmentID INT;
+    DECLARE @BranchID INT;
+    DECLARE @Salary INT;
+
+    -- Lấy EmployeeID mới
+    SELECT @NewEmployeeID = ISNULL(MAX(EmployeeID), 0) + 1 FROM EMPLOYEE;
+
+    -- Tra cứu BranchID dựa trên BranchName
+    SELECT @BranchID = BranchID
+    FROM BRANCH
+    WHERE BranchName = @BranchName;
+
+    -- Kiểm tra nếu BranchID không tồn tại
+    IF @BranchID IS NULL
+    BEGIN
+        RAISERROR('Invalid BranchName', 16, 1);
+        RETURN;
+    END;
+
+    -- Tra cứu DepartmentID dựa trên DepartmentName và BranchID
+    SELECT @DepartmentID = DepartmentID
+    FROM DEPARTMENT
+    WHERE DepartmentName = @DepartmentName
+      AND BranchID = @BranchID;
+
+    -- Kiểm tra nếu DepartmentID không tồn tại
+    IF @DepartmentID IS NULL
+    BEGIN
+        RAISERROR('Invalid DepartmentName or BranchName', 16, 1);
+        RETURN;
+    END;
+
+    -- Lấy lương từ nhân viên khác cùng bộ phận
+    SELECT TOP 1 @Salary = Salary
+    FROM EMPLOYEE
+    WHERE DepartmentID = @DepartmentID
+    ORDER BY EmployeeID;
+
+    -- Nếu không tìm thấy lương, đặt mặc định
+    IF @Salary IS NULL
+        SET @Salary = 50000; -- Giá trị mặc định
+
+    -- Thêm nhân viên mới vào bảng EMPLOYEE
     INSERT INTO EMPLOYEE
-        (
-        EmployeeID,EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate,
+    (
+        EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate,
         DepartmentID, BranchID, EmployeeAddress, EmployeePhone
-        )
+    )
     VALUES
-        (
-            @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate,
-            @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone
+    (
+        @NewEmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate,
+        @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone
     );
 END;
 GO
