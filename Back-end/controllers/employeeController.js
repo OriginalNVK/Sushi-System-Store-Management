@@ -30,7 +30,6 @@ const getEmployee = async (req, res) => {
 
 const addNewEmployee = async (req, res) => {
     const employee = req.body;
-
     try {
         await employeeModel.addEmployee(employee);
         res.status(200).json({ message: 'Employee added successfully.' });

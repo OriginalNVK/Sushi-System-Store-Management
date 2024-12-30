@@ -103,22 +103,24 @@ export const getEmployeeByBranchID = async (branchID) => {
   }
 }
 
-export const createEmployee = async (employee) => {
-  try {
-    const response = await fetch('http://localhost:3000/api/employees', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(employee),
-    })
-  }
-  catch(error)
-  {
-    console.error("Error during createEmployee request:", error);
+export const createEmployee = async (employeeData) => {
+  try{
+  const response = await fetch("http://localhost:3000/api/employees/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(employeeData),
+  });
+  return response; // This must be a Response object
+}
+  catch (error) {
+    console.error("Error during putEmployee request:", error);
     return { success: false, error: "Network error" };
   }
-}
+};
+
+
 
 export const putEmployee = async (employee) => {
   try {

@@ -16,20 +16,18 @@ const getEmployeeById = async (EmployeeID) => {
 };
 
 const addEmployee = async (Employee) => {
-    const { EmployeeID, EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate, DepartmentID, BranchID, EmployeeAddress, EmployeePhone } = Employee;
+    const { EmployeeName, EmployeeBirth, EmployeeGender, EntryDate, DepartmentName, BranchName, EmployeeAddress, EmployeePhone } = Employee;
     const pool = await connectToDB();
     await pool.request()
-        .input('EmployeeID', sql.Int, EmployeeID)
         .input('EmployeeName', sql.NVarChar, EmployeeName)
         .input('EmployeeBirth', sql.Date, EmployeeBirth)
         .input('EmployeeGender', sql.NVarChar, EmployeeGender)
-        .input('Salary', sql.Decimal, Salary)
         .input('EntryDate', sql.Date, EntryDate)
-        .input('DepartmentID', sql.Int, DepartmentID)
-        .input('BranchID', sql.Int, BranchID)
+        .input('DepartmentName', sql.NVarChar, DepartmentName)
+        .input('BranchName', sql.NVarChar, BranchName)
         .input('EmployeeAddress', sql.NVarChar, EmployeeAddress)
         .input('EmployeePhone', sql.NVarChar, EmployeePhone)
-        .query('EXEC New_Employee @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone');
+        .query('EXEC New_Employee @EmployeeName, @EmployeeBirth, @EmployeeGender, @EntryDate, @DepartmentName, @BranchName, @EmployeeAddress, @EmployeePhone');
 };
 
 const updateEmployee = async (Employee) => {
