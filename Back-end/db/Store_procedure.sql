@@ -560,12 +560,19 @@ CREATE OR ALTER PROCEDURE Delete_Employee
     @EmployeeID INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1
-    FROM EMPLOYEE
-    WHERE EmployeeID = @EmployeeID)
+    -- Kiểm tra xem nhân viên có tồn tại trong bảng EMPLOYEE không
+    IF EXISTS (SELECT 1 FROM EMPLOYEE WHERE EmployeeID = @EmployeeID)
     BEGIN
+        -- Cập nhật các trường khóa ngoại liên kết với EmployeeID trong các bảng liên quan
+        UPDATE CARD_CUSTOMER SET EmployeeID = NULL WHERE EmployeeID = @EmployeeID;
+        UPDATE BRANCH SET ManagerID = NULL WHERE ManagerID = @EmployeeID;
+        UPDATE EMPLOYEE_HISTORY SET EmployeeID = NULL WHERE EmployeeID = @EmployeeID;
+        UPDATE ORDER_DIRECTORY SET EmployeeID = NULL WHERE EmployeeID = @EmployeeID;
+        
+        -- Xóa nhân viên khỏi bảng EMPLOYEE
         DELETE FROM EMPLOYEE WHERE EmployeeID = @EmployeeID;
-        PRINT 'Employee deleted successfully.';
+        
+        PRINT 'Employee deleted successfully, and foreign keys updated.';
     END
     ELSE
     BEGIN
