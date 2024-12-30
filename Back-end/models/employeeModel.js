@@ -39,20 +39,27 @@ const addEmployee = async (Employee) => {
 };
 
 const updateEmployee = async (EmployeeID, employeeData) => {
-    const pool = await connectToDB();
-    await pool.request()
-        .input('EmployeeID', sql.Int, EmployeeID)
-        .input('EmployeeName', sql.NVarChar, employeeData.EmployeeName)
-        .input('EmployeeBirth', sql.Date, employeeData.EmployeeBirth)
-        .input('EmployeeGender', sql.NVarChar, employeeData.EmployeeGender)
-        .input('Salary', sql.Decimal, employeeData.Salary)
-        .input('EntryDate', sql.Date, employeeData.EntryDate)
-        .input('LeaveDate', sql.Date, employeeData.LeaveDate)
-        .input('DepartmentID', sql.Int, employeeData.DepartmentID)
-        .input('BranchID', sql.Int, employeeData.BranchID)
-        .input('EmployeeAddress', sql.NVarChar, employeeData.EmployeeAddress)
-        .input('EmployeePhone', sql.NVarChar, employeeData.EmployeePhone)
-        .query('EXEC Update_Employee @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, @LeaveDate, @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone');
+    try {
+        console.log('Updating employee with data:', { EmployeeID, ...employeeData }); // Log dữ liệu đầu vào
+        const pool = await connectToDB();
+        await pool.request()
+            .input('EmployeeID', sql.Int, EmployeeID)
+            .input('EmployeeName', sql.NVarChar, employeeData.EmployeeName)
+            .input('EmployeeBirth', sql.Date, employeeData.EmployeeBirth)
+            .input('EmployeeGender', sql.NVarChar, employeeData.EmployeeGender)
+            .input('Salary', sql.Decimal, employeeData.Salary)
+            .input('EntryDate', sql.Date, employeeData.EntryDate)
+            .input('LeaveDate', sql.Date, employeeData.LeaveDate)
+            .input('DepartmentID', sql.Int, employeeData.DepartmentID)
+            .input('BranchID', sql.Int, employeeData.BranchID)
+            .input('EmployeeAddress', sql.NVarChar, employeeData.EmployeeAddress)
+            .input('EmployeePhone', sql.NVarChar, employeeData.EmployeePhone)
+            .query('EXEC Update_Employee @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate, @LeaveDate, @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone');
+        console.log('Employee update query executed successfully'); // Log khi query thành công
+    } catch (error) {
+        console.error('Error in updateEmployee:', error.message); // Log lỗi
+        throw error;
+    }
 };
 
 const deleteEmployeeById = async (EmployeeID) => {

@@ -54,13 +54,18 @@ const updateEmployee = async (req, res) => {
     const { EmployeeID } = req.params;
     const employeeData = req.body;
 
+    console.log('Received update request:', { EmployeeID, employeeData }); // Log request nhận được
+
     try {
         await employeeModel.updateEmployee(EmployeeID, employeeData);
+        console.log('Employee updated successfully'); // Log khi update thành công
         res.status(200).json({ message: 'Employee updated successfully.' });
     } catch (err) {
+        console.error('Error in updateEmployee controller:', err.message); // Log lỗi từ controller
         res.status(500).json({ error: err.message });
     }
 };
+
 
 const deleteEmployee = async (req, res) => {
     const { EmployeeID } = req.params;
