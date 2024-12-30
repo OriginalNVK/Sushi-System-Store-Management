@@ -2,13 +2,13 @@ const sql = require("mssql");
 const connectToDB = require("../db/dbConfig")
 
 // Lấy tất cả khách hàng
-const getAllCustomers = async () => {
+const getAllCustomers = async (BranchID) => {
     try {
         const pool = await connectToDB();
         if (!pool) {
             throw new Error("Không thể kết nối với cơ sở dữ liệu");
         }
-        let result = await pool.request().query("SELECT * FROM CUSTOMER");
+        let result = await pool.request().input('BranchID', BranchID).query(`EXEC GetCustomersByBranchID @BranchID`);
         return result.recordset;
     } catch (err) {
         console.error("Lỗi khi lấy tất cả khách hàng:", err.message);

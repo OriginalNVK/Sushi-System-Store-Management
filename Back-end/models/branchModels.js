@@ -13,14 +13,14 @@ const getBranchesModel = async () => {
         b.HasCarParking,
         b.HasMotorParking,
         AREA.AreaName,
-        EMPLOYEE.EmployeeName,
-        b.HasDeliveryService
+        b.HasDeliveryService,
+        e.EmployeeName
     FROM 
         BRANCH b
-    LEFT JOIN 
+    JOIN 
         AREA ON b.AreaID = AREA.AreaID
-    LEFT JOIN 
-        EMPLOYEE ON b.ManagerID = EMPLOYEE.EmployeeID;
+    JOIN 
+        EMPLOYEE e ON b.ManagerID = e.EmployeeID;
 `);
   return result.recordset;
 };

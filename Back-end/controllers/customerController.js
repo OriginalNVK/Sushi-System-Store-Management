@@ -8,8 +8,9 @@ const {
 
 // Lấy tất cả khách hàng
 const getAllCustomersController = async (req, res) => {
+  const { BranchID } = req.params;
   try {
-    const customers = await getAllCustomers(); // Gọi phương thức từ models
+    const customers = await getAllCustomers(BranchID); // Gọi phương thức từ models
     res.json(customers);
   } catch (err) {
     console.error("Lỗi lấy khách hàng:", err);

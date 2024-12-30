@@ -26,9 +26,9 @@ export const loginUser = async (phone, password) => {
   }
 };
 
-export const getCustomer = async () => {
+export const getCustomer = async (branchID) => {
   try {
-    const response = await fetch('http://localhost:3000/api/customers');
+    const response = await fetch(`http://localhost:3000/api/customers/${branchID}`);
 
     const result = await response.json();
     return result;
@@ -103,22 +103,24 @@ export const getEmployeeByBranchID = async (branchID) => {
   }
 }
 
-export const createEmployee = async (employee) => {
-  try {
-    const response = await fetch('http://localhost:3000/api/employees', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(employee),
-    })
-  }
-  catch(error)
-  {
-    console.error("Error during createEmployee request:", error);
+export const createEmployee = async (employeeData) => {
+  try{
+  const response = await fetch("http://localhost:3000/api/employees/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(employeeData),
+  });
+  return response; // This must be a Response object
+}
+  catch (error) {
+    console.error("Error during putEmployee request:", error);
     return { success: false, error: "Network error" };
   }
-}
+};
+
+
 
 export const putEmployee = async (employee) => {
   try {
@@ -153,9 +155,22 @@ export const deleteEmployee = async (employeeID) => {
   }
 }
 
-export const getDishes = async () => {
+export const getDishes = async (branchID) => {
   try {
-    const response = await fetch('http://localhost:3000/api/dishes');
+    const response = await fetch(`http://localhost:3000/api/dishes/${branchID}`);
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getDishes request:", error);
+    return [];
+  }
+}
+
+export const getDishesForCus = async () => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/dishes/`);
     const result = await response.json();
     return result;
   }

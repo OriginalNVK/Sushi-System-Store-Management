@@ -1,18 +1,7 @@
 const employeeModel = require('../models/employeeModel');
 
-const getAllEmployees = async (req, res) => {
-    try {
-      const employee = await employeeModel.getAllEmployee();
-      res.json(employee);
-    } catch (err) {
-      console.error("Error fetching employee:", err);
-      res.status(500).json({ error: "An error occurred while fetching employee" });
-    }
-};
-
 const getAllEmployeeByBranchID = async (req, res) => {
   const { BranchID } = req.params;
-
   try {
     const employees = await employeeModel.getAllEmployeeByBranchID(BranchID);
     res.status(200).json(employees);
@@ -41,7 +30,6 @@ const getEmployee = async (req, res) => {
 
 const addNewEmployee = async (req, res) => {
     const employee = req.body;
-
     try {
         await employeeModel.addEmployee(employee);
         res.status(200).json({ message: 'Employee added successfully.' });
@@ -79,7 +67,6 @@ const deleteEmployee = async (req, res) => {
 };
 
 module.exports = {
-  getAllEmployees,
   getAllEmployeeByBranchID,
   getEmployee,
   addNewEmployee,

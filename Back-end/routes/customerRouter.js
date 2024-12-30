@@ -9,7 +9,7 @@ const {
 } = require("../controllers/customerController");
 
 // Lấy danh sách khách hàng
-router.get("/", getAllCustomersController);
+router.get("/:BranchID", getAllCustomersController);
 
 // Lấy khách hàng theo ID
 router.get("/:id", getCustomerByIdController);
