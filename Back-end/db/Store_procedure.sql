@@ -705,66 +705,179 @@ GO
 
 ----------------------REVENUE PROC----------------------------------------------------------------------------------------------
 CREATE PROCEDURE InsertRevenueByDate
+    @paymentDate DATE, 
+    @branchID INT
 AS
 BEGIN
-    INSERT INTO RevenueByDate (RevenueDate, TotalRevenue)
-    SELECT 
-        PaymentDate AS RevenueDate, 
-        SUM(TotalMoney - DiscountMoney) AS TotalRevenue
-    FROM 
-        INVOICE
-    GROUP BY 
-        PaymentDate;
+    -- Kiểm tra nếu đã tồn tại record với PaymentDate và BranchID
+    IF EXISTS (SELECT 1 FROM RevenueByDate WHERE RevenueDate = @paymentDate AND BranchID = @branchID)
+    BEGIN
+        -- Nếu tồn tại, thực hiện UPDATE
+		DECLARE @TOTALREVENUE INT;
+		SELECT @TOTALREVENUE = SUM(I.TotalMoney - I.DiscountMoney)
+        FROM INVOICE I
+        JOIN ORDER_DIRECTORY OD ON I.OrderID = OD.OrderID
+        WHERE OD.BRANCHID = @branchID AND I.PaymentDate = @paymentDate
+        GROUP BY I.PaymentDate, OD.BRANCHID;
+
+        UPDATE RevenueByDate
+        SET TotalRevenue = @TOTALREVENUE
+        WHERE BRANCHID = @branchID AND RevenueDate = @paymentDate
+    END
+    ELSE
+    BEGIN
+        -- Nếu không tồn tại, thực hiện INSERT
+        INSERT INTO RevenueByDate (RevenueDate, TotalRevenue, BranchID)
+        SELECT 
+            I.PaymentDate AS RevenueDate, 
+            SUM(I.TotalMoney - I.DiscountMoney) AS TotalRevenue,
+            OD.BRANCHID
+        FROM 
+            INVOICE I
+        JOIN ORDER_DIRECTORY OD ON I.OrderID = OD.OrderID
+        WHERE OD.BRANCHID = @branchID AND I.PaymentDate = @paymentDate
+        GROUP BY I.PaymentDate, OD.BRANCHID;
+    END
 END;
 GO
+
+--DROP PROCEDURE InsertRevenueByYear
 
 CREATE PROCEDURE InsertRevenueByMonth
+    @paymentDate DATE, 
+    @branchID INT
 AS
 BEGIN
-    INSERT INTO RevenueByMonth (RevenueMonth, RevenueYear, TotalRevenue)
-    SELECT 
-        MONTH(RevenueDate) AS RevenueMonth, 
-        YEAR(RevenueDate) AS RevenueYear, 
-        SUM(TotalRevenue) AS TotalRevenue
-    FROM 
-        RevenueByDate
-    GROUP BY 
-        MONTH(RevenueDate), YEAR(RevenueDate)
-    HAVING SUM(TotalRevenue) > 0;
+    -- Kiểm tra nếu đã tồn tại record với RevenueMonth, RevenueYear và BranchID
+    IF EXISTS (SELECT 1 
+               FROM RevenueByMonth 
+               WHERE RevenueMonth = MONTH(@paymentDate) 
+                 AND RevenueYear = YEAR(@paymentDate) 
+                 AND BranchID = @branchID)
+    BEGIN
+        -- Nếu tồn tại, thực hiện UPDATE
+		DECLARE @TOTALREVENUE INT;
+		SELECT @TOTALREVENUE = SUM(RBD.TotalRevenue)
+        FROM RevenueByDate RBD
+        WHERE RBD.BranchID = @branchID
+        AND MONTH(RBD.RevenueDate) = MONTH(@paymentDate)
+        AND YEAR(RBD.RevenueDate) = YEAR(@paymentDate)
+        GROUP BY MONTH(RBD.RevenueDate), YEAR(RBD.RevenueDate);
+        UPDATE RevenueByMonth
+        SET TotalRevenue = @TOTALREVENUE
+		WHERE RevenueMonth = MONTH(@paymentDate) AND RevenueYear = YEAR(@paymentDate)
+    END
+    ELSE
+    BEGIN
+        -- Nếu không tồn tại, thực hiện INSERT
+        INSERT INTO RevenueByMonth (RevenueMonth, RevenueYear, TotalRevenue, BranchID)
+        SELECT 
+            MONTH(RBD.RevenueDate) AS RevenueMonth, 
+            YEAR(RBD.RevenueDate) AS RevenueYear, 
+            SUM(RBD.TotalRevenue) AS TotalRevenue,
+            @branchID
+        FROM 
+            RevenueByDate RBD
+        WHERE RBD.BranchID = @branchID 
+        AND MONTH(RBD.RevenueDate) = MONTH(@paymentDate)
+        AND YEAR(RBD.RevenueDate) = YEAR(@paymentDate)
+        GROUP BY MONTH(RBD.RevenueDate), YEAR(RBD.RevenueDate)
+        HAVING SUM(RBD.TotalRevenue) > 0;
+    END
 END;
 GO
 
-GO
 CREATE PROCEDURE InsertRevenueByQuarter
+    @paymentDate DATE, 
+    @branchID INT
 AS
 BEGIN
-    INSERT INTO RevenueByQuarter (RevenueQuarter, RevenueYear, TotalRevenue)
-    SELECT 
-        CEILING(MONTH(RevenueDate) / 3.0) AS RevenueQuarter, 
-        YEAR(RevenueDate) AS RevenueYear, 
-        SUM(TotalRevenue) AS TotalRevenue
-    FROM 
-        RevenueByDate
-    GROUP BY 
-        CEILING(MONTH(RevenueDate) / 3.0), YEAR(RevenueDate)
-    HAVING SUM(TotalRevenue) > 0;
+    -- Kiểm tra nếu đã tồn tại record với RevenueQuarter, RevenueYear và BranchID
+    IF EXISTS (SELECT 1 
+               FROM RevenueByQuarter 
+               WHERE RevenueQuarter = CEILING(MONTH(@paymentDate) / 3.0) 
+                 AND RevenueYear = YEAR(@paymentDate) 
+                 AND BranchID = @branchID)
+    BEGIN
+        -- Nếu tồn tại, thực hiện UPDATE
+		DECLARE @TOTALREVENUE INT;
+		SELECT @TOTALREVENUE = SUM(RBD.TotalRevenue)
+        FROM RevenueByDate RBD
+        WHERE RBD.BranchID = @branchID
+        AND CEILING(MONTH(RBD.RevenueDate) / 3.0) = CEILING(MONTH(@paymentDate) / 3.0)
+        AND YEAR(RBD.RevenueDate) = YEAR(@paymentDate)
+        GROUP BY CEILING(MONTH(RBD.RevenueDate) / 3.0), YEAR(RBD.RevenueDate);
+        UPDATE RevenueByQuarter
+        SET TotalRevenue = @TOTALREVENUE
+		WHERE RevenueQuarter = CEILING(MONTH(@paymentDate) / 3.0) AND RevenueYear = YEAR(@paymentDate)
+    END
+    ELSE
+    BEGIN
+        -- Nếu không tồn tại, thực hiện INSERT
+        INSERT INTO RevenueByQuarter (RevenueQuarter, RevenueYear, TotalRevenue, BranchID)
+        SELECT 
+            CEILING(MONTH(RBD.RevenueDate) / 3.0) AS RevenueQuarter, 
+            YEAR(RBD.RevenueDate) AS RevenueYear, 
+            SUM(RBD.TotalRevenue) AS TotalRevenue,
+            @branchID
+        FROM 
+            RevenueByDate RBD
+        WHERE RBD.BranchID = @branchID
+        AND CEILING(MONTH(RBD.RevenueDate) / 3.0) = CEILING(MONTH(@paymentDate) / 3.0)
+        AND YEAR(RBD.RevenueDate) = YEAR(@paymentDate)
+        GROUP BY CEILING(MONTH(RBD.RevenueDate) / 3.0), YEAR(RBD.RevenueDate)
+        HAVING SUM(RBD.TotalRevenue) > 0;
+    END
 END;
 GO
 
 CREATE PROCEDURE InsertRevenueByYear
+    @paymentDate DATE, 
+    @branchID INT
 AS
 BEGIN
-    INSERT INTO RevenueByYear (RevenueYear, TotalRevenue)
-    SELECT 
-        YEAR(RevenueDate) AS RevenueYear, 
-        SUM(TotalRevenue) AS TotalRevenue
-    FROM 
-        RevenueByDate
-    GROUP BY 
-        YEAR(RevenueDate)
-    HAVING SUM(TotalRevenue) > 0;
+    -- Kiểm tra nếu đã tồn tại record với RevenueYear và BranchID
+    IF EXISTS (SELECT 1 
+               FROM RevenueByYear 
+               WHERE RevenueYear = YEAR(@paymentDate) 
+                 AND BranchID = @branchID)
+    BEGIN
+        -- Nếu tồn tại, thực hiện UPDATE
+		DECLARE @TOTALREVENUE INT;
+		SELECT @TOTALREVENUE = SUM(RBD.TotalRevenue)
+        FROM RevenueByDate RBD
+        WHERE RBD.BranchID = @branchID
+        AND YEAR(RBD.RevenueDate) = YEAR(@paymentDate)
+        GROUP BY YEAR(RBD.RevenueDate);
+        UPDATE RevenueByYear
+        SET TotalRevenue = @TOTALREVENUE
+		WHERE RevenueYear = YEAR(@paymentDate)
+    END
+    ELSE
+    BEGIN
+        -- Nếu không tồn tại, thực hiện INSERT
+        INSERT INTO RevenueByYear (RevenueYear, TotalRevenue, BranchID)
+        SELECT 
+            YEAR(RBD.RevenueDate) AS RevenueYear, 
+            SUM(RBD.TotalRevenue) AS TotalRevenue,
+            @branchID
+        FROM 
+            RevenueByDate RBD
+        WHERE RBD.BranchID = @branchID
+        AND YEAR(RBD.RevenueDate) = YEAR(@paymentDate)
+        GROUP BY YEAR(RBD.RevenueDate)
+        HAVING SUM(RBD.TotalRevenue) > 0;
+    END
 END;
 GO
+
+exec InsertRevenueByDate "2024-12-30T00:00:00.000Z", 1;
+exec InsertRevenueByMonth "2024-12-30T00:00:00.000Z", 1;
+exec InsertRevenueByYear "2024-12-30T00:00:00.000Z", 1;
+exec InsertRevenueByQuarter "2024-12-30T00:00:00.000Z", 1;
+exec UPDATEDISHREVENUE 1
+
+select * from DISHREVENUE
 
 -- Procedure to calculate revenue by day
 CREATE PROCEDURE CalRevenueByDay (@InputDate DATE)
@@ -832,7 +945,7 @@ BEGIN
     SET NOCOUNT ON;
 
     SELECT 
-        rbd.RevenueDate AS PayDate,
+        rbd.RevenueDate AS PayDate,	
         rbd.TotalRevenue AS TotalRevenue,
         b.BranchName AS BranchName
     FROM 
@@ -1157,6 +1270,52 @@ BEGIN
         -- Xử lý lỗi nếu có
         ROLLBACK TRANSACTION;
         PRINT N'Đã xảy ra lỗi khi đặt đơn hàng: ' + ERROR_MESSAGE();
+        THROW;
+    END CATCH
+END;
+GO
+
+CREATE PROCEDURE UPDATEDISHREVENUE
+    @INVOICEID INT -- Tham số ID hóa đơn
+AS
+BEGIN
+    BEGIN TRY
+        -- Bắt đầu transaction để đảm bảo tính nhất quán dữ liệu
+        BEGIN TRANSACTION;
+
+        -- Xử lý: Duyệt từng bản ghi để thực hiện chèn hoặc cập nhật
+        MERGE DISHREVENUE AS DR
+        USING (
+            SELECT 
+                OD.BRANCHID,
+                D.DISHID,
+                I.PAYMENTDATE AS PAYDATE,
+                O.AMOUNTDISH * D.PRICE AS NEW_REVENUE
+            FROM INVOICE I
+            JOIN ORDER_DISH_AMOUNT O ON I.ORDERID = O.ORDERID
+            JOIN DISH D ON O.DISHID = D.DISHID
+            LEFT JOIN ORDER_DIRECTORY OD ON OD.ORDERID = I.ORDERID
+            WHERE I.INVOICEID = @INVOICEID
+        ) AS SourceData
+        ON DR.BRANCHID = SourceData.BRANCHID 
+           AND DR.DISHID = SourceData.DISHID 
+           AND DR.PAYDATE = SourceData.PAYDATE
+        WHEN MATCHED THEN
+            -- Nếu đã tồn tại, cập nhật REVENUE
+            UPDATE SET DR.REVENUE = DR.REVENUE + SourceData.NEW_REVENUE
+        WHEN NOT MATCHED THEN
+            -- Nếu chưa tồn tại, thêm bản ghi mới
+            INSERT (BRANCHID, DISHID, PAYDATE, REVENUE)
+            VALUES (SourceData.BRANCHID, SourceData.DISHID, SourceData.PAYDATE, SourceData.NEW_REVENUE);
+
+        -- Commit transaction nếu không có lỗi
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        -- Rollback transaction nếu có lỗi
+        ROLLBACK TRANSACTION;
+
+        -- Ném lỗi ra ngoài
         THROW;
     END CATCH
 END;
