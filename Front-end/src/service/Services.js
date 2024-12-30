@@ -270,7 +270,7 @@ export const getInvoiceDetail = async (invoiceID) => {
   }
 };
 
-export const updateInvoice = async (invoiceID) => {
+export const updateInvoice = async (invoiceID, branchID) => {
   try {
     const date = new Date();
     const response = await fetch(`http://localhost:3000/api/invoice/${invoiceID}`, {
@@ -278,7 +278,7 @@ export const updateInvoice = async (invoiceID) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ paymentDate: date, invoiceID: invoiceID }),
+      body: JSON.stringify({ paymentDate: date, invoiceID: invoiceID, branchID: branchID }),
     });
 
     // console.log(response);  

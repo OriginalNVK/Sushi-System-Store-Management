@@ -61,7 +61,7 @@ const addInvoiceController = async (req, res) => {
 // Cập nhật hóa đơn
 const updateInvoiceController = async (req, res) => {
   try {
-    const {paymentDate, invoiceID} = req.body;
+    const {paymentDate, invoiceID, branchID} = req.body;
 
     if (!invoiceID || !paymentDate) {
       return res.status(400).json({ error: "All fields are required" });
@@ -69,7 +69,7 @@ const updateInvoiceController = async (req, res) => {
 
     const parsedDate = new Date(paymentDate);
 
-    const result = await updateInvoiceById(invoiceID, parsedDate); // Gọi phương thức từ models
+    const result = await updateInvoiceById(invoiceID, parsedDate, branchID); // Gọi phương thức từ models
     if (!result) {
       return res.status(404).json({ error: "Invoice not found" });
     }

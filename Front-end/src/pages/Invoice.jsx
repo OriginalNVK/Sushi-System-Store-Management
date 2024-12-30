@@ -49,7 +49,9 @@ const Invoice = () => {
       return;
     }
 
-    const response = await updateInvoice(selectedInvoice);
+    const {BranchID} = localStorage.getItem('BranchID');
+
+    const response = await updateInvoice(selectedInvoice, BranchID);
     if (response.ok) {
       alert("Create invoice successfully");
       navigate(`/invoice/detail/${selectedInvoice}`);

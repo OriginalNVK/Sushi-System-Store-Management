@@ -69,7 +69,7 @@ const addInvoice = async (invoiceData) => {
         INSERT INTO INVOICE (InvoiceID, CardID, TotalMoney, DiscountMoney, PaymentDate, OrderID)
         VALUES (@InvoiceID, @CardID, @TotalMoney, @DiscountMoney, @PaymentDate, @OrderID)
       `);
-
+    
     return {
       success: true,
       message: "Invoice added successfully",
@@ -106,7 +106,7 @@ const deleteInvoiceById = async (id) => {
   return true; // Xóa thành công
 };
 
-const updateInvoiceById = async (id, date) => {
+const updateInvoiceById = async (id, date, branchID) => {
 
   const pool = await connectToDB();
     try {
@@ -118,6 +118,35 @@ const updateInvoiceById = async (id, date) => {
         SET PaymentDate = @paymentDate 
         WHERE InvoiceID = @InvoiceID
       `);
+
+      await pool
+        .request()
+        .input("paymentDate", sql.Date, date)
+        .input("branchID", sql.Int, branchID)
+        .execute("InsertRevenueByDate");
+      await pool
+        .request()
+        .input("paymentDate", sql.Date, date)
+        .input("branchID", sql.Int, branchID)
+        .execute("InsertRevenueByMonth");
+      await pool
+        .request()
+        .input("paymentDate", sql.Date, date)
+        .input("branchID", sql.Int, branchID)
+        .execute("InsertRevenueByQuarter");
+      await pool
+        .request()
+        .input("paymentDate", sql.Date, date)
+        .input("branchID", sql.Int, branchID)
+        .execute("InsertRevenueByYear");
+
+      // Update dish revenue
+      await pool
+        .request()
+        .input("INVOICEID", sql.Int, id)
+        .execute("UPDATEDISHREVENUE");
+    
+
       return { success: true, message: "Invoice updated successfully" };
   }
   catch (error) {
