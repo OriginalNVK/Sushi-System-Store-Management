@@ -15,9 +15,18 @@ BEGIN
         D.DishName,
         ODA.AmountDish,
         OO.DateOrder,
+        OO.AmountCustomer,
+        D.DishName,
+        ODA.AmountDish,
+        OO.DateOrder,
         OO.TimeOrder
     FROM
+    FROM
         ORDER_DIRECTORY OD
+        INNER JOIN ORDER_ONLINE OO ON OD.OrderID = OO.OnOrderID
+        INNER JOIN ORDER_DISH_AMOUNT ODA ON OD.OrderID = ODA.OrderID
+        INNER JOIN DISH D ON ODA.DishID = D.DishID
+        INNER JOIN CARD_CUSTOMER CC ON OD.CardID = CC.CardID
         INNER JOIN ORDER_ONLINE OO ON OD.OrderID = OO.OnOrderID
         INNER JOIN ORDER_DISH_AMOUNT ODA ON OD.OrderID = ODA.OrderID
         INNER JOIN DISH D ON ODA.DishID = D.DishID
@@ -25,6 +34,7 @@ BEGIN
     ORDER BY OO.DateOrder, OO.TimeOrder;
 END;
 GO
+
 
 --Drop procedure GetOrderOnlinePendingOverview
 --Go
@@ -48,6 +58,7 @@ BEGIN
 END;
 GO 
 
+--DROP procedure GetOrderOnlinePendingDetail
 --DROP procedure GetOrderOnlinePendingDetail
 
 CREATE OR ALTER PROCEDURE GetOrderPendingDetail
@@ -131,6 +142,7 @@ BEGIN
         -- Insert into ORDER_DIRECTORY
         INSERT INTO ORDER_DIRECTORY (OrderID, EmployeeID, NumberTable, CardID, BranchID)
         VALUES (@OrderID,NULL, @NumberTable, @CardID, @BranchID);
+        VALUES (@OrderID,NULL, @NumberTable, @CardID, @BranchID);
 
         -- Insert into ORDER_ONLINE
         INSERT INTO ORDER_ONLINE (OnOrderID, DateOrder, TimeOrder, AmountCustomer)
@@ -165,6 +177,9 @@ BEGIN
         IF NOT EXISTS (SELECT 1
     FROM ORDER_DIRECTORY
     WHERE OrderID = @OrderID)
+        IF NOT EXISTS (SELECT 1
+    FROM ORDER_DIRECTORY
+    WHERE OrderID = @OrderID)
         BEGIN
             THROW 50020, 'Order does not exist.', 1;
         END
@@ -182,7 +197,11 @@ BEGIN
         COMMIT TRANSACTION;
     END
     TRY
+    END
+    TRY
     BEGIN CATCH
+    PRINT 'Error occurred while deleting the order: ' + ERROR_MESSAGE();
+    ROLLBACK TRANSACTION;
     PRINT 'Error occurred while deleting the order: ' + ERROR_MESSAGE();
     ROLLBACK TRANSACTION;
     END CATCH
@@ -210,9 +229,15 @@ BEGIN
         IF NOT EXISTS (SELECT 1
     FROM ORDER_DIRECTORY
     WHERE OrderID = @OrderID)
+        IF NOT EXISTS (SELECT 1
+    FROM ORDER_DIRECTORY
+    WHERE OrderID = @OrderID)
         BEGIN
             THROW 50021, 'Order does not exist.', 1;
         END
+        IF NOT EXISTS (SELECT 1
+    FROM BRANCH
+    WHERE BranchID = @BranchID)
         IF NOT EXISTS (SELECT 1
     FROM BRANCH
     WHERE BranchID = @BranchID)
@@ -222,7 +247,15 @@ BEGIN
     IF NOT EXISTS (SELECT 1
     FROM EMPLOYEE
     WHERE EmployeeID = @EmployeeID)
+    IF NOT EXISTS (SELECT 1
+    FROM EMPLOYEE
+    WHERE EmployeeID = @EmployeeID)
         BEGIN
+    THROW 50023, 'Employee does not exist.', 1;
+END
+IF NOT EXISTS (SELECT 1
+FROM CARD_CUSTOMER
+WHERE CardID = @CardID)
     THROW 50023, 'Employee does not exist.', 1;
 END
 IF NOT EXISTS (SELECT 1
@@ -231,7 +264,14 @@ WHERE CardID = @CardID)
         BEGIN
 THROW 50024, 'Customer does not exist.', 1;
 END
+THROW 50024, 'Customer does not exist.', 1;
+END
 
+-- Get DishID
+DECLARE @DishID INT;
+SELECT @DishID = DishID
+FROM DISH
+WHERE DishName = @DishName;
 -- Get DishID
 DECLARE @DishID INT;
 SELECT @DishID = DishID
@@ -239,7 +279,10 @@ FROM DISH
 WHERE DishName = @DishName;
 
 IF @DishID IS NULL
+IF @DishID IS NULL
         BEGIN
+THROW 50025, 'Dish does not exist.', 1;
+END
 THROW 50025, 'Dish does not exist.', 1;
 END
 
@@ -257,13 +300,24 @@ END
 IF EXISTS (SELECT 1
 FROM ORDER_DISH_AMOUNT
 WHERE OrderID = @OrderID AND DishID = @DishID)
+-- Update or Insert ORDER_DISH_AMOUNT
+IF EXISTS (SELECT 1
+FROM ORDER_DISH_AMOUNT
+WHERE OrderID = @OrderID AND DishID = @DishID)
         BEGIN
+    UPDATE ORDER_DISH_AMOUNT
     UPDATE ORDER_DISH_AMOUNT
             SET AmountDish = @AmountDish
             WHERE OrderID = @OrderID AND DishID = @DishID;
 END
+END
         ELSE
         BEGIN
+    INSERT INTO ORDER_DISH_AMOUNT
+        (OrderID, DishID, AmountDish)
+    VALUES
+        (@OrderID, @DishID, @AmountDish);
+END
     INSERT INTO ORDER_DISH_AMOUNT
         (OrderID, DishID, AmountDish)
     VALUES
@@ -273,7 +327,13 @@ END
 PRINT 'Order updated successfully!';
 COMMIT TRANSACTION;
 END TRY
+PRINT 'Order updated successfully!';
+COMMIT TRANSACTION;
+END TRY
     BEGIN CATCH
+PRINT 'Error occurred while updating the order: ' + ERROR_MESSAGE();
+ROLLBACK TRANSACTION;
+END CATCH
 PRINT 'Error occurred while updating the order: ' + ERROR_MESSAGE();
 ROLLBACK TRANSACTION;
 END CATCH
@@ -459,6 +519,8 @@ GO
 CREATE OR ALTER PROC New_Employee
     @EmployeeID INT,
     @EmployeeName NVARCHAR(255),
+    @EmployeeID INT,
+    @EmployeeName NVARCHAR(255),
     @EmployeeBirth DATE,
     @EmployeeGender NVARCHAR(10),
     @Salary INT,
@@ -472,7 +534,15 @@ BEGIN
     INSERT INTO EMPLOYEE
         (
         EmployeeID,EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate,
+    INSERT INTO EMPLOYEE
+        (
+        EmployeeID,EmployeeName, EmployeeBirth, EmployeeGender, Salary, EntryDate,
         DepartmentID, BranchID, EmployeeAddress, EmployeePhone
+        )
+    VALUES
+        (
+            @EmployeeID, @EmployeeName, @EmployeeBirth, @EmployeeGender, @Salary, @EntryDate,
+            @DepartmentID, @BranchID, @EmployeeAddress, @EmployeePhone
         )
     VALUES
         (
@@ -518,6 +588,9 @@ CREATE OR ALTER PROCEDURE Delete_Employee
     @EmployeeID INT
 AS
 BEGIN
+    IF EXISTS (SELECT 1
+    FROM EMPLOYEE
+    WHERE EmployeeID = @EmployeeID)
     IF EXISTS (SELECT 1
     FROM EMPLOYEE
     WHERE EmployeeID = @EmployeeID)
@@ -682,6 +755,7 @@ BEGIN
 END
 GO
 
+--EXEC GetInvoiceDetail 1
 --EXEC GetInvoiceDetail 1
 --===============================================================================================================================
 
