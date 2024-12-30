@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { reportDetailByMonth } from '../constants/index';
+import {getReportRevenueDetailByMonth} from '../service/Services';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Decorate from '../components/Decorate';
@@ -23,12 +24,43 @@ const TableRow = ({ detail, index }) => (
 );
 
 const ReportDetailByMonth = () => {
+  const [reportDetailByMonth, setReportDetailByMonth] = useState({
+    summaryData: {  },
+    dishDetails: []
+  });
+  useEffect(() => {
+    const branchID = localStorage.getItem('BranchID');
+    const month = localStorage.getItem('month');
+    const year = localStorage.getItem('year');
+
+    console.log('Fetched from localStorage:', { branchID, month, year });
+
+    if (!branchID || !month || !year) {
+      console.error('Missing branchID or month or year');
+      return;
+    }
+
+    const loadData = async (branchID, month, year) => {
+      try {
+        const response = await getReportRevenueDetailByMonth(month, year, branchID);
+        console.log('API Response:', response);
+        setReportDetailByMonth({
+          summaryData: response.summaryData[0], // Lấy phần tử đầu tiên của mảng summaryData
+          dishDetails: response.dishDetails
+        });
+      } catch (err) {
+        console.error('Error in loadData:', err);
+      }
+    };
+
+    loadData(branchID, month, year);
+  }, []);
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <div className="flex flex-col items-center py-6">
         <p className="text-yellow text-4xl font-play font-bold py-2">
-          REPORT DETAIL: {reportDetailByMonth.month} - {reportDetailByMonth.year}
+          REPORT DETAIL: {reportDetailByMonth.summaryData.Month} - {reportDetailByMonth.summaryData.Year}
         </p>
         <Decorate />
       </div>
@@ -38,16 +70,16 @@ const ReportDetailByMonth = () => {
         <div className="grid grid-cols-3 gap-6 w-3/4 text-center text-lg font-play font-bold">
           <div className="shadow-lg bg-white p-4 rounded-lg">
             <p>Month-Year:</p>
-            <span className="text-yellow text-xl">{reportDetailByMonth.month}-{ reportDetailByMonth.year }</span>
+            <span className="text-yellow text-xl">{reportDetailByMonth.summaryData.Month}-{ reportDetailByMonth.summaryData.Year }</span>
           </div>
           <div className="shadow-lg bg-white p-4 rounded-lg">
             <p>Branch Name:</p>
-            <span className="text-green text-xl">{reportDetailByMonth.branchName}</span>
+            <span className="text-green text-xl">{reportDetailByMonth.summaryData.BranchName}</span>
           </div>
           <div className="shadow-lg bg-white p-4 rounded-lg">
             <p>Total Revenue:</p>
             <span className="text-blue-500 text-xl">
-              {Number(reportDetailByMonth.totalRevenue).toLocaleString()} VNĐ
+              {Number(reportDetailByMonth.summaryData.TotalRevenue).toLocaleString()} VNĐ
             </span>
           </div>
         </div>
@@ -58,8 +90,8 @@ const ReportDetailByMonth = () => {
         <table className="w-11/12 text-center font-play shadow-lg bg-white rounded-lg">
           <TableHeader />
           <tbody className="text-gray-800">
-            {reportDetailByMonth.details && reportDetailByMonth.details.length > 0 ? (
-              reportDetailByMonth.details.map((detail, index) => (
+            {reportDetailByMonth.dishDetails && reportDetailByMonth.dishDetails.length > 0 ? (
+              reportDetailByMonth.dishDetails.map((detail, index) => (
                 <TableRow key={index} detail={detail} index={index} />
               ))
             ) : (

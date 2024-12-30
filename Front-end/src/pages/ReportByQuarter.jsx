@@ -1,16 +1,26 @@
-import React from 'react'
-import {reportOverviewByQuarter} from '../constants/index'
+import React, {useState, useEffect} from 'react'
+import {getReportRevenueOverviewByQuarter} from '../service/Services'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Decorate from '../components/Decorate';
 import { useNavigate } from 'react-router-dom';
 
 const ReportByQuarter = () => {
+    const [reportOverviewByQuarter, setReportOverviewByQuarter] = useState([]);
 
     const navigate = useNavigate();
-
+    useEffect(() => {
+        const branchID = localStorage.getItem('BranchID');
+        const loadData = async (branchID) => {
+            const response = await getReportRevenueOverviewByQuarter(branchID);
+            setReportOverviewByQuarter(response);
+        };
+        loadData(branchID);
+    }, []);
     const reportDetailByQuarter = (numberOfQuarter, year) => {
-        navigate(`/report-detail/${numberOfQuarter}-${year}`);
+        localStorage.setItem('numberOfQuarter', numberOfQuarter);
+        localStorage.setItem('year', year);
+        navigate(`/report-detail/quarter/${numberOfQuarter}/${year}`);
     }
   return (
       <div className='min-h-screen flex flex-col'>
@@ -33,10 +43,10 @@ const ReportByQuarter = () => {
                     <tbody className='md:text-lg text-base font-play'>
                       {reportOverviewByQuarter.map((report, index) => (
                               <tr key={index}>
-                              <td className='border p-1 font-bold'>{report.numberOfQuarter} - {report.year}</td>
-                                  <td className='border p-1'>{report.totalRevenue}</td>
+                              <td className='border p-1 font-bold'>{report.NumberOfQuarter} - {report.Year}</td>
+                                  <td className='border p-1'>{report.TotalRevenue}</td>
                                   <td className='border p-1'>
-                                      <button type='button' className='border text-yellow px-2 py-1 rounded hover:opacity-80 text-center' onClick={() => reportDetailByQuarter(report.numberOfQuarter, report.year)}>
+                                      <button type='button' className='border text-yellow px-2 py-1 rounded hover:opacity-80 text-center' onClick={() => reportDetailByQuarter(report.NumberOfQuarter, report.Year)}>
                                           Check Detail
                                       </button>
                                   </td>

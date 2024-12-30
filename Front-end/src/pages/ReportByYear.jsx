@@ -1,16 +1,24 @@
-import React from 'react'
-import {reportOverviewByYear} from '../constants/index'
+import React, {useState, useEffect} from 'react'
+import {getReportRevenueOverviewByYear} from '../service/Services'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Decorate from '../components/Decorate';
 import { useNavigate } from 'react-router-dom';
 
 const ReportByYear = () => {
-
+    const [reportOverviewByYear, setReportOverviewByYear] = useState([]);
     const navigate = useNavigate();
-
+    useEffect(() => {
+        const branchID = localStorage.getItem('BranchID');
+        const loadData = async (branchID) => {
+            const response = await getReportRevenueOverviewByYear(branchID);
+            setReportOverviewByYear(response);
+        };
+        loadData(branchID);
+    }, []);
     const reportDetailByYear = (year) => {
-        navigate(`/report-detail/${year}`);
+        localStorage.setItem('year', year);
+        navigate(`/report-detail/year/${year}`);
     }
   return (
       <div className='min-h-screen flex flex-col'>
@@ -33,10 +41,10 @@ const ReportByYear = () => {
                     <tbody className='md:text-lg text-base font-play'>
                       {reportOverviewByYear.map((report, index) => (
                               <tr key={index}>
-                              <td className='border p-1 font-bold'>{report.year}</td>
-                                  <td className='border p-1'>{report.totalRevenue}</td>
+                              <td className='border p-1 font-bold'>{report.Year}</td>
+                                  <td className='border p-1'>{report.TotalRevenue}</td>
                                   <td className='border p-1'>
-                                      <button type='button' className='border text-yellow px-2 py-1 rounded hover:opacity-80 text-center' onClick={() => reportDetailByYear(report.year)}>
+                                      <button type='button' className='border text-yellow px-2 py-1 rounded hover:opacity-80 text-center' onClick={() => reportDetailByYear(report.Year)}>
                                           Check Detail
                                       </button>
                                   </td>

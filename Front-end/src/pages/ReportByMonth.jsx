@@ -1,16 +1,26 @@
-import React from 'react'
-import {reportOverviewByMonth,} from '../constants/index'
+import React, {useState, useEffect} from 'react'
+import {getReportRevenueOverviewByMonth} from '../service/Services'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Decorate from '../components/Decorate';
 import { useNavigate } from 'react-router-dom';
 
 const ReportByMonth = () => {
+    const [reportOverviewByMonth, setReportOverviewByMonth] = useState([]);
 
     const navigate = useNavigate();
-
+    useEffect(() => {
+        const branchID = localStorage.getItem('BranchID');
+        const loadData = async (branchID) => {
+            const response = await getReportRevenueOverviewByMonth(branchID);
+            setReportOverviewByMonth(response);
+        };
+        loadData(branchID);
+    }, []);
     const reportDetailByMonth = (month, year) => {
-        navigate(`/report-detail/${month}-${year}`);
+        localStorage.setItem('month', month);
+        localStorage.setItem('year', year);
+        navigate(`/report-detail/month/${month}/${year}`);
     }
   return (
       <div className='min-h-screen flex flex-col'>
@@ -33,10 +43,10 @@ const ReportByMonth = () => {
                     <tbody className='md:text-lg text-base font-play'>
                       {reportOverviewByMonth.map((report, index) => (
                               <tr key={index}>
-                              <td className='border p-1 font-bold'>{report.month} - {report.year}</td>
-                                  <td className='border p-1'>{report.totalRevenue}</td>
+                              <td className='border p-1 font-bold'>{report.Month} - {report.Year}</td>
+                                  <td className='border p-1'>{report.TotalRevenue}</td>
                                   <td className='border p-1'>
-                                      <button type='button' className='border text-yellow px-2 py-1 rounded hover:opacity-80 text-center' onClick={() => reportDetailByMonth(report.month, report.year)}>
+                                      <button type='button' className='border text-yellow px-2 py-1 rounded hover:opacity-80 text-center' onClick={() => reportDetailByMonth(report.Month, report.Year)}>
                                           Check Detail
                                       </button>
                                   </td>

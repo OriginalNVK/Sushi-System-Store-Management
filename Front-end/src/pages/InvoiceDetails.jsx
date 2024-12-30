@@ -19,7 +19,6 @@ const InvoiceDetails = () => {
       try {
         const result = await getInvoiceDetail(id); // Fetch invoice details
         setInvoiceDetail(result); // Update state
-        console.log("Invoice detail: ", result); // Log fetched data
       } catch (error) {
         console.error("Error fetching invoice details:", error);
       }

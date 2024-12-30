@@ -289,3 +289,123 @@ export const updateInvoice = async (invoiceID, branchID) => {
     return { success: false, error: "Network error" };
   }
 }
+
+export const getReportRevenueOverviewByDate = async (branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/date/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueOverviewByDate request:", error);
+    return [];
+  }
+}
+
+export const getReportRevenueOverviewByMonth = async (branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/month/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueOverviewByMonth request:", error);
+    return [];
+  }
+}
+
+export const getReportRevenueOverviewByQuarter = async (branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/quarter/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueOverviewByQuarter request:", error);
+    return [];
+  }
+}
+
+export const getReportRevenueOverviewByYear = async (branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/year/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueOverviewByYear request:", error);
+    return [];
+  }
+}
+
+export const getReportRevenueDetailByDate = async (date, branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/detail/date/${date}/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueDetailByDate request:", error);
+    return [];
+  }
+}
+
+export const getReportRevenueDetailByMonth = async (month, year, branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/detail/month/${month}/${year}/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueDetailByMonth request:", error);
+    return [];
+  }
+}
+
+export const getReportRevenueDetailByQuarter = async (quarter, year, branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/detail/quarter/${quarter}/${year}/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueDetailByQuarter request:", error);
+    return [];
+  }
+}
+
+export const getReportRevenueDetailByYear = async (year, branchID) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/report/detail/year/${year}/${branchID}`
+    );
+    const result = await response.json();
+    return result;
+  }
+  catch (error)
+  {
+    console.error("Error during getReportRevenueDetailByYear request:", error);
+    return [];
+  }
+}

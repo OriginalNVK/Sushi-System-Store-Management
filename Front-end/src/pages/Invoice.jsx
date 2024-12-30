@@ -49,7 +49,7 @@ const Invoice = () => {
       return;
     }
 
-    const {BranchID} = localStorage.getItem('BranchID');
+    const  BranchID  = localStorage.getItem('BranchID');
 
     const response = await updateInvoice(selectedInvoice, BranchID);
     if (response.ok) {

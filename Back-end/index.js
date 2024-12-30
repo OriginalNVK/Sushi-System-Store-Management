@@ -12,6 +12,7 @@ const cardCustomerRouter = require("./routes/cardCustomerRouter");
 const registerRouter = require("./routes/registerRouter");
 const loginRouter = require("./routes/loginRouter");
 const departmentRouter = require("./routes/departmentRouter");
+const reportRouter = require("./routes/reportRouter");
 
 const app = express();
 const port = 3000;
@@ -35,6 +36,7 @@ app.use("/api/cards", cardCustomerRouter);
 app.use("/api/register", registerRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/departments", departmentRouter);  
+app.use("/api/report", reportRouter);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

@@ -2,7 +2,7 @@
 GO
 ---------------------------------------------------------------------------------
 -- GET DATA FROM OrderDirectory, OrderOnline, Dish, OrderDishAmount
-DROP PROCEDURE GetOrderOnline
+--DROP PROCEDURE GetOrderOnline
 CREATE PROCEDURE GetOnlineOrder
 AS
 BEGIN
@@ -877,7 +877,7 @@ exec InsertRevenueByYear "2024-12-30T00:00:00.000Z", 1;
 exec InsertRevenueByQuarter "2024-12-30T00:00:00.000Z", 1;
 exec UPDATEDISHREVENUE 1
 
-select * from DISHREVENUE
+select * from RevenueByQuarter
 
 -- Procedure to calculate revenue by day
 CREATE PROCEDURE CalRevenueByDay (@InputDate DATE)

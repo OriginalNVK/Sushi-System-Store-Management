@@ -56,13 +56,13 @@ const App = () => {
         <Route path="/order/detail/:id" element={<OrderDetailPage />} />
         <Route path="/employee/:id" element={<UpdateEmployee />} />
         <Route path="/reports/date" element={<ReportByDate />} />
-        <Route path="/report-detail/25-12-2024" element={<ReportDetailByDate />} /> 
+        <Route path="/report-detail/date/:date" element={<ReportDetailByDate />} /> 
         <Route path="/reports/month" element={<ReportByMonth />} />
-        <Route path="/report-detail/12-2024" element={<ReportDetailByMonth />} />
+        <Route path="/report-detail/month/:month/:year" element={<ReportDetailByMonth />} />
         <Route path="/reports/quarter" element={<ReportByQuarter />} />
-        <Route path="/report-detail/4-2024" element={<ReportDetailByQuarter />} />
+        <Route path="/report-detail/quarter/:quarter/:year" element={<ReportDetailByQuarter />} />
         <Route path="/reports/year" element={<ReportByYear />} />
-        <Route path="/report-detail/2024" element={<ReportDetailByYear />} />
+        <Route path="/report-detail/year/:year" element={<ReportDetailByYear />} />
       </Routes>
     </Router>
   );
