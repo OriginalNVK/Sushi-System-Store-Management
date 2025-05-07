@@ -1,10 +1,28 @@
-# Project title
+<div align="center">
+  <img src="https://raw.githubusercontent.com/OriginalNVK/SushiSystemStoreManagement/main/assets/banner.png" alt="Sushi Management Store Banner" style="width:100%; max-width:800px;" />
+</div>
 
-This project Sushi Management Store that help manage dish and allow customer to order dish and reserve table in branch.
+<h1 align="center">🍣 Sushi Management Store</h1>
 
-## Table of Contents
+<p align="center">
+  A full-stack multi-role sushi restaurant management platform — from customer experience to company-wide administration.
+</p>
 
-- [About the project](#about-the-project)
+ <img width="600px" src="./src/assets/background-image.png" alt="Screenshot of website">
+
+<div align="center">
+  <img src="https://img.shields.io/badge/ReactJS-18.x-blue?logo=react" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3.x-teal?logo=tailwindcss" />
+  <img src="https://img.shields.io/badge/Node.js-18.x-green?logo=node.js" />
+  <img src="https://img.shields.io/badge/SQL%20Server-2019-red?logo=microsoftsqlserver" />
+</div>
+
+---
+
+## 📌 Table of Contents
+
+- [About the Project](#about-the-project)
+- [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Installation](#installation)
 - [Contributing](#contributing)
@@ -12,80 +30,70 @@ This project Sushi Management Store that help manage dish and allow customer to 
 
 ---
 
-## About the Project
+## 📖 About the Project
 
-The Sushi Management Store is a multi-role platform designed to cater to the needs of customers, employees, branch managers, and company managers. Each role has specific functionalities tailored to their responsibilities, ensuring efficient management and a great customer experience.
+**Sushi Management Store** is a full-stack restaurant management system designed for a sushi restaurant chain. It supports multiple user roles, including customers, employees, branch managers, and company managers — providing seamless operations, from ordering and invoicing to feedback and reporting.
 
-## Features
+---
 
-# Customer Features
+## 🚀 Tech Stack
 
-Home: View the main page with featured items and promotions.
+- **Frontend**: ReactJS, TailwindCSS, html2pdf.js  
+- **Backend**: NodeJS (ExpressJS)  
+- **Database**: Microsoft SQL Server  
+- **Other Tools**: GitHub, Figma, VS Code
 
-Menu: Browse the sushi menu with descriptions and prices.
+---
 
-Booking: Reserve a table at the sushi store.
+## ✅ Features
 
-Introduce: Learn about the sushi store and its values.
+### 👤 Customer
+- 🏠 Home: View featured dishes & promotions
+- 🍣 Menu: Browse sushi menu with prices
+- 📅 Booking: Reserve tables at preferred branches
+- ℹ️ Introduce: Learn about store values
+- 💬 Contact: Submit feedback or inquiries
 
-Contact (Feedback): Provide feedback or contact the store for inquiries.
+### 🧑‍🍳 Employee
+- 🏠 Dashboard: Access employee homepage
+- 📝 Menu Management: Update menu items
+- 📦 Orders: Fulfill customer orders
+- 🧾 Invoices: Generate order invoices
+- 📖 Guide: Learn store workflow
 
-# Employee Features
+### 🧑‍💼 Branch Manager
+- 🏠 Dashboard: Branch overview
+- 📝 Menu: Control branch-specific dishes
+- 👥 Customers: View user interactions
+- 👩‍💼 Employees: Manage employee info
+- 💬 Feedback: Handle customer opinions
+- 📊 Reports: Generate branch reports
 
-Home: Access the employee dashboard.
+### 🏢 Company Manager
+- 🏠 Dashboard: Global overview
+- 📋 Menu: Control master menu
+- 👥 Customers: Centralized customer data
+- 🧑‍💼 Employees: Manage cross-branch staff
+- 🏬 Branches: Administer all branches
+- 💬 Feedback: Handle system-wide feedback
+- 📊 Reports: Analyze system performance
 
-Menu: View and update the menu items.
+---
 
-Order: Manage and fulfill customer orders.
+## 🛠️ Installation
 
-Invoice: Generate and manage invoices for completed orders.
-
-Introduce: Learn about the sushi store and its operations.
-
-# Manager branch
-
-Home: Access the branch manager dashboard.
-
-Menu: Manage the branch’s menu items.
-
-Customer: View customer information and interactions.
-
-Employee: Manage employee details and roles.
-
-Feedback: Review and respond to customer feedback.
-
-Report: Generate branch-specific reports.
-
-# Manager company
-
-Home: Access the company manager dashboard.
-
-Menu: Oversee the company-wide menu.
-
-Customer: Manage company-wide customer information.
-
-Employee: Oversee all employees across branches.
-
-Branch: Manage branch details and operations.
-
-Feedback: Monitor and address customer feedback across branches.
-
-Report: Generate company-wide reports for analysis.
-
-## Installation
-
+```bash
+# Clone the project
 git clone https://github.com/OriginalNVK/SushiSystemStoreManagement.git
+cd SushiSystemStoreManagement
 
-cd sushiSystemStoreManagement
-
+# Install Frontend
 cd Front-end
-
 npm install
-
 npm install html2pdf.js
-
 cd ..
 
+# Install Backend
 npm install
 
 # Contributing
