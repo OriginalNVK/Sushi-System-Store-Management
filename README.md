@@ -8,7 +8,7 @@
   A full-stack multi-role sushi restaurant management platform — from customer experience to company-wide administration.
 </p>
 
- <img width="600px" src="./Front-end/src/assets/background-image.png" alt="Screenshot of website">
+ <img width="600px" src="./Front-end/src/assets/background-website.png" alt="Screenshot of website">
 
 <div align="center">
   <img src="https://img.shields.io/badge/ReactJS-18.x-blue?logo=react" />
