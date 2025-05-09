@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/OriginalNVK/SushiSystemStoreManagement/main/assets/banner.png" alt="Sushi Management Store Banner" style="width:100%; max-width:800px;" />
+  <img src="./Front-end/src/assets/background-website.png" alt="Sushi Management Store Banner" style="width:100%; max-width:800px;" />
 </div>
 
 <h1 align="center">🍣 Sushi Management Store</h1>
@@ -7,8 +7,6 @@
 <p align="center">
   A full-stack multi-role sushi restaurant management platform — from customer experience to company-wide administration.
 </p>
-
- <img width="600px" align="center" src="./Front-end/src/assets/background-website.png" alt="Screenshot of website">
 
 <div align="center">
   <img src="https://img.shields.io/badge/ReactJS-18.x-blue?logo=react" />
