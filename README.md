@@ -23,6 +23,7 @@
 - [Installation](#installation)
 - [Contributing](#contributing)
 - [Contact](#contact)
+- [Usage Guide](#usage-guide)
 
 ---
 
@@ -91,8 +92,60 @@ cd ..
 
 # Install Backend
 npm install
+```
 
-# Contributing
+---
+
+## 📝 Usage Guide
+
+### 1. Start the Application
+
+- **Backend:**
+  1. Open a terminal in the `Back-end` folder.
+  2. Run `npm install` (if not done before).
+  3. Configure your database connection in `.env` (see `sample.env`).
+  4. Run `node index.js` or `npm start` to start the backend server (default: http://localhost:3000).
+
+- **Frontend:**
+  1. Open a terminal in the `Front-end` folder.
+  2. Run `npm install` (if not done before).
+  3. Run `npm run dev` to start the frontend (default: http://localhost:5173).
+
+### 2. User Roles & Main Features
+
+- **Customer:**
+  - Đặt bàn, đặt món online, xem menu, gửi phản hồi.
+  - Đăng ký tài khoản hoặc đăng nhập để sử dụng đầy đủ chức năng.
+
+- **Employee:**
+  - Đăng nhập để xác nhận đơn hàng, xuất hóa đơn, quản lý menu.
+
+- **Branch Manager:**
+  - Quản lý nhân viên, khách hàng, menu, xem báo cáo chi nhánh.
+
+- **Company Manager:**
+  - Quản lý toàn bộ hệ thống, các chi nhánh, nhân viên, khách hàng, báo cáo tổng hợp.
+
+### 3. Booking & Order Flow
+
+- **Đặt bàn/Đặt món:**
+  1. Khách hàng chọn chi nhánh, ngày, giờ, số lượng khách, món ăn.
+  2. Nhấn "Reserve Now" để gửi yêu cầu đặt bàn.
+  3. Đơn hàng sẽ hiển thị ở trang quản lý cho nhân viên xác nhận.
+
+- **Xác nhận đơn hàng:**
+  1. Nhân viên đăng nhập, vào trang Order Online/Offline.
+  2. Chọn đơn hàng chờ xác nhận, nhấn "Confirm Order" để xác nhận và xuất hóa đơn.
+
+### 4. Notes
+
+- Đảm bảo SQL Server đã chạy và đã import các script trong `Back-end/db/`.
+- Nếu gặp lỗi kết nối, kiểm tra lại file `.env` và cấu hình SQL Server.
+- Để thêm dữ liệu mẫu, có thể sử dụng các script trong thư mục `db`.
+
+---
+
+## 🤝 Contributing
 
 - Original NVK: Front-end + Support back-end
 - Dang Huy:
