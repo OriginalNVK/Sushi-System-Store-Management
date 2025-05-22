@@ -1,26 +1,26 @@
 const sql = require('mssql');
 const connectToDB = require('../db/dbConfig');
 
-const getAllDishes = async (BranchID) => {
+const getAllDishes = async () => {
     const pool = await connectToDB();
-    const result = await pool.request().input('BranchID', BranchID).query(`GetActiveDishesByBranchID @BranchID`);
+    const result = await pool.request()
+        .query(`
+      SELECT 
+        mnd.DirectoryName,
+        d.DishName, 
+        d.Price
+      FROM DISH d
+      JOIN MENU_DIRECTORY_DISH mnd ON mnd.DishID = d.DishID
+      WHERE mnd.StatusDish = 'YES'
+      ORDER BY mnd.DirectoryName, d.DishName, d.Price;
+    `);
 
-    // Process the data to group by DirectoryName
-    // const groupedData = result.recordset.reduce((acc, item) => {
-    //     const { DirectoryName, DishName, Price } = item;
-    //     // Find if the DirectoryName already exists
-    //     let directory = acc.find(group => group.DirectoryName === DirectoryName);
-    //     if (!directory) {
-    //         // If not, create a new directory group
-    //         directory = { DirectoryName, Dishes: [] };
-    //         acc.push(directory);
-    //     }
-    //     // Add the dish to the directory's Dishes array
-    //     directory.Dishes.push({ DishName, Price });
-    //     return acc;
-    // }, []);
-    // return groupedData; // Return the grouped data
-    return result.recordset
+    if (!result.recordset || result.recordset.length === 0) {
+        console.log("No dishes found.");
+        throw new Error("Không có món ăn nào được tìm thấy.");
+    }
+
+    return result.recordset;
 };
 
 const getDishById = async (DishID) => {

@@ -11,9 +11,8 @@ const getOrderOffline = async (req, res) => {
 };
 
 const getOrderOfflinePendingOverview = async (req, res) => {
-    const branchID = req.params.BranchID;
     try {
-        const orders = await orderOfflineModel.getOrderOfflinePendingOverview(branchID);
+        const orders = await orderOfflineModel.getOrderOfflinePendingOverview(); // Không truyền branchID
         res.status(200).json(orders);
     } catch (err) {
         res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);

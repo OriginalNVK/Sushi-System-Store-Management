@@ -18,11 +18,15 @@ const Dish = () => {
   useEffect(() => {
     const loadDishes = async () => {
       try {
-        const branchID = localStorage.getItem("BranchID"); // Lấy branchID từ localStorage
-        const data = await getDishes(branchID); // Lấy dữ liệu món ăn
+        const data = await getDishes(); // Fetch all dishes without BranchID
+        console.log("Dishes data received:", data); // Log data received from API
+        if (!Array.isArray(data)) {
+          throw new Error("Dữ liệu trả về không hợp lệ.");
+        }
         setDishes(data);
         setAllDishes(data);
       } catch (err) {
+        console.error("Error loading dishes:", err); // Log error for debugging
         setError("Không thể tải dữ liệu món ăn. Vui lòng thử lại.");
       }
     };
@@ -90,7 +94,7 @@ const Dish = () => {
       <Header />
       <div className="flex flex-1 items-center justify-center flex-col py-6">
         <div className="flex flex-col pb-6">
-          <p className="text-yellow text-5xl font-play py-3 font-bold ">
+          <p className="text-yellow text-5xl font-play py-3 font-bold">
             LIST DISHES
           </p>
           <Decorate />

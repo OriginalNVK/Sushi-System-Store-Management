@@ -11,12 +11,11 @@ const OrderOfflinePage = () => {
   const [order, setOrder] = useState([]);
   const navigate = useNavigate();
     useEffect(() => {
-        const branchID = localStorage.getItem('BranchID');
-        const loadData = async (branchID) => {
-            const data = await getOrderOfflinePendingOverview(branchID);
+        const loadData = async () => {
+            const data = await getOrderOfflinePendingOverview();
             setOrder(data);
         }
-        loadData(branchID);
+        loadData();
     }, []);
 
     const handleSelect = (orderID) => {

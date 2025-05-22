@@ -8,7 +8,9 @@ const getAllCustomers = async (BranchID) => {
         if (!pool) {
             throw new Error("Không thể kết nối với cơ sở dữ liệu");
         }
-        let result = await pool.request().input('BranchID', BranchID).query(`EXEC GetCustomersByBranchID @BranchID`);
+        let result = await pool.request()
+            .input('BranchID', sql.Int, BranchID) // Specify data type as int
+            .query(`EXEC GetCustomersByBranchID @BranchID`);
         return result.recordset;
     } catch (err) {
         console.error("Lỗi khi lấy tất cả khách hàng:", err.message);

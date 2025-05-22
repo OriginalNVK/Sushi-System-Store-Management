@@ -6,17 +6,24 @@ const OrderOnline = {
   // Lấy tất cả đơn hàng
   async getAllOrders() {
     const pool = await connectToDB();
-    const result = await pool.request().execute("GetOnlineOrder");
+    const result = await pool.request().execute("GetOrderOnline");
     return result.recordset;
   },
 
   // Lấy tóm tắt đơn hàng chưa xác nhận
   async getOrderOnlinePendingOverview(branchID) {
     const pool = await connectToDB();
-    const result = await pool
-      .request()
-      .input("BranchID", sql.Int, branchID)
-      .execute("GetOrderOnlinePendingOverview");
+    let result;
+    if (branchID) {
+      result = await pool
+        .request()
+        .input("BranchID", sql.Int, branchID)
+        .execute("GetOrderOnlinePendingOverview");
+    } else {
+      result = await pool
+        .request()
+        .execute("GetOrderOnlinePendingOverview");
+    }
     return result.recordset;
   },
 
@@ -84,7 +91,7 @@ const OrderOnline = {
               .input("AmountDish", sql.Int, parseInt(dishes[i].dishAmount))
               .input("DateOrder", sql.Date, orderData.DateOrder)
               .input("TimeOrder", sql.Time, orderData.TimeOrder)
-                .execute("AddNewOnlineOrder"); 
+                .execute("AddNewOrderOnline"); 
         }
         
         return;

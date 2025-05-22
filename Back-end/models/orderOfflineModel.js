@@ -5,20 +5,19 @@ const OrderOffline = {
     async getAllOrders() {
         try {
             const pool = await connectToDB(); 
-            const result = await pool.request().execute('GetOfflineOrder'); 
+            const result = await pool.request().execute('GetOrderOffline'); 
             return result.recordset;
         } catch (error) {
             throw new Error('Lỗi khi lấy tất cả đơn hàng offline: ' + error.message);
         }
     },
 
-    async getOrderOfflinePendingOverview(branchID) {
+    async getOrderOfflinePendingOverview() {
         try {
             const pool = await connectToDB();
             const result = await pool
               .request()
-              .input("BranchID", sql.Int, branchID)
-                .execute("GetOrderOfflinePendingOverview");
+                .execute("GetOrderOfflinePendingOverview"); // Không truyền branchID
             return result.recordset;
         }
         catch (error) {
