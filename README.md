@@ -21,7 +21,7 @@
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#-usage-guide)
+- [Usage Guide](#-usage-guide)
 - [Contributing](#contributing)
 - [Contact](#contact)
 - [Usage Guide](#usage-guide)
@@ -115,34 +115,34 @@ npm install
 ### 2. User Roles & Main Features
 
 - **Customer:**
-  - Đặt bàn, đặt món online, xem menu, gửi phản hồi.
-  - Đăng ký tài khoản hoặc đăng nhập để sử dụng đầy đủ chức năng.
+  - Book tables and order dishes online, view menu, send feedback.
+  - Register or log in to use all features.
 
 - **Employee:**
-  - Đăng nhập để xác nhận đơn hàng, xuất hóa đơn, quản lý menu.
+  - Log in to confirm orders, generate invoices, and manage the menu.
 
 - **Branch Manager:**
-  - Quản lý nhân viên, khách hàng, menu, xem báo cáo chi nhánh.
+  - Manage employees, customers, menu, and view branch reports.
 
 - **Company Manager:**
-  - Quản lý toàn bộ hệ thống, các chi nhánh, nhân viên, khách hàng, báo cáo tổng hợp.
+  - Manage the entire system, branches, employees, customers, and view overall reports.
 
 ### 3. Booking & Order Flow
 
-- **Đặt bàn/Đặt món:**
-  1. Khách hàng chọn chi nhánh, ngày, giờ, số lượng khách, món ăn.
-  2. Nhấn "Reserve Now" để gửi yêu cầu đặt bàn.
-  3. Đơn hàng sẽ hiển thị ở trang quản lý cho nhân viên xác nhận.
+- **Booking/Ordering:**
+  1. Customers select branch, date, time, number of guests, and dishes.
+  2. Click "Reserve Now" to submit the booking request.
+  3. Orders will appear in the management page for staff to confirm.
 
-- **Xác nhận đơn hàng:**
-  1. Nhân viên đăng nhập, vào trang Order Online/Offline.
-  2. Chọn đơn hàng chờ xác nhận, nhấn "Confirm Order" để xác nhận và xuất hóa đơn.
+- **Order Confirmation:**
+  1. Employees log in and go to the Order Online/Offline page.
+  2. Select a pending order and click "Confirm Order" to confirm and generate an invoice.
 
 ### 4. Notes
 
-- Đảm bảo SQL Server đã chạy và đã import các script trong `Back-end/db/`.
-- Nếu gặp lỗi kết nối, kiểm tra lại file `.env` và cấu hình SQL Server.
-- Để thêm dữ liệu mẫu, có thể sử dụng các script trong thư mục `db`.
+- Make sure SQL Server is running and all scripts in `Back-end/db/` have been imported.
+- If you encounter connection errors, check your `.env` file and SQL Server configuration.
+- To add sample data, use the scripts in the `db` folder.
 
 ---
 
