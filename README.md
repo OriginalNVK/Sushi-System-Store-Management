@@ -21,7 +21,7 @@
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Installation](#installation)
-- [Contributing](#-contributing)
+- [Usage](#-usage-guide)
 - [Contributing](#contributing)
 - [Contact](#contact)
 - [Usage Guide](#usage-guide)
