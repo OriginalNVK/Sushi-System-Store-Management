@@ -15,6 +15,7 @@ const getOrderOnlinePendingOverview = async (req, res) => {
         const orders = await orderOnlineModel.getOrderOnlinePendingOverview(branchID);
         res.status(200).json(orders);
     } catch (err) {
+        console.error("Error fetching pending orders:", err.message);
         res.status(500).send('Lỗi khi lấy dữ liệu: ' + err.message);
     }
 }
@@ -31,7 +32,7 @@ const getOrderPendingDetail = async (req, res) => {
 
 const postOrderOnline = async (req, res) => {
     try {
-        const { BranchID, NumberTable, CardID, AmountCustomer, DateOrder, TimeOrder, dishes } = req.body;
+        const { BranchID, EmployeeID, NumberTable, CardID, AmountCustomer, DateOrder, TimeOrder, dishes } = req.body;
 
         if (!dishes || dishes.length === 0) {
             return res.status(400).json({
@@ -40,15 +41,23 @@ const postOrderOnline = async (req, res) => {
             });
         }
 
+        // Chuyển đổi danh sách món ăn thành chuỗi
+        const DishName = dishes.map((dish) => dish.dishName).join(",");
+        const AmountDish = dishes.map((dish) => dish.dishAmount).join(",");
+
+        // Gọi model để thêm đơn hàng
         const newOrder = await orderOnlineModel.addOrder({
             BranchID,
+            EmployeeID : 1,
             NumberTable,
             CardID,
             AmountCustomer,
+            DishName,
+            AmountDish,
             DateOrder,
             TimeOrder,
-            dishes: dishes
         });
+
         res.status(201).json({
             Status: "Success",
         });
@@ -105,6 +114,7 @@ const deleteOrderOnline = async (req, res) => {
     }
 };
 
+// Đặt món trực tuyến
 const postPlaceOrder = async (req, res) => {
     try {
         const { BranchID, dishes, AmountCustomer, DateOrder, TimeOrder } = req.body;
